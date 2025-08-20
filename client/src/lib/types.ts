@@ -1,4 +1,5 @@
 export interface EventType {
+  _id?: string;
   title: string;
   description: string;
   category: string;
@@ -9,9 +10,12 @@ export interface EventType {
   ticketTypes: TicketType[];
   status: string;
   tags: string[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface TicketType {
+  _id?: string;
   name: string;
   price: number;
   quantity: number;
@@ -29,6 +33,7 @@ export interface EventLocationType {
 }
 
 export interface EventCategoryType {
+  _id?: string;
   name: string;
   address: {
     street: string;
@@ -52,7 +57,7 @@ export interface UserTicketInfoType {
   paymentDetails: PaymentDetailsType;
   bookingDate: Date;
   checkInTime: null;
-//   isTransferable: true;
+  //   isTransferable: true;
   //   transferHistory?: [];
   //   specialRequests: "Vegetarian meal preference";
   createdAt: Date;

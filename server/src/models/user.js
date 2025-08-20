@@ -2,17 +2,11 @@ import { Schema, model } from "mongoose";
 
 const userSchema = new Schema(
   {
-    firstName: {
+    name: {
       type: String,
       required: [true, "First name is required"],
       trim: true,
       maxlength: [50, "First name cannot exceed 50 characters"],
-    },
-    lastName: {
-      type: String,
-      required: [true, "Last name is required"],
-      trim: true,
-      maxlength: [50, "Last name cannot exceed 50 characters"],
     },
     email: {
       type: String,
@@ -35,63 +29,17 @@ const userSchema = new Schema(
       enum: ["USER", "ADMIN"],
       default: "USER",
     },
-    phoneNumber: {
-      type: String,
-      trim: true,
-      match: [/^\+?[\d\s-()]+$/, "Please enter a valid phone number"],
-    },
-    dateOfBirth: {
-      type: Date,
+    age: {
+      type: Number,
     },
     gender: {
       type: String,
-      enum: ["male", "female", "other", "prefer-not-to-say"],
-      default: "prefer-not-to-say",
+      enum: ["male", "female"],
     },
-    location: {
-      city: { type: String, trim: true },
-      state: { type: String, trim: true },
-      country: { type: String, trim: true },
-      zipCode: { type: String, trim: true },
-    },
-    interests: [
-      {
-        type: String,
-        enum: [
-          "music",
-          "sports",
-          "technology",
-          "business",
-          "art",
-          "food",
-          "travel",
-          "education",
-          "health",
-          "entertainment",
-        ],
-      },
-    ],
     profileImage: {
       type: String,
       default: null,
-    },
-    isVerified: {
-      type: Boolean,
-      default: false,
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
-    lastLogin: {
-      type: Date,
-      default: Date.now,
-    },
-    notificationPreferences: {
-      email: { type: Boolean, default: true },
-      sms: { type: Boolean, default: false },
-      push: { type: Boolean, default: true },
-    },
+    }
   },
   {
     timestamps: true,

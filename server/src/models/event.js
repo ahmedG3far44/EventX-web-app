@@ -72,12 +72,7 @@ const eventSchema = new Schema(
         type: Number,
         default: 0,
         min: [0, "Price cannot be negative"],
-      },
-      student: {
-        type: Number,
-        default: 0,
-        min: [0, "Price cannot be negative"],
-      },
+      }
     },
     capacity: {
       total: {
@@ -94,25 +89,12 @@ const eventSchema = new Schema(
         type: Number,
         default: 0,
         min: [0, "VIP seats cannot be negative"],
-      },
-      student: {
-        type: Number,
-        default: 0,
-        min: [0, "Student seats cannot be negative"],
-      },
+      }
     },
     availableSeats: {
       general: { type: Number },
       vip: { type: Number },
-      student: { type: Number },
     },
-    images: [
-      {
-        url: { type: String },
-        alt: { type: String },
-        isPrimary: { type: Boolean, default: false },
-      },
-    ],
     status: {
       type: String,
       enum: ["draft", "published", "active", "completed", "cancelled"],
@@ -124,14 +106,6 @@ const eventSchema = new Schema(
         trim: true,
       },
     ],
-    requirements: {
-      ageRestriction: {
-        type: Number,
-        default: 0,
-        min: [0, "Age restriction cannot be negative"],
-      },
-      specialRequirements: [String],
-    },
     visibility: {
       type: String,
       enum: ["public", "private", "invited"],

@@ -3,8 +3,6 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 import formatResponse from "../utils/formatResponse.js";
 
-const jwtSecrete = process.env.JWT_SECRETE;
-
 export const login = async (req, res) => {
   try {
     const payload = req.body;
@@ -14,21 +12,45 @@ export const login = async (req, res) => {
     }
 
     const { email, password } = payload;
+
     // check if User exist before or not
-    const user = await User.findOne({ email, password });
+
+    const hash = await bcrypt.hash(password, 10);
+
+    const isPasswordCorrect = await bcrypt.compare(password, hash);
+
+    if (!isPasswordCorrect) {
+      throw new Error("your email or password is wrong!!");
+    }
+    const user = await User.findOne({ email }).select({
+      name: 1,
+      email: 1,
+      role: 1,
+      age: 1,
+      gender: 1,
+      profileImage: 1,
+    });
+
+    console.log(user);
     // compare email and passwords
     if (!user) {
-      throw new Error("your email or password is wrong!!");
+      throw new Error("user not found your email or password is wrong!!");
     }
 
     // generate new token
-    const token = jwt.sign(payload, jwtSecrete, {
-      expiresIn: "7d",
+
+    const token = jwt.sign(payload, process.env.JWT_SECRETE, {
+      expiresIn: "24h",
     });
 
+    res.cookie("authToken", token, {
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === "production", 
+      sameSite: "strict", 
+      maxAge: 24 * 60 * 60 * 1000, 
+    });
     const loggedUser = {
-      ...user,
-      token,
+      ...user._doc,
     };
 
     res
@@ -42,6 +64,7 @@ export const login = async (req, res) => {
       );
   }
 };
+
 export const register = async (req, res) => {
   try {
     const payload = req.body;
@@ -50,28 +73,60 @@ export const register = async (req, res) => {
       throw new Error("payload data is missing!!");
     }
 
-    const { email, password } = payload;
+    console.log(payload);
+
+    const { name, gender, age, email, password, profile } = payload;
     // check if User exist before or not
 
-    const hashedPassword = bcrypt.hash(password, 10);
+    // const hashedPassword = bcrypt.hash(password, 10);
 
-    const User = await User.findOne({ email, password: hashedPassword });
+    const user = await User.findOne({ email, password });
+
     // compare email and passwords
-    if (User) {
+    if (user) {
       throw new Error("this User is already exist!!");
     }
 
     // hash new User password before add
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
 
-    const newUser = await User.create({ ...payload });
-    // generate new token
-    const token = jwt.sign(payload, jwtSecrete, {
-      expiresIn: "7d",
+    const newUser = new User({
+      name,
+      email,
+      password: hash,
+      role: "USER",
+      gender,
+      age,
+      profileImage: profile,
+    });
+
+    await newUser.save();
+
+    const token = jwt.sign(
+      {
+        name,
+        email,
+        gender,
+        age,
+        profileImage: profile,
+      },
+      process.env.JWT_SECRETE,
+      {
+        expiresIn: "24h",
+      }
+    );
+    res.cookie("authToken", token, {
+      httpOnly: true, // Cannot be accessed by JavaScript
+      secure: process.env.NODE_ENV === "production", // HTTPS only in production
+      sameSite: "strict", // Prevent CSRF attacks
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      // domain: 'yourdomain.com', // Optional: set specific domain
+      // path: '/', // Optional: cookie path
     });
 
     const registeredUser = {
-      ...newUser,
-      token,
+      ...newUser._doc,
     };
 
     res
@@ -93,9 +148,79 @@ export const register = async (req, res) => {
 };
 export const logout = async (req, res) => {
   try {
+    res.clearCookie('authToken', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/' 
+    });
+    
     res
       .status(200)
-      .json(formatResponse("logout route", true, "login complete success"));
+      .json(formatResponse( "", true, "Logged out successfully"));
+  } catch (error) {
+    res
+      .status(500)
+      .json(formatResponse("internal server error", false, error.message));
+  }
+};
+
+export const createDefaultAdmin = async (req, res) => {
+  try {
+    const random = Math.floor(Math.random() * 191) + 10;
+
+    const adminProfile =
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLKYamkRB_qMHdd_HvhrxBlHhExgcAW6Mquw&s";
+    const newUser = new User({
+      name: `Administrator ${random}`,
+      email: `admin${random}@gmail.com`,
+      password: "admin@password",
+      role: "ADMIN",
+      gender: "male",
+      age: 23,
+      profileImage: adminProfile,
+    });
+
+    await newUser.save();
+
+    const payloadUser = newUser._doc;
+
+    const { _id, name, email, age, gender, profileImage, role } = payloadUser;
+
+    const token = jwt.sign(
+      {
+        _id,
+        name,
+        email,
+        gender,
+        age,
+        role,
+        profileImage,
+      },
+      process.env.JWT_SECRETE,
+      {
+        expiresIn: "7d",
+      }
+    );
+
+    res.cookie("authToken", token, {
+      httpOnly: true, // Cannot be accessed by JavaScript
+      secure: process.env.NODE_ENV === "production", // HTTPS only in production
+      sameSite: "strict", // Prevent CSRF attacks
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      // domain: 'yourdomain.com', // Optional: set specific domain
+      // path: '/', // Optional: cookie path
+    });
+
+    const registeredUser = {
+      ...payloadUser,
+    };
+
+    res
+      .status(201)
+      .json(
+        formatResponse(registeredUser, true, "a new Admin was created success")
+      );
   } catch (error) {
     res
       .status(500)

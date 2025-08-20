@@ -1,11 +1,16 @@
 import { Router } from "express";
-import { login, logout, register } from "../controllers/auth.controllers.js";
-
+import {
+  createDefaultAdmin,
+  login,
+  logout,
+  register,
+} from "../controllers/auth.controllers.js";
 
 const router = Router();
 
-router.use("/login", login);
-router.use("/register", register);
-router.use("/logout", logout);
+router.post("/login", login);
+router.post("/register", register);
+router.post("/default-admin", createDefaultAdmin);
+router.post("/logout", logout);
 
 export default router;

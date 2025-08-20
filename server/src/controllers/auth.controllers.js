@@ -22,7 +22,9 @@ export const login = async (req, res) => {
     if (!isPasswordCorrect) {
       throw new Error("your email or password is wrong!!");
     }
+    
     const user = await User.findOne({ email }).select({
+      _id: 1,
       name: 1,
       email: 1,
       role: 1,
@@ -31,7 +33,7 @@ export const login = async (req, res) => {
       profileImage: 1,
     });
 
-    console.log(user);
+    console.log(user._doc);
     // compare email and passwords
     if (!user) {
       throw new Error("user not found your email or password is wrong!!");
@@ -39,15 +41,19 @@ export const login = async (req, res) => {
 
     // generate new token
 
-    const token = jwt.sign(payload, process.env.JWT_SECRETE, {
-      expiresIn: "24h",
-    });
+    const token = jwt.sign(
+      { ...user._doc, role: "USER" },
+      process.env.JWT_SECRETE,
+      {
+        expiresIn: "24h",
+      }
+    );
 
     res.cookie("authToken", token, {
-      httpOnly: true, 
-      secure: process.env.NODE_ENV === "production", 
-      sameSite: "strict", 
-      maxAge: 24 * 60 * 60 * 1000, 
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
     });
     const loggedUser = {
       ...user._doc,
@@ -103,30 +109,18 @@ export const register = async (req, res) => {
 
     await newUser.save();
 
-    const token = jwt.sign(
-      {
-        name,
-        email,
-        gender,
-        age,
-        profileImage: profile,
-      },
-      process.env.JWT_SECRETE,
-      {
-        expiresIn: "24h",
-      }
-    );
+    const token = jwt.sign(newUser._doc, process.env.JWT_SECRETE, {
+      expiresIn: "24h",
+    });
     res.cookie("authToken", token, {
-      httpOnly: true, // Cannot be accessed by JavaScript
-      secure: process.env.NODE_ENV === "production", // HTTPS only in production
-      sameSite: "strict", // Prevent CSRF attacks
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      // domain: 'yourdomain.com', // Optional: set specific domain
-      // path: '/', // Optional: cookie path
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
     });
 
     const registeredUser = {
-      ...newUser._doc,
+      ...newUser,
     };
 
     res
@@ -148,16 +142,14 @@ export const register = async (req, res) => {
 };
 export const logout = async (req, res) => {
   try {
-    res.clearCookie('authToken', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        path: '/' 
+    res.clearCookie("authToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
     });
-    
-    res
-      .status(200)
-      .json(formatResponse( "", true, "Logged out successfully"));
+
+    res.status(200).json(formatResponse("", true, "Logged out successfully"));
   } catch (error) {
     res
       .status(500)
@@ -204,12 +196,10 @@ export const createDefaultAdmin = async (req, res) => {
     );
 
     res.cookie("authToken", token, {
-      httpOnly: true, // Cannot be accessed by JavaScript
-      secure: process.env.NODE_ENV === "production", // HTTPS only in production
-      sameSite: "strict", // Prevent CSRF attacks
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      // domain: 'yourdomain.com', // Optional: set specific domain
-      // path: '/', // Optional: cookie path
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
     });
 
     const registeredUser = {

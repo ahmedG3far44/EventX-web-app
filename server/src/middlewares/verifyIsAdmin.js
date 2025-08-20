@@ -1,20 +1,20 @@
 import jwt from "jsonwebtoken";
 import formatResponse from "../utils/formatResponse.js";
 
-const jwtSecrete = process.env.JWT_SECRETE;
 
 const verifyIsAdmin = async (req, res, next) => {
   try {
-    console.log(req);
     // get the token from req headers or cookies
-    const token = req;
+    const token = req.headers.cookie.split("=")[1];
 
     if (!token) {
       throw new Error("token is missing!!");
-    }
+    } 
 
-    const { payload } = jwt.verify(token, jwtSecrete);
 
+    const payload = jwt.verify(token, process.env.JWT_SECRETE);
+
+    console.log(payload);
     if (!payload) {
       throw new Error("not payload returns");
     }
@@ -24,7 +24,7 @@ const verifyIsAdmin = async (req, res, next) => {
     }
 
     req.user = payload;
-    
+
     next();
   } catch (error) {
     res

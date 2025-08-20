@@ -13,6 +13,7 @@ const router = express.Router();
 //api/auth/logout
 //api/auth/reset-password
 
+
 router.use("/auth", authRouter);
 router.use("/events", eventsRouter);
 router.use("/tickets", ticketsRouter);

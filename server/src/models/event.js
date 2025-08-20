@@ -4,137 +4,82 @@ const eventSchema = new Schema(
   {
     title: {
       type: String,
-      required: [true, "Event title is required"],
+      required: [true, "Please add a title"],
       trim: true,
-      maxlength: [200, "Title cannot exceed 200 characters"],
+      maxlength: [100, "Title cannot be more than 100 characters"],
     },
     description: {
       type: String,
-      required: [true, "Event description is required"],
-      maxlength: [2000, "Description cannot exceed 2000 characters"],
+      required: [true, "Please add a description"],
+      maxlength: [1000, "Description cannot be more than 1000 characters"],
     },
     category: {
-      type: String,
-      required: [true, "Event category is required"],
-      enum: [
-        "music",
-        "sports",
-        "technology",
-        "business",
-        "art",
-        "food",
-        "travel",
-        "education",
-        "health",
-        "entertainment",
-      ],
-    },
-    organizer: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      type: Schema.Types.ObjectId,
+      ref: "Category",
       required: true,
     },
     venue: {
       name: {
         type: String,
-        required: [true, "Venue name is required"],
-        trim: true,
+        required: true,
       },
       address: {
-        street: { type: String, required: true, trim: true },
-        city: { type: String, required: true, trim: true },
-        state: { type: String, required: true, trim: true },
-        country: { type: String, required: true, trim: true },
-        zipCode: { type: String, trim: true },
-        coordinates: {
-          latitude: { type: Number },
-          longitude: { type: Number },
-        },
+        street: String,
+        city: String,
+        state: String,
+        zipCode: String,
+      },
+      capacity: {
+        type: Number,
+        required: true,
       },
     },
     dateTime: {
-      start: {
-        type: Date,
-        required: [true, "Event start date is required"],
-      },
-      end: {
-        type: Date,
-        required: [true, "Event end date is required"],
-      },
+      type: Date,
+      required: true,
     },
-    pricing: {
-      general: {
-        type: Number,
-        required: [true, "General ticket price is required"],
-        min: [0, "Price cannot be negative"],
-      },
-      vip: {
-        type: Number,
-        default: 0,
-        min: [0, "Price cannot be negative"],
-      }
+    organizer: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-    capacity: {
-      total: {
-        type: Number,
-        required: [true, "Total capacity is required"],
-        min: [1, "Capacity must be at least 1"],
-      },
-      general: {
-        type: Number,
-        required: true,
-        min: [0, "General seats cannot be negative"],
-      },
-      vip: {
-        type: Number,
-        default: 0,
-        min: [0, "VIP seats cannot be negative"],
-      }
-    },
-    availableSeats: {
-      general: { type: Number },
-      vip: { type: Number },
-    },
-    status: {
+    image: {
       type: String,
-      enum: ["draft", "published", "active", "completed", "cancelled"],
-      default: "draft",
+      default: "default-event.jpg",
     },
-    tags: [
+    ticketTypes: [
       {
-        type: String,
-        trim: true,
+        name: {
+          type: String,
+          required: true,
+        },
+        price: {
+          type: Number,
+          required: true,
+          min: 0,
+        },
+        quantity: {
+          type: Number,
+          required: true,
+          min: 0,
+        },
+        available: {
+          type: Number,
+          min: 0,
+        },
       },
     ],
-    visibility: {
+    status: {
       type: String,
-      enum: ["public", "private", "invited"],
-      default: "public",
+      enum: ["draft", "published", "cancelled", "completed"],
+      default: "draft",
     },
-    registrationDeadline: {
-      type: Date,
-    },
-    maxTicketsPerUser: {
-      type: Number,
-      default: 10,
-      min: [1, "Max tickets per user must be at least 1"],
-    },
-    isRefundable: {
-      type: Boolean,
-      default: false,
-    },
-    refundPolicy: {
-      type: String,
-      maxlength: [500, "Refund policy cannot exceed 500 characters"],
-    },
+    tags: [String],
   },
   {
     timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
   }
 );
-
 const Event = model("events", eventSchema);
 
 export default Event;

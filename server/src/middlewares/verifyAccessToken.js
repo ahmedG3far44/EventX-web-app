@@ -1,20 +1,19 @@
 import jwt from "jsonwebtoken";
-import formatResponse from "../utils/formatResponse";
+import formatResponse from "../utils/formatResponse.js";
 
-const jwtSecrete = process.env.JWT_SECRETE;
 
 const verifyAccessToken = async (req, res, next) => {
   try {
-    console.log(req);
-
-    const token = req;
+    const token = req.headers.cookie.split("=")[1];
 
     if (!token) {
       throw new Error("token is missing!!");
     }
 
-    const { payload } = jwt.verify(token, jwtSecrete);
-    req.user = payload;
+    const decode = jwt.verify(token, process.env.JWT_SECRETE);
+
+
+    req.user = decode;
     next();
   } catch (error) {
     res

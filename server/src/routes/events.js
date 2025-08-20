@@ -1,11 +1,22 @@
 import { Router } from "express";
-import { login, logout, register } from "../controllers/auth.controllers.js";
 
+import {
+  createEvent,
+  deleteEvent,
+  getEvent,
+  getEvents,
+  updateEvent,
+} from "../controllers/events.controllers.js";
+
+// import verifyAccessToken from "../middlewares/verifyAccessToken.js";
+// import verifyIsAdmin from "../middlewares/verifyIsAdmin.js";
 
 const router = Router();
 
-router.use("/login", login);
-router.use("/register", register);
-router.use("/logout", logout);
+router.get("/:eventId", getEvent);
+router.get("/", getEvents);
+router.post("/", createEvent);
+router.put("/", updateEvent);
+router.delete("/", deleteEvent);
 
 export default router;

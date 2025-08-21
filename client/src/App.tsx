@@ -5,10 +5,12 @@ import SignupPage from "./pages/signup";
 import DashboardPage from "./pages/dashboard";
 import EventDetailsPage from "./pages/event-details";
 import EventsPage from "./pages/events";
+import Users from "./components/ui/Users";
+import EventForm from "./components/EventForm";
 
 const App = () => {
   return (
-    <div className="bg-zinc-950 text-white min-h-screen">
+    <div className="w-full overflow-x-hidden min-h-screen">
       <BrowserRouter>
         <Routes>
           <Route index path="/" element={<Home />} />
@@ -17,7 +19,8 @@ const App = () => {
           <Route path="/events" element={<EventsPage />} />
           <Route path="/event/:id" element={<EventDetailsPage />} />
           <Route path="dashboard" element={<DashboardPage />}>
-            <Route path="users" element={<SignupPage />} />
+            <Route path="users" element={<Users />} />
+            <Route path="manage-events" element={<EventForm />} />
           </Route>
         </Routes>
       </BrowserRouter>

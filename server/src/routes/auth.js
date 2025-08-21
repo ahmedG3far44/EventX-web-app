@@ -1,9 +1,9 @@
 import { Router } from "express";
 import {
-  createDefaultAdmin,
   login,
   logout,
   register,
+  createDefaultAdmin,
 } from "../controllers/auth.controllers.js";
 
 const router = Router();

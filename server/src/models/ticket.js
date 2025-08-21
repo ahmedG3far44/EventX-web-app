@@ -30,6 +30,11 @@ const ticketSchema = new Schema(
       required: true,
       min: [0, "Price cannot be negative"],
     },
+    quantity: {
+      type: Number,
+      required: true,
+      default: 1,
+    },
     status: {
       type: String,
       enum: ["booked", "confirmed", "checked-in", "cancelled", "refunded"],
@@ -50,7 +55,7 @@ const ticketSchema = new Schema(
         type: String,
         enum: ["pending", "completed", "failed", "refunded"],
         default: "pending",
-      }
+      },
     },
     bookingDate: {
       type: Date,

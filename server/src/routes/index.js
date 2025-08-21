@@ -1,24 +1,25 @@
-import express from "express";
+import { Router } from "express";
+
 import authRouter from "./auth.js";
 import eventsRouter from "./events.js";
 import ticketsRouter from "./tickets.js";
-import notificationsRouter from "./notifications.js";
 import analyticsRouter from "./analytics.js";
 import usersRouter from "./users.js";
+import walletRouter from "./wallets.js";
 
-const router = express.Router();
+const router = Router();
 
 //api/auth/login
 //api/auth/register
 //api/auth/logout
 //api/auth/reset-password
 
-
 router.use("/auth", authRouter);
 router.use("/events", eventsRouter);
 router.use("/tickets", ticketsRouter);
 router.use("/analytics", analyticsRouter);
-router.use("/notifications", notificationsRouter);
+router.use("/wallets", walletRouter);
 router.use("/users", usersRouter);
+// router.use("/notifications", notificationsRouter);
 
 export default router;

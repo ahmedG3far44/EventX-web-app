@@ -4,7 +4,7 @@ import { Router } from "express";
 
 const router = Router();
 
-router.use("/", async (req, res)=>{
+router.get("/", async (req, res)=>{
     res.send("analytics")
 });
 

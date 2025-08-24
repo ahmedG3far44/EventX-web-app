@@ -22,16 +22,16 @@ const EventsPage = () => {
   if (loading) return <div>loading...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
   return (
-    <div>
-      <div>
+    <div className="w-3/4 m-auto">
+      <div className="p-4 bg-zinc-100 flex justify-center items-center mb-20">
         <input
           onChange={(e) => setSearch(e.target.value)}
-          className="p-2 rounded-md"
+          className="p-2 border bg-zinc-100 rounded-md gap-4"
           type="search"
         />
         <Button onClick={handleSearch}>Search</Button>
       </div>
-      <div className="w-3/4 m-auto p-4 grid grid-cols-4 grid-flow-row gap-10 items-center">
+      <div className="m-auto p-4 grid grid-cols-4 grid-flow-row gap-2 items-center">
         {filteredEvents.length <= 0 ? (
           <>
             {events.map((event) => {

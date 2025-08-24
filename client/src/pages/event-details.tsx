@@ -16,8 +16,8 @@ const EventDetailsPage = () => {
   if (loading) return <div>loading...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
   return (
-    <div className="flex flex-col justify-center gap-10 items-center w-3/4 m-auto">
-      <div className="flex flex-col items-center justify-center gap-4">
+    <div className="flex min-h-screen justify-center gap-10 items-center w-3/4 m-auto">
+      <div className="flex items-center justify-center gap-4">
         {eventDetails && <EventCard {...eventDetails} />}{" "}
         <div>
           <SeatBooking />

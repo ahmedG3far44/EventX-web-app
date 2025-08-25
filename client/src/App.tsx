@@ -5,8 +5,11 @@ import SignupPage from "./pages/signup";
 import DashboardPage from "./pages/dashboard";
 import EventDetailsPage from "./pages/event-details";
 import EventsPage from "./pages/events";
-import Users from "./components/ui/Users";
-import EventForm from "./components/EventForm";
+import PaymentPage from "./pages/payment";
+import SuccessPaymentPage from "./pages/success";
+import NotFoundPage from "./pages/error";
+// import Users from "./components/ui/Users";
+// import EventForm from "./components/EventForm";
 
 const App = () => {
   return (
@@ -18,9 +21,31 @@ const App = () => {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/event/:id" element={<EventDetailsPage />} />
+          <Route path="/event/:eventId/payment" element={<PaymentPage />} />
+          <Route path="/success" element={<SuccessPaymentPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+
           <Route path="dashboard" element={<DashboardPage />}>
-            <Route path="users" element={<Users />} />
-            <Route path="manage-events" element={<EventForm />} />
+            <Route path="add" element={<h1>Add Quick Event Form</h1>} />
+            <Route
+              path="insights"
+              element={<h1>Dashboard Insights: revenue</h1>}
+            />
+            <Route path="events" element={<h1>All Event Insights</h1>}>
+              <Route path=":id" element={<h1>Single Event Insights</h1>} />
+            </Route>
+            <Route
+              path="manage-events"
+              element={
+                <h1>Change Events Status active | canceled | upcoming</h1>
+              }
+            />
+            <Route
+              path="categories"
+              element={<h1>Categories List / add </h1>}
+            />
+            <Route path="users" element={<h1>Manage Users</h1>} />
+            <Route path="reports" element={<h1>Download a reports</h1>} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -1,97 +1,25 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useBookingTickets } from "@/contexts/BookingTicketsProvider";
+import { useNavigate } from "react-router-dom";
 
 const SeatBooking = () => {
-  const initializeSeats = () => {
-    const seats = [];
-    const rows = 5;
-    const seatsPerRow = [6, 8, 10, 10, 10];
-    let seatId = 1;
-    for (let row = 0; row < rows; row++) {
-      const rowSeats = [];
-      for (let seat = 0; seat < seatsPerRow[row]; seat++) {
-        rowSeats.push({
-          id: seatId++,
-          row: row + 1,
-          number: seat + 1,
-          status: "available",
-        });
-      }
-      seats.push(rowSeats);
-    }
-    return seats;
-  };
 
-  const [seats, setSeats] = useState(initializeSeats());
-  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
+  const navigate = useNavigate();
+  const {
+    seats,
+    selectedSeats,
+    getSeatClassName,
+    getTotalPrice,
+    getSelectedSeatCount,
+    handleSeatClick,
+  } = useBookingTickets();
 
-  const handleSeatClick = (rowIndex: number, seatIndex: number) => {
-    const seat = seats[rowIndex][seatIndex];
 
-    if (seat.status === "paid" || seat.status === "reserved") return;
-
-    const seatKey = `${rowIndex}-${seatIndex}`;
-    const isSelected = selectedSeats.includes(seatKey);
-
-    if (isSelected) {
-      setSelectedSeats(selectedSeats.filter((s) => s !== seatKey));
-    } else {
-      setSelectedSeats([...selectedSeats, seatKey]);
-    }
-  };
-
-  const getSeatClassName = (
-    seat: { id?: number; row?: number; number?: number; status: any },
-    rowIndex: number,
-    seatIndex: number
-  ) => {
-    const baseClasses =
-      "w-8 h-8 rounded-md cursor-pointer transition-all duration-200 hover:scale-105 border-2";
-    const seatKey = `${rowIndex}-${seatIndex}`;
-    const isSelected = selectedSeats.includes(seatKey);
-
-    if (seat.status === "paid") {
-      return `${baseClasses} bg-purple-600 border-purple-700 cursor-not-allowed`;
-    }
-    if (seat.status === "reserved") {
-      return `${baseClasses} bg-purple-400 border-purple-500 cursor-not-allowed`;
-    }
-    if (isSelected) {
-      return `${baseClasses} bg-green-500 border-green-600 shadow-lg`;
-    }
-    return `${baseClasses} bg-gray-300 border-gray-400 hover:bg-gray-200`;
-  };
-
-  const getSelectedSeatCount = () => selectedSeats.length;
-  const getTotalPrice = () => getSelectedSeatCount() * 25; // $25 per seat
-
-  const handleBooking = () => {
-    if (selectedSeats.length === 0) return;
-
-    alert(`Booking ${selectedSeats.length} seat(s) for $${getTotalPrice()}`);
-
-    // Update seat status to reserved after booking
-    const newSeats = seats.map((row, rowIndex) =>
-      row.map((seat, seatIndex) => {
-        const seatKey = `${rowIndex}-${seatIndex}`;
-        if (selectedSeats.includes(seatKey)) {
-          return { ...seat, status: "reserved" };
-        }
-        return seat;
-      })
-    );
-
-    setSeats(newSeats);
-    setSelectedSeats([]);
-  };
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
         Seat Allocation
       </h2>
-
-      {/* Legend */}
       <div className="flex justify-center gap-6 mb-8">
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded bg-purple-600"></div>
@@ -173,7 +101,7 @@ const SeatBooking = () => {
         </div>
 
         <button
-          onClick={handleBooking}
+          onClick={() => navigate("payment")}
           disabled={selectedSeats.length === 0}
           className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors ${
             selectedSeats.length > 0

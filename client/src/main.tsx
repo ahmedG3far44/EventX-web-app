@@ -4,12 +4,15 @@ import AuthProvider from "./contexts/AuthProvider.tsx";
 import EventsProvider from "./contexts/EventsProvider.tsx";
 import App from "./App.tsx";
 import "./index.css";
+import BookingTicketsProvider from "./contexts/BookingTicketsProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
       <EventsProvider>
-        <App />
+        <BookingTicketsProvider>
+          <App />
+        </BookingTicketsProvider>
       </EventsProvider>
     </AuthProvider>
   </StrictMode>

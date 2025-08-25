@@ -1,8 +1,11 @@
-import Event from "../models/event.js";
-import Ticket from "../models/ticket.js";
+// import Event from "../models/event.js";
+// import Ticket from "../models/ticket.js";
 
 export const buyTickets = async (req, res) => {
   try {
+    const payload =  req.body;
+
+    console.log(payload)
     // get user info from token
     // get event info by eventId
     // check the event has available seats
@@ -13,7 +16,7 @@ export const buyTickets = async (req, res) => {
     // mutate the all billing info to db
     // return response with qrCode url and billing info
     res.status(201).json({
-      data: buyTickets,
+      data: "buyTickets",
       success: true,
       message: "ticket checkout completed!!",
     });

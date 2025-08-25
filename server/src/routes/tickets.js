@@ -4,6 +4,6 @@ import { buyTickets } from "../controllers/tickets.controllers.js";
 
 const router = Router();
 
-router.post("/", verifyAccessToken, buyTickets);
+router.post("/", buyTickets);
 
 export default router;

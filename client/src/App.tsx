@@ -8,8 +8,14 @@ import EventsPage from "./pages/events";
 import PaymentPage from "./pages/payment";
 import SuccessPaymentPage from "./pages/success";
 import NotFoundPage from "./pages/error";
-// import Users from "./components/ui/Users";
-// import EventForm from "./components/EventForm";
+import ManageEvents from "./components/admin/ManageEvents";
+import EventDetails from "./components/admin/EventDetails";
+import Insights from "./components/admin/Insights";
+import AnalyticsReports from "./components/admin/AnalyticsReports";
+import ManageUsers from "./components/admin/ManageUsers";
+import BookingTickets from "./components/admin/BookingTickets";
+import AttendeeInsights from "./components/admin/AttendeeInsights";
+import EventCategories from "./components/admin/EventCategories";
 
 const App = () => {
   return (
@@ -19,34 +25,27 @@ const App = () => {
           <Route index path="/" element={<Home />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+
+          {/* Protected user Routes */}
           <Route path="/events" element={<EventsPage />} />
           <Route path="/event/:id" element={<EventDetailsPage />} />
           <Route path="/event/:eventId/payment" element={<PaymentPage />} />
           <Route path="/success" element={<SuccessPaymentPage />} />
-          <Route path="*" element={<NotFoundPage />} />
 
+          {/* Protected Admin Routes */}
           <Route path="dashboard" element={<DashboardPage />}>
             <Route path="add" element={<h1>Add Quick Event Form</h1>} />
-            <Route
-              path="insights"
-              element={<h1>Dashboard Insights: revenue</h1>}
-            />
-            <Route path="events" element={<h1>All Event Insights</h1>}>
-              <Route path=":id" element={<h1>Single Event Insights</h1>} />
-            </Route>
-            <Route
-              path="manage-events"
-              element={
-                <h1>Change Events Status active | canceled | upcoming</h1>
-              }
-            />
-            <Route
-              path="categories"
-              element={<h1>Categories List / add </h1>}
-            />
-            <Route path="users" element={<h1>Manage Users</h1>} />
-            <Route path="reports" element={<h1>Download a reports</h1>} />
+            <Route path="insights" element={<Insights />} />
+            <Route path="manage-events" element={<ManageEvents />} />
+            <Route path="manage-events/:id" element={<EventDetails />} />
+            <Route path="attendee-insights" element={<AttendeeInsights />} />
+            <Route path="manage-users" element={<ManageUsers />} />
+            <Route path="analytics-reports" element={<AnalyticsReports />} />
+            <Route path="booking-tickets" element={<BookingTickets />} />
+            <Route path="event-categories" element={<EventCategories />} />
           </Route>
+
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
     </div>

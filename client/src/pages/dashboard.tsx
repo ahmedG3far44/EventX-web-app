@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   LucideActivity,
@@ -10,7 +11,6 @@ import {
   LucideVenusAndMars,
   LucideX,
 } from "lucide-react";
-import { useState } from "react";
 
 import { Link, Outlet, useLocation } from "react-router-dom";
 
@@ -94,7 +94,7 @@ function AsideMenu() {
   ];
   return (
     <aside
-      className={`p-8 bg-zinc-100  max-w-3/4 lg:w-[20%] fixed lg:sticky md:sticky min-h-screen shadow-md left-0 top-0 z-50`}
+      className={`p-8 bg-zinc-100  max-w-3/4 lg:w-[20%] fixed lg:sticky animate- md:sticky min-h-screen shadow-md left-0 top-0 z-50`}
     >
       <ul>
         {dashboardLinks.map((url) => {

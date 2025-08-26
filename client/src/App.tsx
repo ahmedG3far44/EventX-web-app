@@ -6,8 +6,9 @@ import DashboardPage from "./pages/dashboard";
 import EventDetailsPage from "./pages/event-details";
 import EventsPage from "./pages/events";
 import PaymentPage from "./pages/payment";
-import SuccessPaymentPage from "./pages/success";
 import NotFoundPage from "./pages/error";
+import MyTickets from "./components/ui/MyTickets";
+import PaymentSuccessPage from "./pages/success";
 // import Users from "./components/ui/Users";
 // import EventForm from "./components/EventForm";
 
@@ -22,7 +23,8 @@ const App = () => {
           <Route path="/events" element={<EventsPage />} />
           <Route path="/event/:id" element={<EventDetailsPage />} />
           <Route path="/event/:eventId/payment" element={<PaymentPage />} />
-          <Route path="/success" element={<SuccessPaymentPage />} />
+          <Route path="/success" element={<PaymentSuccessPage />} />
+          <Route path="/tickets" element={<MyTickets />} />
           <Route path="*" element={<NotFoundPage />} />
 
           <Route path="dashboard" element={<DashboardPage />}>

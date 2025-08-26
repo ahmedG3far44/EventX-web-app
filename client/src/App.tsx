@@ -6,8 +6,8 @@ import DashboardPage from "./pages/dashboard";
 import EventDetailsPage from "./pages/event-details";
 import EventsPage from "./pages/events";
 import PaymentPage from "./pages/payment";
-import SuccessPaymentPage from "./pages/success";
 import NotFoundPage from "./pages/error";
+<<<<<<< HEAD
 import ManageEvents from "./components/admin/ManageEvents";
 import EventDetails from "./components/admin/EventDetails";
 import Insights from "./components/admin/Insights";
@@ -16,6 +16,12 @@ import ManageUsers from "./components/admin/ManageUsers";
 import BookingTickets from "./components/admin/BookingTickets";
 import AttendeeInsights from "./components/admin/AttendeeInsights";
 import EventCategories from "./components/admin/EventCategories";
+=======
+import MyTickets from "./components/ui/MyTickets";
+import PaymentSuccessPage from "./pages/success";
+// import Users from "./components/ui/Users";
+// import EventForm from "./components/EventForm";
+>>>>>>> 0f51173e87bcda22ac4013aa4572895aaf7384f5
 
 const App = () => {
   return (
@@ -30,7 +36,13 @@ const App = () => {
           <Route path="/events" element={<EventsPage />} />
           <Route path="/event/:id" element={<EventDetailsPage />} />
           <Route path="/event/:eventId/payment" element={<PaymentPage />} />
+<<<<<<< HEAD
           <Route path="/success" element={<SuccessPaymentPage />} />
+=======
+          <Route path="/success" element={<PaymentSuccessPage />} />
+          <Route path="/tickets" element={<MyTickets />} />
+          <Route path="*" element={<NotFoundPage />} />
+>>>>>>> 0f51173e87bcda22ac4013aa4572895aaf7384f5
 
           {/* Protected Admin Routes */}
           <Route path="dashboard" element={<DashboardPage />}>

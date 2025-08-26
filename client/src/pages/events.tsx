@@ -70,7 +70,7 @@ const EventsPage = () => {
       {/* {filteredEvents.length === 0 && (
         <div className="my-10 text-center">No items available in status {eventStatus}</div>
       )} */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 grid-flow-row place-content-center place-items-center gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-flow-row place-content-center place-items-center gap-4">
         {filteredEvents.length <= 0 ? (
           <>
             {events.map((event) => {

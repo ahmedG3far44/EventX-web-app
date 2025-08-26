@@ -34,14 +34,16 @@ const App = () => {
           <Route path="/tickets" element={<MyTickets />} />
           <Route path="*" element={<NotFoundPage />} />
 
-
           {/* Protected Admin Routes */}
           <Route path="dashboard" element={<DashboardPage />}>
             <Route path="add" element={<h1>Add Quick Event Form</h1>} />
             <Route path="insights" element={<Insights />} />
             <Route path="manage-events" element={<ManageEvents />} />
             <Route path="manage-events/:id" element={<EventDetails />} />
-            <Route path="attendee-insights" element={<AttendeeInsights />} />
+            <Route
+              path="attendee-insights/:id"
+              element={<AttendeeInsights />}
+            />
             <Route path="manage-users" element={<ManageUsers />} />
             <Route path="analytics-reports" element={<AnalyticsReports />} />
             <Route path="booking-tickets" element={<BookingTickets />} />

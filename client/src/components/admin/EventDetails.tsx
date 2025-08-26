@@ -12,6 +12,7 @@ import {
   UserCheck,
   Star,
 } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
 
 interface EventDetailsProps {
   eventData?: {
@@ -32,6 +33,7 @@ interface EventDetailsProps {
 }
 
 const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
+  const params = useParams();
   // Default data based on the image
   const defaultData = {
     name: "Colombo Music Festival 2025",
@@ -292,10 +294,13 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
             <button className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 px-6 rounded-lg transition-colors">
               EDIT
             </button>
-            <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2">
+            <Link
+              to={`/dashboard/attendee-insights/${params.id}`}
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
+            >
               <BarChart3 className="w-5 h-5" />
               Attendee Insights
-            </button>
+            </Link>
           </div>
         </div>
       </div>

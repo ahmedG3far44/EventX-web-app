@@ -1,13 +1,18 @@
 export interface EventType {
   _id?: string;
-  title: string;
+  name: string;
   description: string;
   category: string;
-  venue: EventLocationType;
-  dateTime: Date;
+  venue: string;
+  datetime: Date;
   organizer: string;
-  image: string;
-  ticketTypes: TicketType[];
+  emoji: string;
+  seatsAmount: number;
+  availableSeats: number;
+  seatsMap: number[][];
+  revenue: number;
+  popularity: "High Popularity" | "Medium Popularity" | "Low Popularity";
+  ticketTypes: TicketType;
   status: string;
   tags: string[];
   createdAt: Date;
@@ -18,7 +23,6 @@ export interface TicketType {
   _id?: string;
   name: string;
   price: number;
-  quantity: number;
   available: number;
 }
 export interface EventLocationType {

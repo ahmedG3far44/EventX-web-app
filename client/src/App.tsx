@@ -17,6 +17,8 @@ import AttendeeInsights from "./components/admin/AttendeeInsights";
 import EventCategories from "./components/admin/EventCategories";
 import MyTickets from "./components/ui/MyTickets";
 import PaymentSuccessPage from "./pages/success";
+import EventForm from "./components/EventForm";
+
 const App = () => {
   return (
     <div className="w-full overflow-x-hidden min-h-screen">
@@ -36,7 +38,7 @@ const App = () => {
 
           {/* Protected Admin Routes */}
           <Route path="dashboard" element={<DashboardPage />}>
-            <Route path="add" element={<h1>Add Quick Event Form</h1>} />
+            <Route path="add" element={<EventForm />} />
             <Route path="insights" element={<Insights />} />
             <Route path="manage-events" element={<ManageEvents />} />
             <Route path="manage-events/:id" element={<EventDetails />} />

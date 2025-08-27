@@ -1,11 +1,10 @@
 import { Button } from "@/components/ui/button";
-import EventCard from "@/components/ui/EventCard";
+import EventsList from "@/components/ui/EventsList";
 import { useEvents } from "@/contexts/EventsProvider";
 import type { EventType } from "@/lib/types";
 import { useEffect, useState } from "react";
 
 export type EventStatusType =
-  | null
   | "active"
   | "published"
   | "draft"
@@ -16,11 +15,11 @@ const EventsPage = () => {
 
   const [filteredEvents, setFilteredEvents] = useState<EventType[]>([]);
   const [search, setSearch] = useState<undefined | string>(undefined);
-  const [eventStatus, setEventStatus] = useState<EventStatusType>(null);
+  const [eventStatus, setEventStatus] = useState<EventStatusType>();
 
   const handleSearch = () => {
     const filtered = events.filter((event) =>
-      event.title
+      event.name
         .toLowerCase()
         .includes(search ? search?.toLocaleLowerCase().toString() : "")
     );
@@ -67,24 +66,13 @@ const EventsPage = () => {
           </select>
         </div>
       </div>
-      {/* {filteredEvents.length === 0 && (
-        <div className="my-10 text-center">No items available in status {eventStatus}</div>
-      )} */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-flow-row place-content-center place-items-center gap-4">
+      <>
         {filteredEvents.length <= 0 ? (
-          <>
-            {events.map((event) => {
-              return <EventCard key={event._id} {...event} />;
-            })}
-          </>
+          <EventsList events={events} />
         ) : (
-          <>
-            {filteredEvents.map((event) => {
-              return <EventCard key={event._id} {...event} />;
-            })}
-          </>
+          <EventsList events={filteredEvents} />
         )}
-      </div>
+      </>
     </div>
   );
 };

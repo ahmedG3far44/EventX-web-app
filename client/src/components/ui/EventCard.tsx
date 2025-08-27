@@ -1,24 +1,25 @@
 import {
   Calendar,
   Clock,
-  DollarSign,
   MapPin,
   MoreHorizontal,
   TrendingUp,
   Users,
 } from "lucide-react";
-import type React from "react";
-import type { Event } from "../admin/ManageEvents";
-import { Link } from "react-router-dom";
 
-const EventCard: React.FC<{ event: Event }> = ({ event }) => {
+import { Link } from "react-router-dom";
+import type { EventType } from "@/lib/types";
+
+const EventCard = ({ event }: { event: EventType }) => {
+  const eventTime = new Date(event.datetime);
+  const eventDate = new Date(event.datetime);
   const formatCurrency = (amount: number) => {
-    return `${amount.toLocaleString()}KR`;
+    return `${amount.toLocaleString()}EGP`;
   };
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow">
+    <div className="bg-white min-w-[300px] rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between mb-3">
-        <h3 className="font-semibold text-gray-900 text-lg">{event.title}</h3>
+        <h3 className="font-semibold text-gray-900 text-lg">{event.name}</h3>
         <button className="text-gray-400 hover:text-gray-600">
           <MoreHorizontal className="w-5 h-5" />
         </button>
@@ -31,31 +32,30 @@ const EventCard: React.FC<{ event: Event }> = ({ event }) => {
         </div>
         <div className="flex items-center text-sm text-gray-600">
           <Calendar className="w-4 h-4 mr-2 text-gray-400" />
-          Date: {event.date}
+          Date: {eventDate.toLocaleDateString()}
         </div>
         <div className="flex items-center text-sm text-gray-600">
           <Clock className="w-4 h-4 mr-2 text-gray-400" />
-          Time: {event.time}
+          Time: {eventTime.toLocaleTimeString()}
         </div>
       </div>
 
       <div className="flex items-center justify-between text-sm">
         <div className="flex items-center space-x-4">
           <div className="flex items-center text-green-600">
-            <DollarSign className="w-4 h-4 mr-1" />
-            {formatCurrency(event.price)}
+            {formatCurrency(event.ticketTypes.price)}
           </div>
           <div className="flex items-center text-red-600">
             <TrendingUp className="w-4 h-4 mr-1" />
-            {event.sold}
+            {event.availableSeats}
           </div>
           <div className="flex items-center text-purple-600">
             <Users className="w-4 h-4 mr-1" />
-            {event.capacity}
+            {event.seatsAmount - event.availableSeats}
           </div>
         </div>
         <Link
-          to={`${event.id}`}
+          to={`/event/${event._id}`}
           className="text-blue-600 hover:text-blue-800 transition-colors"
         >
           <span className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">

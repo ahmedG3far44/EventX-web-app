@@ -57,10 +57,6 @@ export const getEvent = async (req, res) => {
 // @access  Private (Admin/Organizer)
 export const createEvent = async (req, res) => {
   try {
-    // Add user to req.body
-    // req.body.organizer = req.user.id;
-
-    // const userId = "67a1b2c3d4e5f67890123457"
 
     const payload = req.body;
 

@@ -1,185 +1,535 @@
 import { useState } from "react";
-import Input from "./ui/input";
-import { Button } from "./ui/button";
-import { Card } from "./ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { X, Plus, ArrowLeft } from "lucide-react";
+
+interface TicketType {
+  name: string;
+  price: number;
+  available: number;
+}
+
+interface EventData {
+  title: string;
+  description: string;
+  category: string;
+  venue: {
+    name: string;
+    address: {
+      street: string;
+      city: string;
+      state: string;
+      zipCode: string;
+    };
+    capacity: number;
+  };
+  dateTime: string;
+  emoji: string;
+  ticketType: TicketType;
+  status: string;
+  tags: string[];
+}
 
 const EventForm = () => {
-  const [event, setEvent] = useState({
+  const categories = [
+    "Music",
+    "Sports",
+    "Arts & Culture",
+    "Food & Drink",
+    "Technology",
+    "Business",
+    "Health & Wellness",
+    "Education",
+    "Entertainment",
+    "Fashion",
+    "Travel",
+    "Community",
+  ];
+
+  const eventEmojis = [
+    "🎵",
+    "🎤",
+    "🎸",
+    "🎹",
+    "🎺",
+    "🎷",
+    "🥁",
+    "🎻",
+    "🎪",
+    "🎭",
+    "🎨",
+    "🎬",
+    "📚",
+    "🏆",
+    "🎯",
+    "🎮",
+    "🎲",
+    "🎳",
+    "🎊",
+    "🎉",
+    "🎈",
+    "🎂",
+    "🍕",
+    "🍔",
+    "🍰",
+    "☕",
+    "🍷",
+    "🥂",
+    "🎓",
+    "💻",
+    "🚀",
+    "⭐",
+    "🌟",
+    "💫",
+    "🎆",
+    "🎇",
+    "🔥",
+    "💎",
+    "🎁",
+    "🏅",
+  ];
+
+  const getRandomEmoji = () => {
+    return eventEmojis[Math.floor(Math.random() * eventEmojis.length)];
+  };
+
+  const [event, setEvent] = useState<EventData>({
     title: "",
-    date: "",
-    venue: "",
-    time: "",
     description: "",
-    ticketPrice: "",
-    popularity: "",
-    availableSeats: 0,
-    amountSeats: 0,
+    category: "",
+    venue: {
+      name: "",
+      address: {
+        street: "",
+        city: "",
+        state: "",
+        zipCode: "",
+      },
+      capacity: 0,
+    },
+    dateTime: "",
+    emoji: "",
+    ticketType: { name: "General Admission", price: 0, available: 0 },
+    status: "draft",
+    tags: [],
   });
 
-  function handleChangeInput(prev: React.ChangeEvent<HTMLInputElement>) {
-    if (prev) {
-      setEvent({ ...event, [prev.target.name]: prev.target.value });
+  const [newTag, setNewTag] = useState("");
+
+  const handleInputChange = (field: string, value: string | number) => {
+    if (field.includes(".")) {
+      const fields = field.split(".");
+      if (fields[0] === "venue" && fields[1] === "address") {
+        setEvent((prev) => ({
+          ...prev,
+          venue: {
+            ...prev.venue,
+            address: {
+              ...prev.venue.address,
+              [fields[2]]: value,
+            },
+          },
+        }));
+      } else if (fields[0] === "venue") {
+        setEvent((prev) => ({
+          ...prev,
+          venue: {
+            ...prev.venue,
+            [fields[1]]: value,
+          },
+        }));
+      }
+    } else {
+      setEvent((prev) => ({ ...prev, [field]: value }));
     }
+  };
 
-  }
+  const handleTicketTypeChange = (field: string, value: string | number) => {
+    setEvent((prev) => ({
+      ...prev,
+      ticketType: {
+        ...prev.ticketType,
+        [field]:
+          field === "price" || field === "available" ? Number(value) : value,
+      },
+    }));
+  };
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  const addTag = () => {
+    if (newTag.trim() && !event.tags.includes(newTag.trim())) {
+      setEvent((prev) => ({
+        ...prev,
+        tags: [...prev.tags, newTag.trim()],
+      }));
+      setNewTag("");
+    }
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    setEvent((prev) => ({
+      ...prev,
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(event);
-  }
+
+    // Generate random emoji and convert dateTime to ISO string
+    const formattedEvent = {
+      ...event,
+      emoji: getRandomEmoji(),
+      dateTime: new Date(event.dateTime).toISOString(),
+    };
+
+
+    console.log("Event Data:", JSON.stringify(formattedEvent, null, 2));
+  };
+
   return (
-    <Card className="w-3/4 m-auto p-8">
-      <div className="flex items-center justify-center ">
-        <Button className="mr-auto">back</Button>
-        <h2 className="text-3xl font-bold text-center">Event Details</h2>
-      </div>
-      <form onSubmit={handleSubmit}>
-        <div className="flex justify-start items-center gap-4 w-full">
-          <Input
-            disabled={false}
-            onChangeFunc={handleChangeInput}
-            id="eventTitle"
-            name="title"
-            type="text"
-            placeholder="enter event title"
-          />
-          <Input
-            disabled={false}
-            onChangeFunc={handleChangeInput}
-            id="date"
-            name="date"
-            type="date"
-            placeholder="event date"
-          />
-        </div>
-
-        <div className="flex justify-start items-center gap-4 w-full">
-          <Input
-            disabled={false}
-            onChangeFunc={handleChangeInput}
-            id="venue"
-            name="venue"
-            type="text"
-            placeholder="venue address"
-          />
-
-          <Input
-            disabled={false}
-            onChangeFunc={handleChangeInput}
-            id="time"
-            name="time"
-            type="datetime-local"
-            placeholder="select event time"
-          />
-        </div>
-
-        <div className="w-full">
-          <Input
-            disabled={false}
-            onChangeFunc={handleChangeInput}
-            id="description"
-            name="description"
-            type="text"
-            placeholder="enter event description"
-          />
-        </div>
-        <div className="w-full flex justify-start gap-4 items-center">
-          <Input
-            disabled={false}
-            onChangeFunc={handleChangeInput}
-            id="ticketPrice"
-            name="ticketPrice"
-            type="number"
-            placeholder="enter ticket price"
-          />
-          <Input
-            disabled={false}
-            onChangeFunc={handleChangeInput}
-            id="availableSeats"
-            name="availableSeats"
-            type="number"
-            placeholder="available event seats"
-          />
-          <Input
-            disabled={false}
-            onChangeFunc={handleChangeInput}
-            id="amountSeats"
-            name="amountSeats"
-            type="number"
-            placeholder="enter Seat Amount"
-          />
-          <Input
-            disabled={false}
-            onChangeFunc={handleChangeInput}
-            id="popularity"
-            name="popularity"
-            type="text"
-            placeholder="High popularity"
-          />
-        </div>
-        <div className="flex items-center my-8 gap-8">
-          <div>
-            <div className="w-[800px] h-[400px] rounded-2xl border border-dashed bg-zinc-50">
-              {}
-            </div>
+    <div className="mx-auto space-y-6">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <Button variant="outline" size="sm">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
+            <CardTitle className="text-2xl font-bold">
+              Create New Event
+            </CardTitle>
+            <div></div>
           </div>
+        </CardHeader>
+        <CardContent>
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            {/* Basic Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Basic Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="title">Event Title</Label>
+                    <Input
+                      id="title"
+                      value={event.title}
+                      onChange={(e) =>
+                        handleInputChange("title", e.target.value)
+                      }
+                      placeholder="Enter event title"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="category">Category</Label>
+                    <Select
+                      value={event.category}
+                      onValueChange={(value) =>
+                        handleInputChange("category", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category} value={category}>
+                            {category}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
 
-          <div>
-            <div className="w-[400px] h-[400px] rounded-2xl border border-dashed bg-zinc-50">
-              qrCode
-            </div>
-          </div>
-        </div>
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={event.description}
+                    onChange={(e) =>
+                      handleInputChange("description", e.target.value)
+                    }
+                    placeholder="Enter event description"
+                    rows={3}
+                    required
+                  />
+                </div>
 
-        <div>
-          <Button className="w-full" type="submit">Add Event</Button>
-        </div>
-      </form>
-    </Card>
+                <div>
+                  <div>
+                    <Label htmlFor="dateTime">Date & Time</Label>
+                    <Input
+                      id="dateTime"
+                      type="datetime-local"
+                      value={event.dateTime}
+                      onChange={(e) =>
+                        handleInputChange("dateTime", e.target.value)
+                      }
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="status">Event Status</Label>
+                  <Select
+                    value={event.status}
+                    onValueChange={(value) =>
+                      handleInputChange("status", value)
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="draft">Draft</SelectItem>
+                      <SelectItem value="published">Published</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Venue Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Venue Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="venueName">Venue Name</Label>
+                    <Input
+                      id="venueName"
+                      value={event.venue.name}
+                      onChange={(e) =>
+                        handleInputChange("venue.name", e.target.value)
+                      }
+                      placeholder="Venue name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="capacity">Capacity</Label>
+                    <Input
+                      id="capacity"
+                      type="number"
+                      value={event.venue.capacity}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "venue.capacity",
+                          Number(e.target.value)
+                        )
+                      }
+                      placeholder="Venue capacity"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="street">Street Address</Label>
+                  <Input
+                    id="street"
+                    value={event.venue.address.street}
+                    onChange={(e) =>
+                      handleInputChange("venue.address.street", e.target.value)
+                    }
+                    placeholder="Street address"
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="city">City</Label>
+                    <Input
+                      id="city"
+                      value={event.venue.address.city}
+                      onChange={(e) =>
+                        handleInputChange("venue.address.city", e.target.value)
+                      }
+                      placeholder="City"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="state">State</Label>
+                    <Input
+                      id="state"
+                      value={event.venue.address.state}
+                      onChange={(e) =>
+                        handleInputChange("venue.address.state", e.target.value)
+                      }
+                      placeholder="State"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="zipCode">Zip Code</Label>
+                    <Input
+                      id="zipCode"
+                      value={event.venue.address.zipCode}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "venue.address.zipCode",
+                          e.target.value
+                        )
+                      }
+                      placeholder="Zip code"
+                      required
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Ticket Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Ticket Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="ticketName">Ticket Name</Label>
+                    <Input
+                      id="ticketName"
+                      value={event.ticketType.name}
+                      onChange={(e) =>
+                        handleTicketTypeChange("name", e.target.value)
+                      }
+                      placeholder="e.g., General Admission"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="ticketPrice">Price ($)</Label>
+                    <Input
+                      id="ticketPrice"
+                      type="number"
+                      step="0.01"
+                      value={event.ticketType.price}
+                      onChange={(e) =>
+                        handleTicketTypeChange("price", e.target.value)
+                      }
+                      placeholder="99.99"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="ticketAvailable">Available Tickets</Label>
+                    <Input
+                      id="ticketAvailable"
+                      type="number"
+                      value={event.ticketType.available}
+                      onChange={(e) =>
+                        handleTicketTypeChange("available", e.target.value)
+                      }
+                      placeholder="100"
+                      required
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Tags */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Tags</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex gap-2">
+                  <Input
+                    value={newTag}
+                    onChange={(e) => setNewTag(e.target.value)}
+                    placeholder="Add a tag"
+                    onKeyPress={(e) =>
+                      e.key === "Enter" && (e.preventDefault(), addTag())
+                    }
+                  />
+                  <Button type="button" onClick={addTag}>
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  {event.tags.map((tag) => (
+                    <Badge
+                      key={tag}
+                      variant="secondary"
+                      className="flex items-center gap-1"
+                    >
+                      {tag}
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-4 w-4 p-0 hover:bg-transparent"
+                        onClick={() => removeTag(tag)}
+                      >
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Event Preview */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Event Preview</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                  <div className="text-6xl mb-4">{event.emoji || "🎉"}</div>
+                  <p className="text-sm text-gray-500 mb-2">
+                    Event Emoji Preview
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    A random emoji will be assigned when the event is created
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="mt-4"
+                    onClick={() =>
+                      setEvent((prev) => ({ ...prev, emoji: getRandomEmoji() }))
+                    }
+                  >
+                    Preview Random Emoji
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Submit Button */}
+            <Button type="submit" className="w-full" size="lg">
+              Create Event
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
 export default EventForm;
-
-
-
-// {
-//   "title": "Summer Music Festival 2024",
-//   "description": "The biggest music festival of the year featuring top artists from around the world. Three days of non-stop music, food, and fun!",
-//   "category": "67b2c3d4e5f6789012345678", 
-//   "venue": {
-//     "name": "City Park Amphitheater",
-//     "address": {
-//       "street": "100 Music Lane",
-//       "city": "Los Angeles",
-//       "state": "CA",
-//       "zipCode": "90001"
-//     },
-//     "capacity": 20000
-//   },
-//   "dateTime": "2024-07-15T18:00:00.000Z",
-//   "organizer": "67a1b2c3d4e5f67890123456",
-//   "image": "summer-festival-2024.jpg",
-//   "ticketTypes": [
-//     {
-//       "name": "General Admission",
-//       "price": 99.99,
-//       "quantity": 15000,
-//       "available": 15000
-//     },
-//     {
-//       "name": "VIP Experience",
-//       "price": 249.99,
-//       "quantity": 2000,
-//       "available": 2000
-//     },
-//     {
-//       "name": "Platinum VIP",
-//       "price": 499.99,
-//       "quantity": 500,
-//       "available": 500
-//     }
-//   ],
-//   "status": "published",
-//   "tags": ["music", "festival", "summer", "live"]
-// }

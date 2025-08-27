@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { X, Plus, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+// import { useEvents } from "@/contexts/EventsProvider";
 
 interface TicketType {
   name: string;
@@ -121,7 +123,7 @@ const EventForm = () => {
     dateTime: "",
     emoji: "",
     ticketType: { name: "General Admission", price: 0, available: 0 },
-    status: "draft",
+    status: "upcoming",
     tags: [],
   });
 
@@ -182,8 +184,8 @@ const EventForm = () => {
       tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
   };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  // const { createEvent } = useEvents();
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // Generate random emoji and convert dateTime to ISO string
@@ -193,16 +195,19 @@ const EventForm = () => {
       dateTime: new Date(event.dateTime).toISOString(),
     };
 
+    // await createEvent(formattedEvent )
 
     console.log("Event Data:", JSON.stringify(formattedEvent, null, 2));
   };
+
+  const navigate = useNavigate();
 
   return (
     <div className="mx-auto space-y-6">
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <Button variant="outline" size="sm">
+            <Button onClick={() => navigate(-1)} variant="outline" size="sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
             </Button>
@@ -221,7 +226,7 @@ const EventForm = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
+                  <div className="space-y-4">
                     <Label htmlFor="title">Event Title</Label>
                     <Input
                       id="title"
@@ -233,7 +238,7 @@ const EventForm = () => {
                       required
                     />
                   </div>
-                  <div>
+                  <div className="space-y-4">
                     <Label htmlFor="category">Category</Label>
                     <Select
                       value={event.category}
@@ -255,7 +260,7 @@ const EventForm = () => {
                   </div>
                 </div>
 
-                <div>
+                <div className="space-y-4">
                   <Label htmlFor="description">Description</Label>
                   <Textarea
                     id="description"
@@ -270,7 +275,7 @@ const EventForm = () => {
                 </div>
 
                 <div>
-                  <div>
+                  <div className="space-y-4">
                     <Label htmlFor="dateTime">Date & Time</Label>
                     <Input
                       id="dateTime"
@@ -284,7 +289,7 @@ const EventForm = () => {
                   </div>
                 </div>
 
-                <div>
+                <div className="space-y-4">
                   <Label htmlFor="status">Event Status</Label>
                   <Select
                     value={event.status}
@@ -296,9 +301,10 @@ const EventForm = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="draft">Draft</SelectItem>
-                      <SelectItem value="published">Published</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                      <SelectItem value="upcoming">Upcoming</SelectItem>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="canceled">Canceled</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -312,7 +318,7 @@ const EventForm = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
+                  <div className="space-y-4">
                     <Label htmlFor="venueName">Venue Name</Label>
                     <Input
                       id="venueName"
@@ -324,7 +330,7 @@ const EventForm = () => {
                       required
                     />
                   </div>
-                  <div>
+                  <div className="space-y-4">
                     <Label htmlFor="capacity">Capacity</Label>
                     <Input
                       id="capacity"
@@ -342,7 +348,7 @@ const EventForm = () => {
                   </div>
                 </div>
 
-                <div>
+                <div className="space-y-4">
                   <Label htmlFor="street">Street Address</Label>
                   <Input
                     id="street"
@@ -356,7 +362,7 @@ const EventForm = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
+                  <div className="space-y-4">
                     <Label htmlFor="city">City</Label>
                     <Input
                       id="city"
@@ -368,7 +374,7 @@ const EventForm = () => {
                       required
                     />
                   </div>
-                  <div>
+                  <div className="space-y-4">
                     <Label htmlFor="state">State</Label>
                     <Input
                       id="state"
@@ -380,7 +386,7 @@ const EventForm = () => {
                       required
                     />
                   </div>
-                  <div>
+                  <div className="space-y-4">
                     <Label htmlFor="zipCode">Zip Code</Label>
                     <Input
                       id="zipCode"
@@ -406,7 +412,7 @@ const EventForm = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
+                  <div className="space-y-4">
                     <Label htmlFor="ticketName">Ticket Name</Label>
                     <Input
                       id="ticketName"
@@ -418,7 +424,7 @@ const EventForm = () => {
                       required
                     />
                   </div>
-                  <div>
+                  <div className="space-y-4">
                     <Label htmlFor="ticketPrice">Price ($)</Label>
                     <Input
                       id="ticketPrice"
@@ -432,7 +438,7 @@ const EventForm = () => {
                       required
                     />
                   </div>
-                  <div>
+                  <div className="space-y-4">
                     <Label htmlFor="ticketAvailable">Available Tickets</Label>
                     <Input
                       id="ticketAvailable"

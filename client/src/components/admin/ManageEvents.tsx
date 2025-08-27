@@ -1,25 +1,9 @@
 import React, { useState, useMemo } from "react";
-import {
-  Search,
-  Filter,
-  Calendar,
-  Plus,
-  TrendingUp,
-} from "lucide-react";
+import { Search, Filter, Calendar, Plus, TrendingUp } from "lucide-react";
 import EventCard from "../ui/EventCard";
-
-export interface Event {
-  id: string;
-  title: string;
-  venue: string;
-  date: string;
-  time: string;
-  price: number;
-  sold: number;
-  capacity: number;
-  status: "upcoming" | "pending" | "closed";
-  revenue: number;
-}
+import { useEvents } from "@/contexts/EventsProvider";
+import type { EventType } from "@/lib/types";
+import { Link } from "react-router-dom";
 
 const ManageEvents: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,146 +11,48 @@ const ManageEvents: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState("");
   console.log(selectedDate, setSelectedDate);
   // Sample data based on your interface
-  const events: Event[] = [
-    {
-      id: "1",
-      title: "Colombo Music Festival",
-      venue: "Open Air Theater, Colombo",
-      date: "12 April 2025",
-      time: "09:00PM to 11:30PM",
-      price: 5000,
-      sold: 2500,
-      capacity: 1800,
-      status: "upcoming",
-      revenue: 5000000,
-    },
-    {
-      id: "2",
-      title: "Lanka Supercar Show",
-      venue: "Lanka Supercar Show",
-      date: "15 April 2025",
-      time: "09:00PM to 11:30PM",
-      price: 3000,
-      sold: 2500,
-      capacity: 0,
-      status: "pending",
-      revenue: 3000000,
-    },
-    {
-      id: "3",
-      title: "Rock & Roll Night",
-      venue: "Open Air Theater, Colombo",
-      date: "03 March 2025",
-      time: "09:00PM to 11:30PM",
-      price: 3000,
-      sold: 1500,
-      capacity: 1500,
-      status: "closed",
-      revenue: 3000000,
-    },
-    {
-      id: "4",
-      title: "Galle Literary Fair",
-      venue: "Open Air Theater, Galle",
-      date: "14 April 2025",
-      time: "09:00AM to 12:00PM",
-      price: 2000,
-      sold: 1500,
-      capacity: 600,
-      status: "upcoming",
-      revenue: 2000000,
-    },
-    {
-      id: "5",
-      title: "Kandy Art Exhibition",
-      venue: "Open Air Theater, Colombo",
-      date: "19 April 2025",
-      time: "09:00PM to 11:30PM",
-      price: 4000,
-      sold: 750,
-      capacity: 0,
-      status: "pending",
-      revenue: 4000000,
-    },
-    {
-      id: "6",
-      title: "Sri Lanka Food Fest",
-      venue: "Open Air Theater, Colombo",
-      date: "02 March 2025",
-      time: "09:00PM to 11:30PM",
-      price: 2000,
-      sold: 700,
-      capacity: 600,
-      status: "closed",
-      revenue: 2000000,
-    },
-    {
-      id: "7",
-      title: "Tech Lanka Expo 2025",
-      venue: "Open Air Theater, Colombo",
-      date: "18 April 2025",
-      time: "10:00AM to 01:30PM",
-      price: 1000,
-      sold: 800,
-      capacity: 400,
-      status: "upcoming",
-      revenue: 1000000,
-    },
-    {
-      id: "8",
-      title: "New Year's Eve Fireworks",
-      venue: "Open Air Theater, Colombo",
-      date: "24 April 2025",
-      time: "09:00PM to 11:30PM",
-      price: 1500,
-      sold: 1500,
-      capacity: 0,
-      status: "pending",
-      revenue: 1500000,
-    },
-    {
-      id: "9",
-      title: "Colombo Music Festival",
-      venue: "Open Air Theater, Colombo",
-      date: "24 February 2025",
-      time: "09:00PM to 11:30PM",
-      price: 5000,
-      sold: 1500,
-      capacity: 1100,
-      status: "closed",
-      revenue: 5000000,
-    },
-  ];
+  const { events } = useEvents();
+
+  console.log(events, "event mange s");
 
   // Filter and search events
   const filteredEvents = useMemo(() => {
-    return events.filter((event) =>
-      event.title.toLowerCase().includes(searchTerm.toLowerCase())
+    return events.filter((event: EventType) =>
+      event.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [searchTerm]);
+  }, [events, searchTerm]);
 
   // Group events by status
   const groupedEvents = useMemo(() => {
     const grouped = {
-      upcoming: filteredEvents.filter((event) => event.status === "upcoming"),
-      pending: filteredEvents.filter((event) => event.status === "pending"),
-      closed: filteredEvents.filter((event) => event.status === "closed"),
+      upcoming: filteredEvents.filter(
+        (event) => event.status === "upcoming"
+      ) as EventType[],
+      canceled: filteredEvents.filter(
+        (event) => event.status === "canceled"
+      ) as EventType[],
+      pending: filteredEvents.filter(
+        (event) => event.status === "pending"
+      ) as EventType[],
+      closed: filteredEvents.filter(
+        (event) => event.status === "closed"
+      ) as EventType[],
     };
     return grouped;
   }, [filteredEvents]);
 
-//   const getStatusColor = (status: string) => {
-//     switch (status) {
-//       case "upcoming":
-//         return "text-blue-600 bg-blue-50 border-blue-200";
-//       case "pending":
-//         return "text-green-600 bg-green-50 border-green-200";
-//       case "closed":
-//         return "text-red-600 bg-red-50 border-red-200";
-//       default:
-//         return "text-gray-600 bg-gray-50 border-gray-200";
-//     }
-//   };
+  //   const getStatusColor = (status: string) => {
+  //     switch (status) {
+  //       case "upcoming":
+  //         return "text-blue-600 bg-blue-50 border-blue-200";
+  //       case "pending":
+  //         return "text-green-600 bg-green-50 border-green-200";
+  //       case "closed":
+  //         return "text-red-600 bg-red-50 border-red-200";
+  //       default:
+  //         return "text-gray-600 bg-gray-50 border-gray-200";
+  //     }
+  //   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -175,23 +61,23 @@ const ManageEvents: React.FC = () => {
       case "pending":
         return <div className="w-3 h-3 bg-green-500 rounded-full"></div>;
       case "closed":
+        return <div className="w-3 h-3 bg-orange-500 rounded-full"></div>;
+      case "canceled":
         return <div className="w-3 h-3 bg-red-500 rounded-full"></div>;
       default:
         return <div className="w-3 h-3 bg-gray-500 rounded-full"></div>;
     }
   };
 
-
-
-
   const StatusSection: React.FC<{
-    status: "upcoming" | "pending" | "closed";
-    events: Event[];
+    status: "upcoming" | "pending" | "closed" | "canceled";
+    events: EventType[];
   }> = ({ status, events }) => {
     const statusLabels = {
       upcoming: "Up-Coming Events",
       pending: "Pending Events",
       closed: "Closed Events",
+      canceled: "Canceled Events",
     };
 
     return (
@@ -207,7 +93,7 @@ const ManageEvents: React.FC = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {events.map((event) => (
-            <EventCard key={event.id} event={event} />
+            <EventCard key={event._id} event={event} />
           ))}
         </div>
         {events.length === 0 && (
@@ -231,10 +117,13 @@ const ManageEvents: React.FC = () => {
           {/* Controls */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <Link
+                to={"/dashboard/add"}
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 New Event
-              </button>
+              </Link>
               <button className="inline-flex items-center px-4 py-2 bg-orange-100 text-orange-600 rounded-lg hover:bg-orange-200 transition-colors">
                 <TrendingUp className="w-4 h-4 mr-2" />
                 Attendee Insights

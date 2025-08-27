@@ -27,7 +27,7 @@ const EventDetailsPage = () => {
             setOpen={setOpen}
             event={eventDetails}
           />
-        )}{" "}
+        )}
         {isOpen && (
           <PopupWrapper setOpen={setOpen}>
             <Seats
@@ -53,12 +53,12 @@ function PopupWrapper({
   isOpen?: boolean;
 }) {
   return (
-    <div className="fixed left-0 top-0 w-full min-h-screen bg-black/90 z-40">
-      <div className="fixed right-0 top-0 h-full  z-50">
+    <div className="fixed lef-0 top-0 w-full min-h-screen bg-black/90 z-40">
+      <div className="w-[40%] absolute right-0 top-0 z-50">
         <span
           role="button"
           onClick={() => setOpen(false)}
-          className="p-2 rounded-full bg-zinc-200 absolute left-5 top-5 cursor-pointer hover:bg-zinc-100 duration-300 "
+          className="p-2 rounded-full bg-zinc-200 absolute right-5 top-5 cursor-pointer hover:bg-zinc-100 duration-300 "
         >
           <LucideX size={20} />
         </span>

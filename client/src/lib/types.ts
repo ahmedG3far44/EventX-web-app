@@ -3,7 +3,7 @@ export interface EventType {
   name: string;
   description: string;
   category: string;
-  venue: string;
+  venue: EventLocationType;
   datetime: Date;
   organizer: string;
   emoji: string;

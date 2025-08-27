@@ -139,7 +139,8 @@ const EventSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      default: "Active",
+      enum: ["active", "upcoming", "closed", "canceled"],
+      default: "upcoming",
     },
     tags: [
       {

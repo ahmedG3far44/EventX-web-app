@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -13,11 +13,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Lock } from "lucide-react";
 import { useBookingTickets } from "@/contexts/BookingTicketsProvider";
 import { useEvents } from "@/contexts/EventsProvider";
-import { Navigate, useParams, useNavigate } from "react-router-dom";
+// import { Navigate } from "react-router-dom";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL as string;
 
-interface PaymentFormData {
+export interface PaymentFormData {
   paymentMethod: "card" | "paypal";
   cardName: string;
   cardNumber: string;
@@ -25,12 +25,12 @@ interface PaymentFormData {
   cvc: string;
 }
 
-const PaymentForm: React.FC = () => {
+const PaymentForm = ({ eventId }: { eventId: string }) => {
   const { events } = useEvents();
-  const { eventId } = useParams();
-  const navigate = useNavigate();
+  console.log(eventId);
   const { getTotalPrice, selectedSeats } = useBookingTickets();
   const [loading, setLoading] = useState<boolean>(false);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [paymentDetails, setPaymentInfo] = useState<PaymentFormData>({
     paymentMethod: "card",
     cardName: "",
@@ -39,11 +39,65 @@ const PaymentForm: React.FC = () => {
     cvc: "",
   });
 
-  const event = events.find((event) => event._id === eventId);
-  const totalPrice = getTotalPrice();
+  // Wait for contexts to be properly initialized
+  useEffect(() => {
+    // Add a small delay to ensure contexts are fully loaded
+    const timer = setTimeout(() => {
+      setIsInitialized(true);
+      console.log("PaymentForm Debug Info:");
+      console.log("eventId:", eventId);
+      console.log("events length:", events?.length);
+      console.log("selectedSeats:", selectedSeats);
+      console.log("totalPrice:", getTotalPrice?.());
+    }, 100);
 
-  if (totalPrice === 0 || !event || !eventId)
-    return <Navigate to={"/events"} />;
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Show loading while contexts initialize
+  if (!isInitialized) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Card className="w-full max-w-md mx-auto">
+          <CardContent className="flex items-center justify-center p-8">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+              <p>Loading payment details...</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // const event = events?.find((event) => event._id === eventId);
+  // const totalPrice = getTotalPrice?.() || 0;
+
+  // Only redirect after contexts are initialized
+  // if (!eventId) {
+  //   console.error("No eventId found in URL params");
+  //   return <Navigate to="/events" replace />;
+  // }
+
+  // if (!events || events.length === 0) {
+  //   console.error("Events not loaded yet");
+  //   return <Navigate to="/events" replace />;
+  // }
+
+  // if (!event) {
+  //   console.error("Event not found with ID:", eventId);
+  //   return <Navigate to="/events" replace />;
+  // }
+
+  // if (!selectedSeats || selectedSeats.length === 0) {
+  //   console.error("No seats selected, redirecting to event page");
+  //   return <Navigate to={`/events/${eventId}`} replace />;
+  // }
+
+  // if (totalPrice === 0) {
+  //   console.error("Total price is 0, redirecting to event page");
+  //   return <Navigate to={`/events/${eventId}`} replace />;
+  // }
 
   const handleInputChange = (field: keyof PaymentFormData, value: string) => {
     setPaymentInfo((prev) => ({
@@ -83,22 +137,29 @@ const PaymentForm: React.FC = () => {
     try {
       setLoading(true);
       console.log("Payment data:", paymentDetails);
+
       const response = await fetch(`${BASE_URL}/tickets`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          eventId: event?._id,
-          price: getTotalPrice(),
+          eventId,
+          price: 0,
           reservedSeats: selectedSeats,
           paymentDetails,
         }),
       });
+
       if (!response.ok) {
-        throw new Error(response.statusText);
+        const errorText = await response.text();
+        throw new Error(`Payment failed: ${response.status} ${errorText}`);
       }
+
       const data = await response.json();
+      console.log("Payment successful:", data);
+
+      // Reset form
       setPaymentInfo({
         paymentMethod: "card",
         cardName: "",
@@ -106,158 +167,162 @@ const PaymentForm: React.FC = () => {
         expiryDate: "",
         cvc: "",
       });
-      console.log(data);
-      return navigate("/success");
+
+      // TODO: Navigate to success page
+      // navigate('/payment-success');
     } catch (error) {
-      console.log((error as Error).message);
+      console.error("Payment error:", (error as Error).message);
+      // TODO: Show error message to user
     } finally {
       setLoading(false);
     }
-    // SEND REQUEST
-    // userId, eventId, reserved seats array, total price,
-    // it's success navigate user to success page
-    // Handle payment submission here
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold text-center">
-          Payment Amount:
-          <span className="mx-4 font-bold text-green-500">${totalPrice}</span>
-        </CardTitle>
-        <CardDescription className="text-center">
-          Complete your purchase by providing your payment details
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Payment Method Selection */}
-          <div className="space-y-4">
-            <Label className="text-base font-semibold">Payment Method</Label>
-            <RadioGroup
-              value={paymentDetails.paymentMethod}
-              onValueChange={(value: "card" | "paypal") =>
-                handleInputChange("paymentMethod", value)
-              }
-              className="grid grid-cols-2 gap-4"
-            >
-              <div>
-                <RadioGroupItem
-                  value="card"
-                  id="card"
-                  className="peer sr-only"
-                />
-                <Label
-                  htmlFor="card"
-                  className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                >
-                  Credit Card
-                </Label>
-              </div>
-              <div>
-                <RadioGroupItem
-                  value="paypal"
-                  id="paypal"
-                  className="peer sr-only"
-                />
-                <Label
-                  htmlFor="paypal"
-                  className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                >
-                  PayPal
-                </Label>
-              </div>
-            </RadioGroup>
-          </div>
-
-          {paymentDetails.paymentMethod === "card" && (
+    <div className="container mx-auto px-4 py-8">
+      <Card className="w-full max-w-md mx-auto">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-center">
+            Payment Amount:
+            <span className="mx-4 font-bold text-green-500">${0}</span>
+          </CardTitle>
+          <CardDescription className="text-center">
+            Complete your purchase for 
+          </CardDescription>
+          <CardDescription className="text-center text-sm">
+            Selected seats: {selectedSeats.length} seat
+            {selectedSeats.length !== 1 ? "s" : ""}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Payment Method Selection */}
             <div className="space-y-4">
-              {/* Card Name */}
-              <div className="space-y-2">
-                <Label htmlFor="cardName">Name on Card</Label>
-                <Input
-                  id="cardName"
-                  placeholder="John Doe"
-                  value={paymentDetails.cardName}
-                  onChange={(e) =>
-                    handleInputChange("cardName", e.target.value)
-                  }
-                  required
-                  className="focus:ring-2 focus:ring-primary"
-                />
-              </div>
+              <Label className="text-base font-semibold">Payment Method</Label>
+              <RadioGroup
+                value={paymentDetails.paymentMethod}
+                onValueChange={(value: "card" | "paypal") =>
+                  handleInputChange("paymentMethod", value)
+                }
+                className="grid grid-cols-2 gap-4"
+              >
+                <div>
+                  <RadioGroupItem
+                    value="card"
+                    id="card"
+                    className="peer sr-only"
+                  />
+                  <Label
+                    htmlFor="card"
+                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+                  >
+                    Credit Card
+                  </Label>
+                </div>
+                <div>
+                  <RadioGroupItem
+                    value="paypal"
+                    id="paypal"
+                    className="peer sr-only"
+                  />
+                  <Label
+                    htmlFor="paypal"
+                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+                  >
+                    PayPal
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
 
-              {/* Card Number */}
-              <div className="space-y-2">
-                <Label htmlFor="cardNumber">Card Number</Label>
-                <Input
-                  id="cardNumber"
-                  placeholder="1234 5678 9012 3456"
-                  value={paymentDetails.cardNumber}
-                  onChange={(e) => handleCardNumberChange(e.target.value)}
-                  maxLength={19}
-                  required
-                  className="focus:ring-2 focus:ring-primary"
-                />
-              </div>
-
-              {/* Expiry Date and CVC */}
-              <div className="grid grid-cols-2 gap-4">
+            {paymentDetails.paymentMethod === "card" && (
+              <div className="space-y-4">
+                {/* Card Name */}
                 <div className="space-y-2">
-                  <Label htmlFor="expiryDate">Expiry Date</Label>
+                  <Label htmlFor="cardName">Name on Card</Label>
                   <Input
-                    id="expiryDate"
-                    placeholder="MM/YY"
-                    value={paymentDetails.expiryDate}
-                    onChange={(e) => handleExpiryDateChange(e.target.value)}
-                    maxLength={5}
+                    id="cardName"
+                    placeholder="John Doe"
+                    value={paymentDetails.cardName}
+                    onChange={(e) =>
+                      handleInputChange("cardName", e.target.value)
+                    }
                     required
                     className="focus:ring-2 focus:ring-primary"
                   />
                 </div>
+
+                {/* Card Number */}
                 <div className="space-y-2">
-                  <Label htmlFor="cvc">CVC</Label>
+                  <Label htmlFor="cardNumber">Card Number</Label>
                   <Input
-                    id="cvc"
-                    placeholder="123"
-                    value={paymentDetails.cvc}
-                    onChange={(e) => handleCvcChange(e.target.value)}
-                    maxLength={4}
+                    id="cardNumber"
+                    placeholder="1234 5678 9012 3456"
+                    value={paymentDetails.cardNumber}
+                    onChange={(e) => handleCardNumberChange(e.target.value)}
+                    maxLength={19}
                     required
                     className="focus:ring-2 focus:ring-primary"
                   />
                 </div>
+
+                {/* Expiry Date and CVC */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="expiryDate">Expiry Date</Label>
+                    <Input
+                      id="expiryDate"
+                      placeholder="MM/YY"
+                      value={paymentDetails.expiryDate}
+                      onChange={(e) => handleExpiryDateChange(e.target.value)}
+                      maxLength={5}
+                      required
+                      className="focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="cvc">CVC</Label>
+                    <Input
+                      id="cvc"
+                      placeholder="123"
+                      value={paymentDetails.cvc}
+                      onChange={(e) => handleCvcChange(e.target.value)}
+                      maxLength={4}
+                      required
+                      className="focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
+                </div>
               </div>
+            )}
+
+            {paymentDetails.paymentMethod === "paypal" && (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">
+                  You will be redirected to PayPal to complete your payment
+                </p>
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <Button
+              disabled={loading}
+              type="submit"
+              className="w-full bg-primary hover:bg-primary/90 h-12 text-lg font-semibold disabled:bg-zinc-500 disabled:cursor-not-allowed"
+              size="lg"
+            >
+              <Lock className="mr-2 h-4 w-4" />
+              {loading ? "Processing payment..." : `Pay $${0}`}
+            </Button>
+
+            {/* Security Notice */}
+            <div className="text-center text-sm text-muted-foreground">
+              <p>Your payment details are encrypted and secure</p>
             </div>
-          )}
-
-          {paymentDetails.paymentMethod === "paypal" && (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">
-                You will be redirected to PayPal to complete your payment
-              </p>
-            </div>
-          )}
-
-          {/* Submit Button */}
-          <Button
-            disabled={loading}
-            type="submit"
-            className="w-full bg-primary hover:bg-primary/90 h-12 text-lg font-semibold disabled:bg-zinc-500 disabled:cursor-not-allowed"
-            size="lg"
-          >
-            <Lock className="mr-2 h-4 w-4" />
-            {loading ? "payment processing..." : "Pay Now"}
-          </Button>
-
-          {/* Security Notice */}
-          <div className="text-center text-sm text-muted-foreground">
-            <p>Your payment details are encrypted and secure</p>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

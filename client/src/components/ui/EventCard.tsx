@@ -11,13 +11,15 @@ import { Link } from "react-router-dom";
 import type { EventType } from "@/lib/types";
 
 const EventCard = ({ event }: { event: EventType }) => {
+
   const eventTime = new Date(event.datetime);
   const eventDate = new Date(event.datetime);
+
   const formatCurrency = (amount: number) => {
     return `${amount.toLocaleString()}EGP`;
   };
   return (
-    <div className="bg-white min-w-[300px] rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow">
+    <div className="bg-white w-full rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between mb-3">
         <h3 className="font-semibold text-gray-900 text-lg">{event.name}</h3>
         <button className="text-gray-400 hover:text-gray-600">

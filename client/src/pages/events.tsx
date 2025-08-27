@@ -37,7 +37,6 @@ const EventsPage = () => {
     handleFilterEvents();
   }, [eventStatus]);
 
-  console.log(eventStatus);
 
   if (loading) return <div>loading...</div>;
   if (error) return <div className="text-red-500">{error}</div>;

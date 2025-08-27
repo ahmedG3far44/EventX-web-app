@@ -1,13 +1,7 @@
 import { useBookingTickets } from "@/contexts/BookingTicketsProvider";
-import { LucideX } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const SeatBooking = ({
-  setOpen,
-}: {
-  isOpen?: boolean;
-  setOpen: (open: boolean) => void;
-}) => {
+const SeatBooking = () => {
   const navigate = useNavigate();
   const {
     seats,
@@ -21,13 +15,7 @@ const SeatBooking = ({
   return (
     <div className="fixed left-0 top-0 w-full min-h-screen bg-black/90 z-40">
       <div className="min-h-screen fixed top-0 right-0 bg-white rounded-lg py-10 px-8  shadow-lg z-50">
-        <span
-          role="button"
-          onClick={() => setOpen(false)}
-          className="p-2 rounded-full bg-zinc-200 absolute left-5 top-5 cursor-pointer hover:bg-zinc-100 duration-300 "
-        >
-          <LucideX size={20} />
-        </span>
+       
         <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
           Seat Allocation
         </h2>

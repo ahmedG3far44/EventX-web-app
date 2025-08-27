@@ -11,6 +11,7 @@ import {
   ChevronRight,
   MoreHorizontal,
 } from "lucide-react";
+import Seats from "../ui/Seats";
 
 interface Event {
   id: number;
@@ -20,12 +21,12 @@ interface Event {
   bgColor: string;
 }
 
-interface Notification {
-  id: number;
-  icon: string;
-  message: string;
-  time?: string;
-}
+// interface Notification {
+//   id: number;
+//   icon: string;
+//   message: string;
+//   time?: string;
+// }
 
 const Insights: React.FC = () => {
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
@@ -69,25 +70,25 @@ const Insights: React.FC = () => {
     },
   ];
 
-  const notifications: Notification[] = [
-    { id: 1, icon: "💸", message: "Paycheck released for artists @Wayo Event" },
-    {
-      id: 2,
-      icon: "🏦",
-      message: "Total revenue has been transferred to bank",
-    },
-    { id: 3, icon: "🎤", message: "@Alan Walker Event in 3 days" },
-    {
-      id: 4,
-      icon: "💸",
-      message: "Paycheck released for artists @Cyndrax Event",
-    },
-    {
-      id: 5,
-      icon: "💸",
-      message: "Paycheck released for artists @Get Together Event",
-    },
-  ];
+  // const notifications: Notification[] = [
+  //   { id: 1, icon: "💸", message: "Paycheck released for artists @Wayo Event" },
+  //   {
+  //     id: 2,
+  //     icon: "🏦",
+  //     message: "Total revenue has been transferred to bank",
+  //   },
+  //   { id: 3, icon: "🎤", message: "@Alan Walker Event in 3 days" },
+  //   {
+  //     id: 4,
+  //     icon: "💸",
+  //     message: "Paycheck released for artists @Cyndrax Event",
+  //   },
+  //   {
+  //     id: 5,
+  //     icon: "💸",
+  //     message: "Paycheck released for artists @Get Together Event",
+  //   },
+  // ];
 
   // Line chart data
   const chartData = [
@@ -501,99 +502,18 @@ const Insights: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Latest Event */}
-          <div className="bg-white rounded-lg p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Latest Event
-            </h2>
-
-            <div className="mb-6">
-              <div className="mb-2">
-                <span className="text-sm text-gray-600">Event Name:</span>
-                <div className="font-semibold text-gray-900">
-                  Alan Walker EDM Festival
-                </div>
-              </div>
-              <div>
-                <span className="text-sm text-gray-600">Event Date:</span>
-                <div className="font-semibold text-gray-900">28 March 2025</div>
-              </div>
-            </div>
-
-            {/* Seating Chart */}
-            <div className="grid grid-cols-12 gap-1 mb-4">
-              {Array.from({ length: 84 }, (_, i) => {
-                const isReserved = [
-                  8, 9, 20, 21, 32, 33, 44, 45, 56, 57, 68, 69,
-                ].includes(i);
-                const isPaid = [
-                  14, 15, 16, 26, 27, 28, 38, 39, 40, 50, 51, 52, 62, 63, 64,
-                  74, 75, 76,
-                ].includes(i);
-                return (
-                  <div
-                    key={i}
-                    className={`aspect-square rounded ${
-                      isPaid
-                        ? "bg-purple-600"
-                        : isReserved
-                        ? "bg-purple-400"
-                        : "bg-gray-200"
-                    }`}
-                  ></div>
-                );
-              })}
-            </div>
-
-            {/* Legend */}
-            <div className="flex items-center justify-center space-x-6 text-sm">
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-purple-600 rounded"></div>
-                <span className="text-gray-600">Paid Seats</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-purple-400 rounded"></div>
-                <span className="text-gray-600">Reserved Seats</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-gray-200 rounded"></div>
-                <span className="text-gray-600">To be sold</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Notifications */}
-          <div className="bg-white rounded-lg p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">
-                Notifications
-              </h2>
-              <ChevronRight className="w-4 h-4 text-gray-400" />
-            </div>
-
-            <div className="space-y-4">
-              {notifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  className="flex items-start space-x-3"
-                >
-                  <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-sm">
-                    {notification.icon}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-900 leading-5">
-                      {notification.message}
-                    </p>
-                  </div>
-                </div>
-              ))}
-              <button className="text-sm text-blue-600 font-medium hover:text-blue-700">
-                See All
-              </button>
-            </div>
-          </div>
+          <Seats
+            seatsMap={[
+              [0, 1, 0, 0, 0],
+              [0, 2, 0, 0, 0],
+              [0, 2, 1, 1, 0, 0],
+              [0, 0, 0, 1, 0, 0],
+              [0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0, 0, 0],
+            ]}
+            editState={false}
+          />
         </div>
       </div>
     </div>

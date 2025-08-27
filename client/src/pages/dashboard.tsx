@@ -6,16 +6,16 @@ import AsideMenu from "@/components/ui/AsideMenu";
 import { Outlet } from "react-router-dom";
 
 const DashboardPage = () => {
-  const [isMobile, setMobile] = useState<boolean>(false);
+  const [isMenuOpen, setMenuOpen] = useState<boolean>(true);
   const handleOpenMenu = () => {
-    setMobile(!isMobile);
+    setMenuOpen(!isMenuOpen);
   };
   return (
     <div className="w-full flex  min-h-screen">
-      {isMobile && <AsideMenu />}
+      {isMenuOpen && <AsideMenu />}
       <main
         className={`${
-          isMobile ? "w-full" : "lg:w-full"
+          isMenuOpen ? "w-full" : "lg:w-full"
         } bg-zinc-300 w-full  min-h-screen`}
       >
         <div className="fixed z-50 right-5 top-5">
@@ -23,7 +23,7 @@ const DashboardPage = () => {
             className="cursor-pointer hover:bg-green-700 duration-300 bg-green-600 text-white "
             onClick={handleOpenMenu}
           >
-            {!isMobile ? <LucideMenu size={30} /> : <LucideX size={30} />}
+            {!isMenuOpen ? <LucideMenu size={30} /> : <LucideX size={30} />}
           </Button>
         </div>
         <Outlet />

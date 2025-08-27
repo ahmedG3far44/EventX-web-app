@@ -9,6 +9,24 @@ const Header = () => {
       <nav className="space-x-4">
         <Link
           className="hover:underline hover:text-green-500 duration-300"
+          to={"/login"}
+        >
+          login
+        </Link>
+        <Link
+          className="hover:underline hover:text-green-500 duration-300"
+          to={"/signup"}
+        >
+          signup
+        </Link>
+        <Link
+          className="hover:underline hover:text-green-500 duration-300"
+          to={"/dashboard/insights"}
+        >
+          Dashboard
+        </Link>
+        <Link
+          className="hover:underline hover:text-green-500 duration-300"
           to={"/events"}
         >
           Events

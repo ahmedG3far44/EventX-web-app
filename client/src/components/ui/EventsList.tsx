@@ -3,7 +3,7 @@ import type { EventType } from "@/lib/types";
 
 const EventsList = ({ events }: { events: EventType[] }) => {
   return (
-    <div className="w-full  mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-2 place-items-center place-content-center grid-flow-row">
+    <div className="p-4 lg:p-8 grid place-items-center  grid-cols-1  md:grid-cols-2 lg:grid-cols-4 gap-2">
       {events.map((event) => {
         return <EventCard key={event._id} event={event} />;
       })}

@@ -31,7 +31,7 @@ const App = () => {
           {/* Protected user Routes */}
           <Route path="/events" element={<EventsPage />} />
           <Route path="/event/:id" element={<EventDetailsPage />} />
-          <Route path="/event/:eventId/payment" element={<PaymentPage />} />
+          <Route path="/checkout/:eventId" element={<PaymentPage />} />
           <Route path="/success" element={<PaymentSuccessPage />} />
           <Route path="/tickets" element={<MyTickets />} />
           <Route path="*" element={<NotFoundPage />} />

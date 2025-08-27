@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { EventType } from "@/lib/types";
+import { Link } from "react-router-dom";
 
 function getSeatStatusColor(seat: number): string {
   switch (seat) {
@@ -21,12 +22,12 @@ const Seats = ({
   seatsMap,
   editState = true,
 }: {
-  event: EventType;
+  event?: EventType;
   seatsMap: number[][];
   editState: boolean;
 }) => {
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
-  const ticketPrice = 34;
+  const ticketPrice = event ? event.ticketTypes.price : 25;
   const [seats, setNewSeatsMap] = useState<number[][]>(
     seatsMap || [
       [0, 2, 0, 0],
@@ -36,9 +37,9 @@ const Seats = ({
       [0, 0, 0, 0, 1, 0, 0, 0],
     ]
   );
-  const [ticketState, setTicketStat] = useState<"book" | "buy">("buy");
+  const [ticketState] = useState<"book" | "buy">("buy");
   const [totalTicketsPrice, setTotalPrice] = useState(0);
-
+  console.log(totalTicketsPrice);
   const updateMapSeats = (
     rowIndex: number,
     colIndex: number,
@@ -73,10 +74,43 @@ const Seats = ({
   };
 
   return (
-    <div className="p-4 bg-zinc-50 rounded-2xl shadow-md text-black">
+    <div className="p-4 bg-zinc-50  shadow-md text-black">
+      {event && (
+        <div className="p-4">
+          <h1>{event?.name}</h1>
+          <p>Event Time: {new Date(event.datetime).toLocaleDateString()}</p>
+          <p>Event Time: {new Date(event.datetime).toLocaleTimeString()}</p>
+          <p>Total Seats: {event.seatsAmount}</p>
+          <p>Available: {event.availableSeats}</p>
+          <p>Reserved Seats: {event.seatsAmount - event.availableSeats}</p>
+        </div>
+      )}
+      <h1 className="text-center text-xl font-semibold my-4">
+        Preview Seats Allocation:
+      </h1>
+
+      <div className="flex items-center gap-8 justify-center my-8">
+        <div className="flex items-center justify-center gap-2">
+          <span
+            className={`w-4 h-4 rounded-sm ${getSeatStatusColor(0)}`}
+          ></span>{" "}
+          <span>Available Seats</span>
+        </div>
+        <div className="flex items-center justify-center gap-2">
+          <span
+            className={`w-4 h-4 rounded-sm ${getSeatStatusColor(1)}`}
+          ></span>{" "}
+          <span>Reserved Seats</span>
+        </div>
+        <div className="flex items-center justify-center gap-2">
+          <span
+            className={`w-4 h-4 rounded-sm ${getSeatStatusColor(2)}`}
+          ></span>{" "}
+          <span>Paid Seats</span>
+        </div>
+      </div>
       {editState ? (
         <>
-          <h1 className="text-center text-xl font-semibold my-4">Preview Seats Allocation:</h1>
           {seats.map((row, rowIndex) => (
             <div
               key={rowIndex}
@@ -97,20 +131,12 @@ const Seats = ({
         </>
       ) : (
         <>
-          <div className="p-2 flex items-center space-x-4 "></div>
-          <div>
-            {ticketState === "book" ? 1 : 2} Total Price: {totalTicketsPrice}
-          </div>
           {seats.map((row, rowIndex) => (
             <div
               key={rowIndex}
               className="flex items-center justify-center space-2"
             >
               {row.map((column, colIndex) => {
-                // const seatName = `${String.fromCharCode(65 + rowIndex)}-${
-                //   colIndex + 1
-                // }`;
-                // console.log(seatName);
                 return (
                   <div
                     key={colIndex}
@@ -129,6 +155,7 @@ const Seats = ({
               })}
             </div>
           ))}
+          <Link to={`/event/${event?._id}/payment`}>Buy Ticket</Link>
         </>
       )}
     </div>

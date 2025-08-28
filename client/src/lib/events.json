@@ -1,0 +1,312 @@
+[
+  {
+    "name": "Rock Concert",
+    "description": "An amazing rock concert featuring popular bands",
+    "emoji": "🎸",
+    "category": "Music",
+    "tags": ["rock", "live", "concert"],
+    "availableSeats": 150,
+    "seatsAmount": 200,
+    "seatsMap": [
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ],
+    "datetime": "2024-12-15T20:00:00",
+    "organizer": "Music Events Inc",
+    "popularity": "High Popularity",
+    "revenue": 12000,
+    "status": "active",
+    "ticketTypes": {
+      "available": 34,
+      "name": "General Admission",
+      "price": 40,
+      "_id": "t1"
+    },
+    "venue": {
+      "address": {
+        "city": "New York",
+        "state": "NY",
+        "zipCode": "10001",
+        "street": "123 Music Ave"
+      },
+      "capacity": 200,
+      "name": "Concert Hall"
+    }
+  },
+  {
+    "name": "Tech Conference",
+    "description": "Annual technology innovation conference",
+    "emoji": "💻",
+    "category": "Technology",
+    "tags": ["tech", "innovation", "networking"],
+    "availableSeats": 80,
+    "seatsAmount": 100,
+    "seatsMap": [
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ],
+
+    "datetime": "2024-11-10T09:00:00",
+    "organizer": "Tech Summit Org",
+    "popularity": "Medium Popularity",
+    "revenue": 8000,
+    "status": "active",
+    "ticketTypes": {
+      "available": 20,
+      "name": "Conference Pass",
+      "price": 100,
+      "_id": "t2"
+    },
+    "venue": {
+      "address": {
+        "city": "San Francisco",
+        "state": "CA",
+        "zipCode": "94102",
+        "street": "456 Tech Blvd"
+      },
+      "capacity": 100,
+      "name": "Innovation Center"
+    }
+  },
+  {
+    "name": "Art Exhibition",
+    "description": "Modern art exhibition featuring local artists",
+    "emoji": "🎨",
+    "category": "Art",
+    "tags": ["art", "exhibition", "culture"],
+    "availableSeats": 45,
+    "seatsAmount": 50,
+    "seatsMap": [
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ],
+    "datetime": "2024-10-05T14:00:00",
+    "organizer": "Art Gallery Collective",
+    "popularity": "Low Popularity",
+    "revenue": 2250,
+    "status": "active",
+    "ticketTypes": {
+      "available": 5,
+      "name": "Exhibition Ticket",
+      "price": 50,
+      "_id": "t3"
+    },
+    "venue": {
+      "address": {
+        "city": "Chicago",
+        "state": "IL",
+        "zipCode": "60601",
+        "street": "789 Art Street"
+      },
+      "capacity": 50,
+      "name": "Modern Art Gallery"
+    }
+  },
+  {
+    "name": "Food Festival",
+    "description": "Annual food and wine festival",
+    "emoji": "🍕",
+    "category": "Food & Drink",
+    "tags": ["food", "wine", "festival"],
+    "availableSeats": 300,
+    "seatsAmount": 400,
+    "seatsMap": [
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ],
+    "datetime": "2024-09-20T12:00:00",
+    "organizer": "Foodie Events",
+    "popularity": "High Popularity",
+    "revenue": 15000,
+    "status": "active",
+    "ticketTypes": {
+      "available": 100,
+      "name": "Festival Pass",
+      "price": 50,
+      "_id": "t4"
+    },
+    "venue": {
+      "address": {
+        "city": "Austin",
+        "state": "TX",
+        "zipCode": "73301",
+        "street": "321 Food Court"
+      },
+      "capacity": 400,
+      "name": "Downtown Park"
+    }
+  },
+  {
+    "name": "Comedy Show",
+    "description": "Stand-up comedy night with famous comedians",
+    "emoji": "😂",
+    "category": "Entertainment",
+    "tags": ["comedy", "stand-up", "fun"],
+    "availableSeats": 120,
+    "seatsAmount": 150,
+    "seatsMap": [
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ],
+    "datetime": "2024-05-15T16:00:00",
+    "organizer": "Laugh Productions",
+    "popularity": "Medium Popularity",
+    "revenue": 6000,
+    "status": "active",
+    "ticketTypes": {
+      "available": 30,
+      "name": "Comedy Night Ticket",
+      "price": 50,
+      "_id": "t5"
+    },
+    "venue": {
+      "address": {
+        "city": "Los Angeles",
+        "state": "CA",
+        "zipCode": "90001",
+        "street": "555 Comedy Lane"
+      },
+      "capacity": 150,
+      "name": "Comedy Club"
+    }
+  },
+  {
+    "name": "Yoga Workshop",
+    "description": "Beginner-friendly yoga and meditation workshop",
+    "emoji": "🧘",
+    "category": "Wellness",
+    "tags": ["yoga", "meditation", "wellness"],
+    "availableSeats": 25,
+    "seatsAmount": 30,
+    "seatsMap": [
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ],
+    "datetime": "2024-05-15T16:00:00",
+    "organizer": "Wellness Center",
+    "popularity": "Low Popularity",
+    "revenue": 1250,
+    "status": "active",
+    "ticketTypes": {
+      "available": 5,
+      "name": "Workshop Pass",
+      "price": 50,
+      "_id": "t6"
+    },
+    "venue": {
+      "address": {
+        "city": "Seattle",
+        "state": "WA",
+        "zipCode": "98101",
+        "street": "777 Peace Street"
+      },
+      "capacity": 30,
+      "name": "Wellness Studio"
+    }
+  },
+  {
+    "name": "Basketball Game",
+    "description": "Professional basketball league match",
+    "emoji": "🏀",
+    "category": "Sports",
+    "tags": ["basketball", "sports", "game"],
+    "availableSeats": 5000,
+    "seatsAmount": 10000,
+    "seatsMap": [
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ],
+    "datetime": "2024-05-15T16:00:00",
+    "organizer": "Sports League",
+    "popularity": "High Popularity",
+    "revenue": 250000,
+    "status": "active",
+    "ticketTypes": {
+      "available": 5000,
+      "name": "Game Ticket",
+      "price": 50,
+      "_id": "t7"
+    },
+    "venue": {
+      "address": {
+        "city": "Boston",
+        "state": "MA",
+        "zipCode": "02101",
+        "street": "888 Arena Road"
+      },
+      "capacity": 10000,
+      "name": "Sports Arena"
+    }
+  },
+  {
+    "name": "Book Reading",
+    "description": "Author book reading and signing event",
+    "emoji": "📚",
+    "category": "Literature",
+    "tags": ["books", "reading", "author"],
+    "availableSeats": 40,
+    "seatsAmount": 50,
+    "seatsMap": [
+      [1, 1, 1, 1],
+      [1, 1, 1, 0]
+    ],
+    "updatedAt": "2024-05-15T16:00:00",
+    "createdAt": "2024-05-15T16:00:00",
+    "datetime": "2024-05-15T16:00:00",
+    "organizer": "Bookstore Chain",
+    "popularity": "Low Popularity",
+    "revenue": 1200,
+    "status": "active",
+    "ticketTypes": {
+      "available": 10,
+      "name": "Reading Ticket",
+      "price": 30,
+      "_id": "t8"
+    },
+    "venue": {
+      "address": {
+        "city": "Portland",
+        "state": "OR",
+        "zipCode": "97201",
+        "street": "999 Book Lane"
+      },
+      "capacity": 50,
+      "name": "Community Library"
+    }
+  }
+]

@@ -122,7 +122,7 @@ const AsideMenu: React.FC<SidebarProps> = ({ className = "" }) => {
     const isExpanded = expandedSections.includes(section.title);
 
     return (
-      <div key={index} className="mb-6">
+      <div key={index} className="mb-6 ">
         <button
           onClick={() => toggleSection(section.title)}
           className="w-full flex items-center justify-between px-4 py-2 text-gray-400 hover:text-white transition-colors group"
@@ -158,7 +158,7 @@ const AsideMenu: React.FC<SidebarProps> = ({ className = "" }) => {
 
   return (
     <aside
-      className={`w-[25%] h-screen bg-gray-900 text-white flex flex-col border-r border-gray-800 ${className}`}
+      className={`min-h-screen  animate-slide bg-gray-900 text-white flex flex-col border-r border-gray-800 ${className}`}
       role="navigation"
       aria-label="Main navigation"
     >

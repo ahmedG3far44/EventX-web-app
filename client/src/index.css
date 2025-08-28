@@ -118,3 +118,29 @@
     @apply bg-background text-foreground;
   }
 }
+
+@theme {
+  --animate-slide: slide 0.2s ease-in-out forwards;
+  @keyframes slide {
+    0% {
+      /* transform: translateX(-100%); */
+      width: 0;
+    }
+    100% {
+      /* transform: translateX(0%); */
+      width: 25%;
+    }
+  }
+  --animate-scale: scale 0.8s ease-in-out forwards;
+  @keyframes scale {
+    0% {
+      scale: 0.5;
+    }
+    50% {
+      scale: 1.1;
+    }
+    100% {
+      scale: 1;
+    }
+  }
+}

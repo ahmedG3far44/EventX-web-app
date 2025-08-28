@@ -21,12 +21,6 @@ interface Event {
   bgColor: string;
 }
 
-// interface Notification {
-//   id: number;
-//   icon: string;
-//   message: string;
-//   time?: string;
-// }
 
 const Insights: React.FC = () => {
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
@@ -317,6 +311,14 @@ const Insights: React.FC = () => {
     );
   };
 
+  // const randomEvent = Math.floor(Math.random() * events.length);
+
+  // console.log(randomEvent, "random");
+
+  // console.log(events);
+  // useEffect(() => {
+  //   getEventsList();
+  // }, []);
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
@@ -502,17 +504,18 @@ const Insights: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1  gap-6">
           <Seats
+            editState={true}
             seatsMap={[
-              [0, 1, 0, 0, 0],
-              [0, 2, 0, 0, 0],
-              [0, 2, 1, 1, 0, 0],
-              [0, 0, 0, 1, 0, 0],
-              [0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0],
+              [0, 1, 0, 0, 0, 0],
+              [0, 0, 0, 2, 2, 0],
+              [0, 0, 1, 0, 0, 0, 0],
+              [0, 1, 0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 2, 0, 0],
+              [0, 0, 0, 0, 1, 1, 2, 0, 0],
             ]}
-            editState={false}
           />
         </div>
       </div>

@@ -13,19 +13,54 @@ const BASE_URL = import.meta.env.VITE_BASE_URL as string;
 const EventsContext = createContext<{
   events: EventType[];
   getEventById: (id: string) => Promise<EventType | void>;
+  getEventsList: () => Promise<EventType | void>;
   createEvent: (newEvent: EventType) => Promise<EventType | void>;
   updateEventStatus: (
     id: string,
     newStatus: string
   ) => Promise<EventType | void>;
   deleteEventById: (id: string) => Promise<EventType | void>;
-  eventDetails: EventType | null;
+  eventDetails: EventType;
   loading: boolean;
   error: null | string;
 }>({
   events: [],
-  eventDetails: null,
+  eventDetails: {
+    _id: "",
+    name: "",
+    description: "",
+    emoji: "",
+    category: "",
+    tags: [],
+    availableSeats: 0,
+    seatsAmount: 0,
+    seatsMap: [[0, 0, 0, 0]],
+    updatedAt: new Date(),
+    createdAt: new Date(),
+    datetime: new Date(),
+    organizer: "",
+    popularity: "High Popularity",
+    revenue: 0,
+    status: "active",
+    ticketTypes: {
+      available: 34,
+      name: "",
+      price: 40,
+      _id: "",
+    },
+    venue: {
+      address: {
+        city: "",
+        state: "",
+        zipCode: "",
+        street: "",
+      },
+      capacity: 0,
+      name: "",
+    },
+  },
   getEventById: () => Promise.resolve(),
+  getEventsList: () => Promise.resolve(),
   createEvent: () => Promise.resolve(),
   updateEventStatus: () => Promise.resolve(),
   deleteEventById: () => Promise.resolve(),
@@ -34,7 +69,40 @@ const EventsContext = createContext<{
 });
 const EventsProvider = ({ children }: { children: ReactNode }) => {
   const [events, setEvents] = useState<EventType[]>([]);
-  const [eventDetails, setEventDetails] = useState<EventType | null>(null);
+  const [eventDetails, setEventDetails] = useState<EventType>({
+    _id: "",
+    name: "",
+    description: "",
+    emoji: "",
+    category: "",
+    tags: [],
+    availableSeats: 0,
+    seatsAmount: 0,
+    seatsMap: [[0, 0, 0, 0]],
+    updatedAt: new Date(),
+    createdAt: new Date(),
+    datetime: new Date(),
+    organizer: "",
+    popularity: "High Popularity",
+    revenue: 0,
+    status: "active",
+    ticketTypes: {
+      available: 34,
+      name: "",
+      price: 40,
+      _id: "",
+    },
+    venue: {
+      address: {
+        city: "",
+        state: "",
+        zipCode: "",
+        street: "",
+      },
+      capacity: 0,
+      name: "",
+    },
+  });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -175,6 +243,7 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
       value={{
         events,
         eventDetails,
+        getEventsList,
         getEventById,
         createEvent,
         updateEventStatus,

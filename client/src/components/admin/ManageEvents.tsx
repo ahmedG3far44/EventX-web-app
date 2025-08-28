@@ -93,7 +93,7 @@ const ManageEvents: React.FC = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {events.map((event) => (
-            <EventCard key={event._id} event={event} />
+            <EventCard key={event._id} event={event} isAdmin={true} />
           ))}
         </div>
         {events.length === 0 && (
@@ -172,6 +172,7 @@ const ManageEvents: React.FC = () => {
           <StatusSection status="upcoming" events={groupedEvents.upcoming} />
           <StatusSection status="pending" events={groupedEvents.pending} />
           <StatusSection status="closed" events={groupedEvents.closed} />
+          <StatusSection status="canceled" events={groupedEvents.canceled} />
         </div>
 
         {/* No results */}

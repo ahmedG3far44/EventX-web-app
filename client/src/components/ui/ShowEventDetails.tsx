@@ -66,11 +66,11 @@ const ShowEventDetails = ({
     switch (status.toLowerCase()) {
       case "active":
         return "bg-green-100 text-green-800 border-green-200";
-      case "draft":
+      case "upcoming":
         return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "cancelled":
+      case "canceled":
         return "bg-red-100 text-red-800 border-red-200";
-      case "completed":
+      case "closed":
         return "bg-blue-100 text-blue-800 border-blue-200";
       default:
         return "bg-gray-100 text-gray-800 border-gray-200";
@@ -145,14 +145,10 @@ const ShowEventDetails = ({
                   <Calendar className="w-5 h-5 text-blue-600" />
                   <div>
                     <p className="font-medium">
-                      {formatDate(
-                        new Date(event.datetime).toLocaleDateString()
-                      )}
+                      {formatDate(event.datetime.toString())}
                     </p>
                     <p className="text-sm text-gray-500">
-                      {formatTime(
-                        new Date(event.datetime).toLocaleTimeString()
-                      )}
+                      {formatTime(event.datetime.toString())}
                     </p>
                   </div>
                 </div>
@@ -160,7 +156,10 @@ const ShowEventDetails = ({
                 <div className="flex items-center gap-3">
                   <MapPin className="w-5 h-5 text-green-600" />
                   <div>
-                    <p className="font-medium">{event.venue}</p>
+                    <p className="font-medium">
+                      {event.venue.name}, {event.venue.address.state} ,{" "}
+                      {event.venue.address.city}, {event.venue.address.street}
+                    </p>
                     <p className="text-sm text-gray-500">Event Venue</p>
                   </div>
                 </div>
@@ -236,9 +235,9 @@ const ShowEventDetails = ({
                   <Separator />
                   <div>
                     <h4 className="font-medium mb-3">Seats Map</h4>
-                    <div className="flex justify-center">
+                    <div className="flex items-center justify-center">
                       <div className="inline-block p-4 bg-gray-50 rounded-lg">
-                        <div className="space-y-2">
+                        <div className="space-y-2 flex flex-col items-center justify-center ">
                           {event.seatsMap.map((row, rowIndex) => (
                             <div key={rowIndex} className="flex gap-2">
                               {row.map((seat, seatIndex) => (
@@ -388,12 +387,22 @@ const ShowEventDetails = ({
                 </div>
               </div>
             </CardContent>
-            <Button
-              className="w-[80%] mx-auto cursor-pointer bg-green-600 hover:bg-green-700 duration-300"
-              onClick={() => setOpen(!isOpen as boolean)}
-            >
-              {isOpen ? "Cancel Booking" : "Book Tickets"}
-            </Button>
+            {event.status === "active" ||
+              (event.status === "upcoming" ? (
+                <Button
+                  className="w-[80%] mx-auto cursor-pointer bg-green-600 hover:bg-green-700 duration-300"
+                  onClick={() => setOpen(!isOpen as boolean)}
+                >
+                  {isOpen ? "Cancel Booking" : "Book Tickets"}
+                </Button>
+              ) : (
+                <Button
+                  className="w-[80%] disabled:bg-zinc-400 disabled:cursor-not-allowed  mx-auto cursor-pointer bg-zinc-600 duration-300"
+                  disabled
+                >
+                  No Available For Book
+                </Button>
+              ))}
           </Card>
         </div>
       </div>

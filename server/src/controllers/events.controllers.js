@@ -57,10 +57,21 @@ export const getEvent = async (req, res) => {
 // @access  Private (Admin/Organizer)
 export const createEvent = async (req, res) => {
   try {
-
     const payload = req.body;
+    // take the total seats number
+    // create 2D array of zeros that is match the number of seats
+    // category Id
+    // seats amount || available seats || venue capacity should be the same number
+    // revenue: default(0)
 
-    const event = await Event.create(payload);
+    console.log(payload);
+
+    const event = new Event({
+      ...payload,
+      availableSeats: payload.seatsAmount,
+    });
+
+    await event.save();
 
     res.status(201).json({
       success: true,

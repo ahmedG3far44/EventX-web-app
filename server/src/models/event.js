@@ -72,11 +72,6 @@ const EventSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    venue: {
-      type: String,
-      required: true,
-      trim: true,
-    },
     datetime: {
       type: Date,
       required: true,
@@ -125,6 +120,7 @@ const EventSchema = new mongoose.Schema(
       type: Number,
       required: true,
       min: 0,
+      default: 0,
     },
     popularity: {
       type: String,
@@ -148,7 +144,7 @@ const EventSchema = new mongoose.Schema(
         trim: true,
       },
     ],
-    location: {
+    venue: {
       type: EventLocationSchema,
       required: false,
     },

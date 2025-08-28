@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Calendar,
   MapPin,
@@ -12,89 +11,60 @@ import {
   UserCheck,
   Star,
 } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import Seats from "../ui/Seats";
+import { useEvents } from "@/contexts/EventsProvider";
+import { useEffect, useState } from "react";
+import type { EventType } from "@/lib/types";
+import QRCode from "react-qr-code";
 
-interface EventDetailsProps {
-  eventData?: {
-    name: string;
-    date: string;
-    venue: string;
-    time: string;
-    description: string;
-    ticketPrice: number;
-    currency: string;
-    seatAmount: number;
-    availableSeats: number;
-    popularity: string;
-    tags: string[];
-    expectedAttendance: number;
-    qrCode?: string;
-  };
-}
+const DOMAIN_URL = import.meta.env.VITE_DOMAIN_URL as string;
 
-const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
-  const params = useParams();
-  // Default data based on the image
-  const defaultData = {
-    name: "Colombo Music Festival 2025",
-    date: "April 12, 2025",
-    venue: "Viharamahadevi Open Air Theater, Colombo",
-    time: "6:00PM - 10:30PM",
-    description:
-      "Get ready for Sri Lanka's biggest music festival - the Colombo Music Festival 2025! 🎵🔥 This electrifying open-air concert will feature top international and local artists, bringing an unforgettable night of music, lights, and energy to the heart of Colombo! Join 10,000+ music lovers at the Viharamahadevi Open Air Theater for a night filled with live performances, immersive stage effects, and a festival atmosphere like no other! Whether you're into pop, rock, EDM, or reggae, this festival has something for every music enthusiast!",
-    ticketPrice: 2500,
-    currency: "LKR",
-    seatAmount: 1200,
-    availableSeats: 523,
-    popularity: "High Popularity",
-    tags: ["#Music", "#Festival"],
-    expectedAttendance: 1000,
-    qrCode:
-      "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSIxMCIgeT0iMTAiIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgZmlsbD0iYmxhY2siLz4KPC9zdmc+",
-  };
+const EventDetails = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  const data = eventData || defaultData;
+  //   name: "Colombo Music Festival 2025",
+  //   date: "April 12, 2025",
+  //   venue: "Viharamahadevi Open Air Theater, Colombo",
+  //   time: "6:00PM - 10:30PM",
+  //   description:
+  //     "Get ready for Sri Lanka's biggest music festival - the Colombo Music Festival 2025! 🎵🔥 This electrifying open-air concert will feature top international and local artists, bringing an unforgettable night of music, lights, and energy to the heart of Colombo! Join 10,000+ music lovers at the Viharamahadevi Open Air Theater for a night filled with live performances, immersive stage effects, and a festival atmosphere like no other! Whether you're into pop, rock, EDM, or reggae, this festival has something for every music enthusiast!",
+  //   ticketPrice: 2500,
+  //   currency: "LKR",
+  //   seatAmount: 1200,
+  //   availableSeats: 523,
+  //   popularity: "High Popularity",
+  //   tags: ["#Music", "#Festival"],
+  //   expectedAttendance: 1000,
+  //   qrCode:
+  //     "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSIxMCIgeT0iMTAiIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgZmlsbD0iYmxhY2siLz4KPC9zdmc+",
+  // };
+  const { getEventById, eventDetails, loading } = useEvents();
+  const [data, setEventData] = useState<EventType>(eventDetails);
 
-  // Seat allocation data
-  const seatData = {
-    paid: 677,
-    reserved: 0,
-    available: 523,
-  };
 
-  console.log(seatData);
+  useEffect(() => {
+    (async () => {
+      const event = await getEventById(id as string);
+      setEventData(event as EventType);
+    })();
+  }, [id]);
 
-  const generateSeatGrid = () => {
-    const totalSeats = 100; // Simplified grid
-    const seats = [];
-
-    for (let i = 0; i < totalSeats; i++) {
-      const random = Math.random();
-      let seatType = "available";
-      if (random < 0.6) seatType = "paid";
-      else if (random < 0.65) seatType = "reserved";
-
-      seats.push(
-        <div
-          key={i}
-          className={`w-6 h-6 rounded-sm ${
-            seatType === "paid"
-              ? "bg-purple-600"
-              : seatType === "reserved"
-              ? "bg-purple-400"
-              : "bg-gray-300"
-          }`}
-        />
-      );
-    }
-    return seats;
-  };
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin w-5 h-5 rounded-full border-r-transparent border-green-500 bg-green-100"></div>
+      </div>
+    );
 
   return (
-    <div className="w-full p-4 mx-auto bg-white">
-      {/* Header */}
+    <div className="w-full min-h-screen p-4 mx-auto bg-white">
       <div className="flex items-center gap-4 mb-8">
-        <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+        <button
+          onClick={() => navigate(-1)}
+          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+        >
           <ArrowLeft className="w-6 h-6" />
         </button>
         <h1 className="text-2xl font-bold">Event Details</h1>
@@ -111,20 +81,25 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
             </label>
             <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border">
               <Edit3 className="w-5 h-5 text-gray-400" />
-              <span className="font-medium">{data.name}</span>
+              <span className="font-medium">{data?.name}</span>
             </div>
           </div>
 
           {/* Event Venue */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Event Venue
-            </label>
-            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border">
-              <MapPin className="w-5 h-5 text-gray-400" />
-              <span>{data.venue}</span>
+          {data?.venue && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Event Venue
+              </label>
+              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border">
+                <MapPin className="w-5 h-5 text-gray-400" />
+                <span>
+                  {data.venue.name}, {data.venue.address.state},{" "}
+                  {data.venue.address.city}, {data.venue.address.street}
+                </span>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Event Description */}
           <div>
@@ -133,7 +108,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
             </label>
             <div className="p-4 bg-gray-50 rounded-lg border">
               <p className="text-sm text-gray-700 leading-relaxed">
-                {data.description}
+                {data?.description}
               </p>
             </div>
           </div>
@@ -148,8 +123,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
                 </span>
               </div>
               <span className="text-lg font-bold">
-                {data.ticketPrice}
-                {data.currency}
+                {data?.ticketTypes.price} EGP
               </span>
             </div>
 
@@ -160,7 +134,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
                   Seat Amount
                 </span>
               </div>
-              <span className="text-lg font-bold">{data.seatAmount}</span>
+              <span className="text-lg font-bold">{data?.seatsAmount}</span>
             </div>
 
             <div className="p-4 bg-gray-50 rounded-lg border">
@@ -170,7 +144,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
                   Available Seats
                 </span>
               </div>
-              <span className="text-lg font-bold">{data.availableSeats}</span>
+              <span className="text-lg font-bold">{data?.availableSeats}</span>
             </div>
 
             <div className="p-4 bg-gray-50 rounded-lg border">
@@ -181,8 +155,20 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
                 </span>
               </div>
               <span className="text-sm font-medium text-green-600">
-                {data.popularity}
+                {data?.popularity}
               </span>
+            </div>
+
+            <div className="p-6 w-full flex items-center justify-center flex-col gap-2 bg-gray-50 rounded-lg border text-center">
+              <QRCode
+                width={400}
+                height={400}
+                bgColor="#ffff"
+                value={`${DOMAIN_URL}/checkout/${data._id}`}
+              />
+              <p className="text-sm text-gray-600">
+                Scan QR code for easy payments
+              </p>
             </div>
           </div>
         </div>
@@ -196,7 +182,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
             </label>
             <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border">
               <Calendar className="w-5 h-5 text-gray-400" />
-              <span>{data.date}</span>
+              <span>{new Date(data.datetime).toLocaleDateString()}</span>
             </div>
           </div>
 
@@ -207,44 +193,22 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
             </label>
             <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border">
               <Clock className="w-5 h-5 text-gray-400" />
-              <span>{data.time}</span>
+              <span>{new Date(data.datetime).toLocaleTimeString()}</span>
             </div>
           </div>
 
-          {/* Seat Allocation */}
-          <div className="p-6 bg-gray-50 rounded-lg border">
-            <h3 className="text-lg font-bold text-center mb-4">
-              Seat Allocation
-            </h3>
-
-            {/* Legend */}
-            <div className="flex justify-center gap-4 mb-4 text-xs">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-purple-600 rounded"></div>
-                <span>Paid Seats</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-purple-400 rounded"></div>
-                <span>Reserved Seats</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-gray-300 rounded"></div>
-                <span>Available</span>
-              </div>
-            </div>
-
-            {/* Seat Grid */}
-            <div className="grid grid-cols-10 gap-1 max-w-xs mx-auto">
-              {generateSeatGrid()}
-            </div>
-          </div>
-
+          <Seats
+            editState={true}
+            seatsMap={data?.seatsMap}
+            event={data as EventType}
+          />
           {/* Tags and Attendance */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Tags
               </label>
+
               <div className="p-4 bg-gray-50 rounded-lg border">
                 <div className="flex flex-wrap gap-2">
                   {data.tags.map((tag, index) => (
@@ -265,28 +229,9 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
               </label>
               <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border">
                 <Users className="w-5 h-5 text-gray-400" />
-                <span className="font-medium">+{data.expectedAttendance}</span>
+                <span className="font-medium">+{data.seatsAmount - 0.3}</span>
               </div>
             </div>
-          </div>
-
-          {/* QR Code */}
-          <div className="p-6 bg-gray-50 rounded-lg border text-center">
-            <div className="w-24 h-24 bg-gray-200 mx-auto mb-3 rounded border-2 border-dashed border-gray-300 flex items-center justify-center">
-              <div className="w-16 h-16 bg-black rounded grid grid-cols-4 gap-px p-1">
-                {[...Array(16)].map((_, i) => (
-                  <div
-                    key={i}
-                    className={`${
-                      Math.random() > 0.5 ? "bg-white" : "bg-black"
-                    } rounded-sm`}
-                  ></div>
-                ))}
-              </div>
-            </div>
-            <p className="text-sm text-gray-600">
-              Scan QR code for easy payments
-            </p>
           </div>
 
           {/* Action Buttons */}
@@ -295,7 +240,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventData }) => {
               EDIT
             </button>
             <Link
-              to={`/dashboard/attendee-insights/${params.id}`}
+              to={`/dashboard/attendee-insights/${id}`}
               className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
             >
               <BarChart3 className="w-5 h-5" />

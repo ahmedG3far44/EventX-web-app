@@ -23,7 +23,7 @@ function getSeatStatusColor(seat: number): string {
 const Seats = ({
   event,
   seatsMap,
-  editState = true,
+  editState = false,
 }: {
   event?: EventType;
   seatsMap: number[][];
@@ -42,7 +42,7 @@ const Seats = ({
   );
   const [ticketState] = useState<"book" | "buy">("buy");
   const [totalTicketsPrice, setTotalPrice] = useState(0);
-  console.log(totalTicketsPrice);
+
   const updateMapSeats = (
     rowIndex: number,
     colIndex: number,
@@ -71,14 +71,11 @@ const Seats = ({
         return prev;
       }
     });
-
-    console.log(selectedSeats);
-    // calc total price
   };
 
   return (
-    <div className="p-4 bg-zinc-50  shadow-md  min-h-screen text-black">
-      {event && (
+    <div className="p-8 bg-zinc-50 rounded-md text-black animate-scale">
+      {event && !editState && (
         <div className="p-4">
           <h1>{event?.name}</h1>
           <p>Event Date: {new Date(event.datetime).toLocaleDateString()}</p>
@@ -158,11 +155,14 @@ const Seats = ({
               })}
             </div>
           ))}
-          <Card className="p-4 flex items-center justify-start flex-row gap-4 my-8">
+          <Card className="p-4 flex flex-col items-start justify-center  gap-4 my-8">
             <h1>Ticket Seats</h1>
-            {selectedSeats.map((seat) => {
-              return <Badge className="inline-flex">{seat}</Badge>;
-            })}
+            <div className="space-x-2 flex justify-start items-start">
+              {selectedSeats.map((seat) => {
+                return <Badge className="inline-flex">{seat}</Badge>;
+              })}
+            </div>
+
             <span className="ml-auto ">
               Total Tickets Price{" "}
               <span className="text-2xl font-bold">
@@ -171,14 +171,14 @@ const Seats = ({
             </span>
           </Card>
 
-          <div className="w-full space-x-8 flex items-center">
+          <div className="w-full space-x-8 flex justify-center items-center">
             <Link
-              className="block w-1/2 px-4 py-2  rounded-md bg-purple-500 text-white hover:bg-purple-600 duration-300 cursor-pointer "
+              className="block w-1/2 px-4 py-2  rounded-md bg-violet-500 text-center  text-sm text-white hover:bg-violet-600 duration-300 cursor-pointer "
               to={`/checkout/${event?._id}`}
             >
               Buy Ticket
             </Link>
-            <Button className="w-1/2 px-4 py-2  rounded-md bg-purple-500 text-white hover:bg-purple-600 duration-300 cursor-pointer ">
+            <Button className="w-1/2 px-4 py-2  rounded-md bg-violet-500 text-center  text-sm text-white hover:bg-violet-600 duration-300 cursor-pointer ">
               Cancel Payment
             </Button>
           </div>

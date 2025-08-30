@@ -21,7 +21,6 @@ interface Event {
   bgColor: string;
 }
 
-
 const Insights: React.FC = () => {
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
   const [hoveredSegment, setHoveredSegment] = useState<number | null>(null);
@@ -337,7 +336,7 @@ const Insights: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="relative">
+              <div className="relative hidden md:block">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
                   type="text"

@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+import type { EventFormData } from "@/components/EventForm";
 import type { EventType } from "@/lib/types";
 import {
   createContext,
@@ -14,7 +15,7 @@ const EventsContext = createContext<{
   events: EventType[];
   getEventById: (id: string) => Promise<EventType | void>;
   getEventsList: () => Promise<EventType | void>;
-  createEvent: (newEvent: EventType) => Promise<EventType | void>;
+  createEvent: (newEvent: EventFormData) => Promise<EventType | void>;
   updateEventStatus: (
     id: string,
     newStatus: string
@@ -153,7 +154,7 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const createEvent = async (newEvent: EventType) => {
+  const createEvent = async (newEvent: EventFormData) => {
     try {
       setLoading(true);
       setError(null);

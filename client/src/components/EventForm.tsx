@@ -1,539 +1,889 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { X, Plus, ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-// import { useEvents } from "@/contexts/EventsProvider";
+import React, { useState } from "react";
+import { Plus, Trash2, Shuffle, MapPin, Tag, Ticket } from "lucide-react";
+import { useEvents } from "@/contexts/EventsProvider";
 
-interface TicketType {
+export interface TicketType {
   name: string;
+  type: "VIP" | "GENERAL";
   price: number;
-  available: number;
 }
 
-interface EventData {
-  title: string;
+export interface Address {
+  city: string;
+  state: string;
+  zipCode: string;
+  street: string;
+}
+
+export interface Venue {
+  name: string;
+  capacity: number;
+  address: Address;
+}
+
+export interface EventFormData {
+  name: string;
   description: string;
-  category: string;
-  venue: {
-    name: string;
-    address: {
-      street: string;
-      city: string;
-      state: string;
-      zipCode: string;
-    };
-    capacity: number;
-  };
-  dateTime: string;
   emoji: string;
-  ticketType: TicketType;
-  status: string;
+  category: string;
   tags: string[];
+  datetime: string;
+  organizer: string;
+  popularity: string;
+  ticketTypes: TicketType[];
+  venue: Venue;
 }
 
-const EventForm = () => {
-  const categories = [
-    "Music",
-    "Sports",
-    "Arts & Culture",
-    "Food & Drink",
-    "Technology",
-    "Business",
-    "Health & Wellness",
-    "Education",
-    "Entertainment",
-    "Fashion",
-    "Travel",
-    "Community",
-  ];
+interface FormErrors {
+  [key: string]: string;
+}
 
-  const eventEmojis = [
-    "🎵",
-    "🎤",
-    "🎸",
-    "🎹",
-    "🎺",
-    "🎷",
-    "🥁",
-    "🎻",
-    "🎪",
-    "🎭",
-    "🎨",
-    "🎬",
-    "📚",
-    "🏆",
-    "🎯",
-    "🎮",
-    "🎲",
-    "🎳",
-    "🎊",
-    "🎉",
-    "🎈",
-    "🎂",
-    "🍕",
-    "🍔",
-    "🍰",
-    "☕",
-    "🍷",
-    "🥂",
-    "🎓",
-    "💻",
-    "🚀",
-    "⭐",
-    "🌟",
-    "💫",
-    "🎆",
-    "🎇",
-    "🔥",
-    "💎",
-    "🎁",
-    "🏅",
-  ];
-
-  const getRandomEmoji = () => {
-    return eventEmojis[Math.floor(Math.random() * eventEmojis.length)];
-  };
-
-  const [event, setEvent] = useState<EventData>({
-    title: "",
+const EventForm: React.FC = () => {
+  const [formData, setFormData] = useState<EventFormData>({
+    name: "",
     description: "",
+    emoji: "🎉",
     category: "",
+    tags: [],
+    datetime: "",
+    organizer: "",
+    popularity: "",
+    ticketTypes: [{ name: "", type: "GENERAL", price: 0 }],
     venue: {
       name: "",
+      capacity: 0,
       address: {
-        street: "",
         city: "",
         state: "",
         zipCode: "",
+        street: "",
       },
-      capacity: 0,
     },
-    dateTime: "",
-    emoji: "",
-    ticketType: { name: "General Admission", price: 0, available: 0 },
-    status: "upcoming",
-    tags: [],
   });
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [currentTag, setCurrentTag] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const categories = [
+    "Music & Arts",
+    "Sports",
+    "Technology",
+    "Business",
+    "Food & Drink",
+    "Education",
+    "Health & Wellness",
+    "Entertainment",
+  ];
+  const popularityOptions = [
+    "Low Popularity",
+    "Medium Popularity",
+    "High Popularity",
+    "Very High Popularity",
+  ];
+  const states = [
+    "AL",
+    "AK",
+    "AZ",
+    "AR",
+    "CA",
+    "CO",
+    "CT",
+    "DE",
+    "FL",
+    "GA",
+    "HI",
+    "ID",
+    "IL",
+    "IN",
+    "IA",
+    "KS",
+    "KY",
+    "LA",
+    "ME",
+    "MD",
+    "MA",
+    "MI",
+    "MN",
+    "MS",
+    "MO",
+    "MT",
+    "NE",
+    "NV",
+    "NH",
+    "NJ",
+    "NM",
+    "NY",
+    "NC",
+    "ND",
+    "OH",
+    "OK",
+    "OR",
+    "PA",
+    "RI",
+    "SC",
+    "SD",
+    "TN",
+    "TX",
+    "UT",
+    "VT",
+    "VA",
+    "WA",
+    "WV",
+    "WI",
+    "WY",
+  ];
 
-  const [newTag, setNewTag] = useState("");
+  const cities = {
+    CA: ["Los Angeles", "San Francisco", "San Diego", "Sacramento"],
+    NY: ["New York", "Buffalo", "Albany", "Rochester"],
+    TX: ["Houston", "Dallas", "Austin", "San Antonio"],
+    FL: ["Miami", "Orlando", "Tampa", "Jacksonville"],
+    MA: ["Boston", "Worcester", "Springfield", "Cambridge"],
+    IL: ["Chicago", "Rockford", "Peoria", "Springfield"],
+    WA: ["Seattle", "Spokane", "Tacoma", "Vancouver"],
+  };
 
-  const handleInputChange = (field: string, value: string | number) => {
-    if (field.includes(".")) {
-      const fields = field.split(".");
-      if (fields[0] === "venue" && fields[1] === "address") {
-        setEvent((prev) => ({
-          ...prev,
-          venue: {
-            ...prev.venue,
-            address: {
-              ...prev.venue.address,
-              [fields[2]]: value,
-            },
-          },
-        }));
-      } else if (fields[0] === "venue") {
-        setEvent((prev) => ({
-          ...prev,
-          venue: {
-            ...prev.venue,
-            [fields[1]]: value,
-          },
-        }));
+  const emojis = [
+    "🎉",
+    "🎵",
+    "🎨",
+    "🏀",
+    "⚽",
+    "🎸",
+    "🎭",
+    "🎪",
+    "🎯",
+    "🎲",
+    "🎮",
+    "🏆",
+    "🌟",
+    "💫",
+    "🔥",
+    "⭐",
+    "🎊",
+    "🎈",
+  ];
+  const { createEvent } = useEvents();
+  const generateRandomEmoji = () => {
+    const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+    setFormData((prev) => ({ ...prev, emoji: randomEmoji }));
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    // Basic validation
+    if (!formData.name.trim()) newErrors.name = "Event name is required";
+    if (!formData.description.trim())
+      newErrors.description = "Description is required";
+    if (!formData.category) newErrors.category = "Category is required";
+    if (!formData.datetime) newErrors.datetime = "Date and time is required";
+    if (!formData.organizer.trim())
+      newErrors.organizer = "Organizer is required";
+    if (!formData.popularity) newErrors.popularity = "Popularity is required";
+
+    // Venue validation
+    if (!formData.venue.name.trim())
+      newErrors["venue.name"] = "Venue name is required";
+    if (formData.venue.capacity <= 0)
+      newErrors["venue.capacity"] = "Capacity must be greater than 0";
+    if (!formData.venue.address.street.trim())
+      newErrors["venue.address.street"] = "Street address is required";
+    if (!formData.venue.address.city)
+      newErrors["venue.address.city"] = "City is required";
+    if (!formData.venue.address.state)
+      newErrors["venue.address.state"] = "State is required";
+    if (!formData.venue.address.zipCode.trim())
+      newErrors["venue.address.zipCode"] = "ZIP code is required";
+
+    // Ticket validation
+    formData.ticketTypes.forEach((ticket, index) => {
+      if (!ticket.name.trim())
+        newErrors[`ticketTypes.${index}.name`] = "Ticket name is required";
+      if (ticket.price <= 0)
+        newErrors[`ticketTypes.${index}.price`] =
+          "Price must be greater than 0";
+    });
+
+    // Tags validation
+    if (formData.tags.length === 0)
+      newErrors.tags = "At least one tag is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setIsSubmitting(true);
+      setSubmitSuccess(false);
+
+      if (validateForm()) {
+        await createEvent(formData);
+      } else {
+        setIsSubmitting(false);
       }
-    } else {
-      setEvent((prev) => ({ ...prev, [field]: value }));
+    } catch (error) {
+      console.log((error as Error).message);
+    } finally {
+      setIsSubmitting(false);
+      setSubmitSuccess(true);
     }
   };
 
-  const handleTicketTypeChange = (field: string, value: string | number) => {
-    setEvent((prev) => ({
+  const addTicketType = () => {
+    setFormData((prev) => ({
       ...prev,
-      ticketType: {
-        ...prev.ticketType,
-        [field]:
-          field === "price" || field === "available" ? Number(value) : value,
-      },
+      ticketTypes: [
+        ...prev.ticketTypes,
+        { name: "", type: "GENERAL", price: 0 },
+      ],
+    }));
+  };
+
+  const removeTicketType = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      ticketTypes: prev.ticketTypes.filter((_, i) => i !== index),
+    }));
+  };
+
+  const updateTicketType = (
+    index: number,
+    field: keyof TicketType,
+    value: string
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      ticketTypes: prev.ticketTypes.map((ticket, i) =>
+        i === index ? { ...ticket, [field]: value } : ticket
+      ),
     }));
   };
 
   const addTag = () => {
-    if (newTag.trim() && !event.tags.includes(newTag.trim())) {
-      setEvent((prev) => ({
+    if (currentTag.trim() && !formData.tags.includes(currentTag.trim())) {
+      setFormData((prev) => ({
         ...prev,
-        tags: [...prev.tags, newTag.trim()],
+        tags: [...prev.tags, currentTag.trim()],
       }));
-      setNewTag("");
+      setCurrentTag("");
     }
   };
 
   const removeTag = (tagToRemove: string) => {
-    setEvent((prev) => ({
+    setFormData((prev) => ({
       ...prev,
       tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
   };
-  // const { createEvent } = useEvents();
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
 
-    // Generate random emoji and convert dateTime to ISO string
-    const formattedEvent = {
-      ...event,
-      emoji: getRandomEmoji(),
-      dateTime: new Date(event.dateTime).toISOString(),
-    };
-
-    // await createEvent(formattedEvent )
-
-    console.log("Event Data:", JSON.stringify(formattedEvent, null, 2));
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addTag();
+    }
   };
 
-  const navigate = useNavigate();
-
   return (
-    <div className="mx-auto space-y-6">
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <Button onClick={() => navigate(-1)} variant="outline" size="sm">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-            <CardTitle className="text-2xl font-bold">
-              Create New Event
-            </CardTitle>
-            <div></div>
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Create Event
+            </h1>
+            <p className="text-gray-600">
+              Fill in the details to create a new event
+            </p>
           </div>
-        </CardHeader>
-        <CardContent>
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {/* Basic Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Basic Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-4">
-                    <Label htmlFor="title">Event Title</Label>
-                    <Input
-                      id="title"
-                      value={event.title}
-                      onChange={(e) =>
-                        handleInputChange("title", e.target.value)
-                      }
-                      placeholder="Enter event title"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-4">
-                    <Label htmlFor="category">Category</Label>
-                    <Select
-                      value={event.category}
-                      onValueChange={(value) =>
-                        handleInputChange("category", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem key={category} value={category}>
-                            {category}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
 
-                <div className="space-y-4">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={event.description}
-                    onChange={(e) =>
-                      handleInputChange("description", e.target.value)
-                    }
-                    placeholder="Enter event description"
-                    rows={3}
-                    required
-                  />
+          {submitSuccess && (
+            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-green-800 font-medium">
+                ✅ Event created successfully!
+              </p>
+            </div>
+          )}
+          <form onSubmit={handleSubmit}>
+            <div className="space-y-8">
+              <div className="space-y-6">
+                <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+                  <Tag className="w-5 h-5" />
+                  Basic Information
+                </h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Event Name
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          name: e.target.value,
+                        }))
+                      }
+                      className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                        errors.name ? "border-red-300" : "border-gray-300"
+                      }`}
+                      placeholder="Enter event name"
+                    />
+                    {errors.name && (
+                      <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Emoji
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={formData.emoji}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            emoji: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="🎉"
+                      />
+                      <button
+                        type="button"
+                        onClick={generateRandomEmoji}
+                        className="px-3 py-2 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 transition-colors"
+                      >
+                        <Shuffle className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
                 <div>
-                  <div className="space-y-4">
-                    <Label htmlFor="dateTime">Date & Time</Label>
-                    <Input
-                      id="dateTime"
-                      type="datetime-local"
-                      value={event.dateTime}
-                      onChange={(e) =>
-                        handleInputChange("dateTime", e.target.value)
-                      }
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <Label htmlFor="status">Event Status</Label>
-                  <Select
-                    value={event.status}
-                    onValueChange={(value) =>
-                      handleInputChange("status", value)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="upcoming">Upcoming</SelectItem>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="canceled">Canceled</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Venue Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Venue Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-4">
-                    <Label htmlFor="venueName">Venue Name</Label>
-                    <Input
-                      id="venueName"
-                      value={event.venue.name}
-                      onChange={(e) =>
-                        handleInputChange("venue.name", e.target.value)
-                      }
-                      placeholder="Venue name"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-4">
-                    <Label htmlFor="capacity">Capacity</Label>
-                    <Input
-                      id="capacity"
-                      type="number"
-                      value={event.venue.capacity}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "venue.capacity",
-                          Number(e.target.value)
-                        )
-                      }
-                      placeholder="Venue capacity"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <Label htmlFor="street">Street Address</Label>
-                  <Input
-                    id="street"
-                    value={event.venue.address.street}
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    value={formData.description}
                     onChange={(e) =>
-                      handleInputChange("venue.address.street", e.target.value)
+                      setFormData((prev) => ({
+                        ...prev,
+                        description: e.target.value,
+                      }))
                     }
-                    placeholder="Street address"
-                    required
+                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                      errors.description ? "border-red-300" : "border-gray-300"
+                    }`}
+                    rows={3}
+                    placeholder="Describe your event"
                   />
+                  {errors.description && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.description}
+                    </p>
+                  )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-4">
-                    <Label htmlFor="city">City</Label>
-                    <Input
-                      id="city"
-                      value={event.venue.address.city}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Category
+                    </label>
+                    <select
+                      value={formData.category}
                       onChange={(e) =>
-                        handleInputChange("venue.address.city", e.target.value)
+                        setFormData((prev) => ({
+                          ...prev,
+                          category: e.target.value,
+                        }))
                       }
-                      placeholder="City"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-4">
-                    <Label htmlFor="state">State</Label>
-                    <Input
-                      id="state"
-                      value={event.venue.address.state}
-                      onChange={(e) =>
-                        handleInputChange("venue.address.state", e.target.value)
-                      }
-                      placeholder="State"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-4">
-                    <Label htmlFor="zipCode">Zip Code</Label>
-                    <Input
-                      id="zipCode"
-                      value={event.venue.address.zipCode}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "venue.address.zipCode",
-                          e.target.value
-                        )
-                      }
-                      placeholder="Zip code"
-                      required
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Ticket Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Ticket Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-4">
-                    <Label htmlFor="ticketName">Ticket Name</Label>
-                    <Input
-                      id="ticketName"
-                      value={event.ticketType.name}
-                      onChange={(e) =>
-                        handleTicketTypeChange("name", e.target.value)
-                      }
-                      placeholder="e.g., General Admission"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-4">
-                    <Label htmlFor="ticketPrice">Price ($)</Label>
-                    <Input
-                      id="ticketPrice"
-                      type="number"
-                      step="0.01"
-                      value={event.ticketType.price}
-                      onChange={(e) =>
-                        handleTicketTypeChange("price", e.target.value)
-                      }
-                      placeholder="99.99"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-4">
-                    <Label htmlFor="ticketAvailable">Available Tickets</Label>
-                    <Input
-                      id="ticketAvailable"
-                      type="number"
-                      value={event.ticketType.available}
-                      onChange={(e) =>
-                        handleTicketTypeChange("available", e.target.value)
-                      }
-                      placeholder="100"
-                      required
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Tags */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Tags</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex gap-2">
-                  <Input
-                    value={newTag}
-                    onChange={(e) => setNewTag(e.target.value)}
-                    placeholder="Add a tag"
-                    onKeyPress={(e) =>
-                      e.key === "Enter" && (e.preventDefault(), addTag())
-                    }
-                  />
-                  <Button type="button" onClick={addTag}>
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </div>
-
-                <div className="flex flex-wrap gap-2">
-                  {event.tags.map((tag) => (
-                    <Badge
-                      key={tag}
-                      variant="secondary"
-                      className="flex items-center gap-1"
+                      className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                        errors.category ? "border-red-300" : "border-gray-300"
+                      }`}
                     >
-                      {tag}
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="h-4 w-4 p-0 hover:bg-transparent"
-                        onClick={() => removeTag(tag)}
+                      <option value="">Select category</option>
+                      {categories.map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.category && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.category}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Popularity
+                    </label>
+                    <select
+                      value={formData.popularity}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          popularity: e.target.value,
+                        }))
+                      }
+                      className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                        errors.popularity ? "border-red-300" : "border-gray-300"
+                      }`}
+                    >
+                      <option value="">Select popularity</option>
+                      {popularityOptions.map((pop) => (
+                        <option key={pop} value={pop}>
+                          {pop}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.popularity && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.popularity}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Date & Time
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={formData.datetime}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          datetime: e.target.value,
+                        }))
+                      }
+                      className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                        errors.datetime ? "border-red-300" : "border-gray-300"
+                      }`}
+                    />
+                    {errors.datetime && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.datetime}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Organizer
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.organizer}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          organizer: e.target.value,
+                        }))
+                      }
+                      className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                        errors.organizer ? "border-red-300" : "border-gray-300"
+                      }`}
+                      placeholder="Enter organizer name"
+                    />
+                    {errors.organizer && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.organizer}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Tags */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Tags
+                  </label>
+                  <div className="flex gap-2 mb-2">
+                    <input
+                      type="text"
+                      value={currentTag}
+                      onChange={(e) => setCurrentTag(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Add a tag and press Enter"
+                    />
+                    <button
+                      type="button"
+                      onClick={addTag}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {formData.tags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
                       >
-                        <X className="w-3 h-3" />
-                      </Button>
-                    </Badge>
-                  ))}
+                        {tag}
+                        <button
+                          type="button"
+                          onClick={() => removeTag(tag)}
+                          className="hover:text-blue-600"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  {errors.tags && (
+                    <p className="mt-1 text-sm text-red-600">{errors.tags}</p>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
 
-            {/* Event Preview */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Event Preview</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                  <div className="text-6xl mb-4">{event.emoji || "🎉"}</div>
-                  <p className="text-sm text-gray-500 mb-2">
-                    Event Emoji Preview
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    A random emoji will be assigned when the event is created
-                  </p>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="mt-4"
-                    onClick={() =>
-                      setEvent((prev) => ({ ...prev, emoji: getRandomEmoji() }))
+              {/* Venue Information */}
+              <div className="space-y-6">
+                <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+                  <MapPin className="w-5 h-5" />
+                  Venue Information
+                </h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Venue Name
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.venue.name}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          venue: { ...prev.venue, name: e.target.value },
+                        }))
+                      }
+                      className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                        errors["venue.name"]
+                          ? "border-red-300"
+                          : "border-gray-300"
+                      }`}
+                      placeholder="Enter venue name"
+                    />
+                    {errors["venue.name"] && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors["venue.name"]}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Capacity
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.venue.capacity || ""}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          venue: {
+                            ...prev.venue,
+                            capacity: parseInt(e.target.value) || 0,
+                          },
+                        }))
+                      }
+                      className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                        errors["venue.capacity"]
+                          ? "border-red-300"
+                          : "border-gray-300"
+                      }`}
+                      placeholder="Enter capacity"
+                    />
+                    {errors["venue.capacity"] && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors["venue.capacity"]}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Street Address
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.venue.address.street}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        venue: {
+                          ...prev.venue,
+                          address: {
+                            ...prev.venue.address,
+                            street: e.target.value,
+                          },
+                        },
+                      }))
                     }
-                  >
-                    Preview Random Emoji
-                  </Button>
+                    className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                      errors["venue.address.street"]
+                        ? "border-red-300"
+                        : "border-gray-300"
+                    }`}
+                    placeholder="Enter street address"
+                  />
+                  {errors["venue.address.street"] && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors["venue.address.street"]}
+                    </p>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Submit Button */}
-            <Button type="submit" className="w-full" size="lg">
-              Create Event
-            </Button>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      State
+                    </label>
+                    <select
+                      value={formData.venue.address.state}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          venue: {
+                            ...prev.venue,
+                            address: {
+                              ...prev.venue.address,
+                              state: e.target.value,
+                              city: "",
+                            },
+                          },
+                        }))
+                      }
+                      className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                        errors["venue.address.state"]
+                          ? "border-red-300"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      <option value="">Select state</option>
+                      {states.map((state) => (
+                        <option key={state} value={state}>
+                          {state}
+                        </option>
+                      ))}
+                    </select>
+                    {errors["venue.address.state"] && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors["venue.address.state"]}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      City
+                    </label>
+                    <select
+                      value={formData.venue.address.city}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          venue: {
+                            ...prev.venue,
+                            address: {
+                              ...prev.venue.address,
+                              city: e.target.value,
+                            },
+                          },
+                        }))
+                      }
+                      className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                        errors["venue.address.city"]
+                          ? "border-red-300"
+                          : "border-gray-300"
+                      }`}
+                      disabled={!formData.venue.address.state}
+                    >
+                      {formData.venue.address.state &&
+                        cities.CA.map((city) => (
+                          <option key={city} value={city}>
+                            {city}
+                          </option>
+                        ))}
+                    </select>
+                    {errors["venue.address.city"] && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors["venue.address.city"]}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      ZIP Code
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.venue.address.zipCode}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          venue: {
+                            ...prev.venue,
+                            address: {
+                              ...prev.venue.address,
+                              zipCode: e.target.value,
+                            },
+                          },
+                        }))
+                      }
+                      className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                        errors["venue.address.zipCode"]
+                          ? "border-red-300"
+                          : "border-gray-300"
+                      }`}
+                      placeholder="Enter ZIP code"
+                    />
+                    {errors["venue.address.zipCode"] && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors["venue.address.zipCode"]}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Ticket Types */}
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+                    <Ticket className="w-5 h-5" />
+                    Ticket Types
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={addTicketType}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Ticket
+                  </button>
+                </div>
+
+                {formData.ticketTypes.map((ticket, index) => (
+                  <div
+                    key={index}
+                    className="p-4 border border-gray-200 rounded-lg space-y-4"
+                  >
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-medium text-gray-900">
+                        Ticket {index + 1}
+                      </h3>
+                      {formData.ticketTypes.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeTicketType(index)}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Ticket Name
+                        </label>
+                        <input
+                          type="text"
+                          value={ticket.name}
+                          onChange={(e) =>
+                            updateTicketType(index, "name", e.target.value)
+                          }
+                          className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                            errors[`ticketTypes.${index}.name`]
+                              ? "border-red-300"
+                              : "border-gray-300"
+                          }`}
+                          placeholder="Enter ticket name"
+                        />
+                        {errors[`ticketTypes.${index}.name`] && (
+                          <p className="mt-1 text-sm text-red-600">
+                            {errors[`ticketTypes.${index}.name`]}
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Type
+                        </label>
+                        <select
+                          value={ticket.type}
+                          onChange={(e) =>
+                            updateTicketType(index, "type", e.target.value)
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="GENERAL">General</option>
+                          <option value="VIP">VIP</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Price ($)
+                        </label>
+                        <input
+                          type="number"
+                          value={ticket.price || ""}
+                          onChange={(e) =>
+                            updateTicketType(index, "price", e.target.value)
+                          }
+                          className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                            errors[`ticketTypes.${index}.price`]
+                              ? "border-red-300"
+                              : "border-gray-300"
+                          }`}
+                          placeholder="Enter price"
+                          min="0"
+                          step="0.01"
+                        />
+                        {errors[`ticketTypes.${index}.price`] && (
+                          <p className="mt-1 text-sm text-red-600">
+                            {errors[`ticketTypes.${index}.price`]}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Submit Button */}
+              <div className="pt-6">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full md:w-auto px-8 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {isSubmitting ? "Creating Event..." : "Create Event"}
+                </button>
+              </div>
+            </div>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };

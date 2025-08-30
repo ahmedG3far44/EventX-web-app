@@ -7,7 +7,7 @@ import { Outlet } from "react-router-dom";
 import MobileMenu from "@/components/ui/MobileMenu";
 
 const DashboardPage = () => {
-  const [isMenuOpen, setMenuOpen] = useState<boolean>(true);
+  const [isMenuOpen, setMenuOpen] = useState<boolean>(false);
 
   const handleOpenMenu = () => {
     setMenuOpen(!isMenuOpen);
@@ -15,19 +15,19 @@ const DashboardPage = () => {
 
   return (
     <div className="w-full flex min-h-screen relative">
-      {/* Always render but control visibility and position */}
+    
 
       {isMenuOpen ? <MobileMenu /> : <AsideMenu />}
 
       <main
-        className={`bg-zinc-300 min-h-screen w-full transition-all duration-300`}
+        className={`bg-zinc-200 min-h-screen w-full transition-all duration-300`}
       >
         <div className="fixed z-50 right-5 top-5">
           <Button
-            className="cursor-pointer hover:bg-green-700 duration-300 bg-green-600 text-white"
+            className="md:hidden cursor-pointer hover:bg-green-700 duration-300 bg-green-600 text-white"
             onClick={handleOpenMenu}
           >
-            {!isMenuOpen ? <LucideMenu size={30} /> : <LucideX size={30} />}
+            {isMenuOpen ? <LucideX size={30} /> : <LucideMenu size={30} />}
           </Button>
         </div>
         <Outlet />

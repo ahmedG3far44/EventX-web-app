@@ -18,18 +18,18 @@ import {
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
-interface SidebarProps {
+export interface SidebarProps {
   className?: string;
 }
 
-interface NavItem {
+export interface NavItem {
   icon: React.ElementType;
   label: string;
   href?: string;
   badge?: string;
 }
 
-interface NavSection {
+export interface NavSection {
   title: string;
   items: NavItem[];
 }
@@ -158,7 +158,7 @@ const AsideMenu: React.FC<SidebarProps> = ({ className = "" }) => {
 
   return (
     <aside
-      className={`min-h-screen  animate-slide bg-gray-900 text-white flex flex-col border-r border-gray-800 ${className}`}
+      className={`min-h-screen lg:flex md:w-[25%] bg-gray-900 text-white hidden flex-col border-r border-gray-800 ${className}`}
       role="navigation"
       aria-label="Main navigation"
     >

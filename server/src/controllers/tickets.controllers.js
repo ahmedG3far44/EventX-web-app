@@ -6,15 +6,45 @@ export const buyTickets = async (req, res) => {
     const payload =  req.body;
 
     console.log(payload)
-    // get user info from token
-    // get event info by eventId
-    // check the event has available seats
-    // get number of tickets by type
-    // calculate the total number price
-    // check there is enough balance 
-    // withdraw the amount of total price tickets from user wallet
-    // mutate the all billing info to db
-    // return response with qrCode url and billing info
+    
+    res.status(201).json({
+      data: "buyTickets",
+      success: true,
+      message: "ticket checkout completed!!",
+    });
+  } catch (error) {
+    res.status(500).json({
+      data: "[Error]: something went wrong!!",
+      success: false,
+      message: error.message,
+    });
+  }
+};
+export const getTicketsByEventId = async (req, res) => {
+  try {
+    const payload =  req.body;
+
+    console.log(payload)
+    
+    res.status(201).json({
+      data: "buyTickets",
+      success: true,
+      message: "ticket checkout completed!!",
+    });
+  } catch (error) {
+    res.status(500).json({
+      data: "[Error]: something went wrong!!",
+      success: false,
+      message: error.message,
+    });
+  }
+};
+export const getUserTickets = async (req, res) => {
+  try {
+    const payload =  req.body;
+
+    console.log(payload)
+   
     res.status(201).json({
       data: "buyTickets",
       success: true,

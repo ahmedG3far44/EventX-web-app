@@ -52,25 +52,42 @@ export const getEvent = async (req, res) => {
   }
 };
 
-// @desc    Create new event
-// @route   POST /api/events
-// @access  Private (Admin/Organizer)
+const createSeatsMap = (capacity) => {
+  const cols = Math.ceil(Math.sqrt(capacity * 1.2));
+  const rows = Math.ceil(capacity / cols);
+  const seatsMap = [];
+  let remainingSeats = capacity;
+  for (let row = 0; row < rows; row++) {
+    const seatsInThisRow = Math.min(cols, remainingSeats);
+    const rowArray = Array(seatsInThisRow).fill(0);
+    seatsMap.push(rowArray);
+    remainingSeats -= seatsInThisRow;
+    if (remainingSeats <= 0) break;
+  }
+  console.log(seatsMap);
+  return seatsMap;
+};
+
 export const createEvent = async (req, res) => {
   try {
     const payload = req.body;
-    // take the total seats number
-    // create 2D array of zeros that is match the number of seats
-    // category Id
-    // seats amount || available seats || venue capacity should be the same number
-    // revenue: default(0)
+    const totalSeats = payload.venue.capacity;
+    const seatsMap = createSeatsMap(totalSeats);
+    const seatsAmount = totalSeats;
+    const availableSeats = totalSeats;
+    const initialRevenue = 0;
 
-    console.log(payload);
+    // console.log(payload);
+
+    // console.log();
 
     const event = new Event({
       ...payload,
-      availableSeats: payload.seatsAmount,
+      seatsMap,
+      seatsAmount,
+      availableSeats,
+      revenue: initialRevenue,
     });
-
     await event.save();
 
     res.status(201).json({
@@ -78,16 +95,55 @@ export const createEvent = async (req, res) => {
       data: event,
     });
   } catch (err) {
-    res.status(400).json({
+    res.status(500).json({
       success: false,
       message: err.message,
     });
   }
 };
 
-// @desc    Update event
-// @route   PUT /api/events/:id
-// @access  Private (Admin/Organizer)
+/*
+EXAMPLE REQUEST BODY STRUCTURE (WITHOUT seatsMap):
+{
+  "name": "Valorant Game Event",
+  "description": "Professional e-sports tournament",
+  "emoji": "🎮",
+  "category": "E-Sports",
+  "tags": ["gaming", "e-sports", "tournament", "valorant"],
+  "datetime": "2024-05-15T16:00:00",
+  "organizer": "Gaming League",
+  "popularity": "High Popularity",
+  "revenue": 0,
+  "ticketTypes": {
+    "type": "VIP",
+    "name": "Premium Gaming Experience",
+    "price": 75
+  },
+  "venue": {
+    "name": "Gaming Arena",
+    "capacity": 200,           // seatsMap will be generated to match this capacity
+    "address": {
+      "street": "123 Gaming Blvd",
+      "city": "Boston",
+      "state": "MA",
+      "zipCode": "02101"
+    }
+  }
+}
+
+GENERATED OUTPUT:
+- seatsMap: 2D array of zeros (e.g., for capacity 200 → ~14x15 grid of zeros)
+- availableSeats: 200 (matches venue.capacity)
+- totalSeats: 200 (calculated from generated seatsMap)
+
+VALIDATION RULES:
+1. venue.capacity is used to generate seatsMap
+2. seatsMap is automatically created as 2D array of zeros
+3. availableSeats equals venue.capacity initially
+4. revenue defaults to 0 for new events
+5. All required fields must be present and properly formatted
+*/
+
 export const updateEvent = async (req, res) => {
   try {
     const { id } = req.params;

@@ -157,8 +157,7 @@ const ShowEventDetails = ({
                   <MapPin className="w-5 h-5 text-green-600" />
                   <div>
                     <p className="font-medium">
-                      {event.venue.name}, {event.venue.address.state} ,{" "}
-                      {event.venue.address.city}, {event.venue.address.street}
+                      {event.venue && event.venue.name}
                     </p>
                     <p className="text-sm text-gray-500">Event Venue</p>
                   </div>

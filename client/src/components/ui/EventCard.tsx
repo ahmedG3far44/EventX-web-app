@@ -12,10 +12,10 @@ import type { EventType } from "@/lib/types";
 import { useState } from "react";
 import { Card } from "./card";
 import { Button } from "./button";
+import { useAuth } from "@/contexts/AuthProvider";
 
 const EventCard = ({
-  event,
-  isAdmin,
+  event
 }: {
   event: EventType;
   isAdmin?: boolean;
@@ -28,24 +28,24 @@ const EventCard = ({
   };
 
   const [openMenu, setOpenMenu] = useState(false);
+  const { isAdmin } = useAuth();
   return (
     <div className="relative bg-white w-full rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-start gap-2 mb-3">
         <span className="w-5 h-5">{event.emoji}</span>
         <h3 className="font-semibold text-gray-900 text-lg">{event.name}</h3>
-        <button
+        {isAdmin && <button
           onClick={() => setOpenMenu(!openMenu)}
           className="ml-auto text-gray-400 hover:text-gray-600"
         >
           <MoreHorizontal className="w-5 h-5" />
-        </button>
+        </button>}
       </div>
       {openMenu && <ActionMenu setOpenMenu={setOpenMenu} />}
       <div className="space-y-2 mb-4">
         <div className="flex items-center text-sm text-gray-600">
           <MapPin className="w-4 h-4 mr-2 text-gray-400 " />
-          Venue: {event.venue && event.name} | {event.venue.address.city} ,
-          {event.venue.address.state} , {event.venue.address.street}.
+          Venue: {event.venue && event.name}
         </div>
         <div className="flex items-center text-sm text-gray-600">
           <Calendar className="w-4 h-4 mr-2 text-gray-400" />

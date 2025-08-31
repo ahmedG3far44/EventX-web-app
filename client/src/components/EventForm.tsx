@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Plus, Trash2, Shuffle, MapPin, Tag, Ticket } from "lucide-react";
 import { useEvents } from "@/contexts/EventsProvider";
+import { create } from "domain";
 
 export interface TicketType {
   name: string;
@@ -30,7 +31,7 @@ export interface EventFormData {
   datetime: string;
   organizer: string;
   popularity: string;
-  ticketTypes: TicketType[];
+  ticketTypes: TicketType;
   venue: Venue;
 }
 
@@ -39,6 +40,7 @@ interface FormErrors {
 }
 
 const EventForm: React.FC = () => {
+  const { createEvent } = useEvents();
   const [formData, setFormData] = useState<EventFormData>({
     name: "",
     description: "",
@@ -48,7 +50,7 @@ const EventForm: React.FC = () => {
     datetime: "",
     organizer: "",
     popularity: "",
-    ticketTypes: [{ name: "", type: "GENERAL", price: 0 }],
+    ticketTypes: { name: "", type: "GENERAL", price: 0 },
     venue: {
       name: "",
       capacity: 0,
@@ -60,10 +62,12 @@ const EventForm: React.FC = () => {
       },
     },
   });
+
   const [errors, setErrors] = useState<FormErrors>({});
   const [currentTag, setCurrentTag] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+
   const categories = [
     "Music & Arts",
     "Sports",
@@ -73,13 +77,16 @@ const EventForm: React.FC = () => {
     "Education",
     "Health & Wellness",
     "Entertainment",
+    "E-Sports",
   ];
+
   const popularityOptions = [
     "Low Popularity",
     "Medium Popularity",
     "High Popularity",
     "Very High Popularity",
   ];
+
   const states = [
     "AL",
     "AK",
@@ -131,6 +138,12 @@ const EventForm: React.FC = () => {
     "WV",
     "WI",
     "WY",
+    "Alexandria",
+    "Cairo",
+    "Giza",
+    "Sharjah",
+    "Dubai",
+    "Abu Dhabi",
   ];
 
   const cities = {
@@ -141,6 +154,9 @@ const EventForm: React.FC = () => {
     MA: ["Boston", "Worcester", "Springfield", "Cambridge"],
     IL: ["Chicago", "Rockford", "Peoria", "Springfield"],
     WA: ["Seattle", "Spokane", "Tacoma", "Vancouver"],
+    Alexandria: ["AL-Mandara", "Sidi Gaber", "Stanley", "Gleem"],
+    Cairo: ["Downtown", "Maadi", "Zamalek", "Heliopolis"],
+    Sharjah: ["Al Majaz", "Al Nahda", "Al Qasimia", "Al Taawun"],
   };
 
   const emojis = [
@@ -163,7 +179,7 @@ const EventForm: React.FC = () => {
     "🎊",
     "🎈",
   ];
-  const { createEvent } = useEvents();
+
   const generateRandomEmoji = () => {
     const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
     setFormData((prev) => ({ ...prev, emoji: randomEmoji }));
@@ -196,16 +212,11 @@ const EventForm: React.FC = () => {
     if (!formData.venue.address.zipCode.trim())
       newErrors["venue.address.zipCode"] = "ZIP code is required";
 
-    // Ticket validation
-    formData.ticketTypes.forEach((ticket, index) => {
-      if (!ticket.name.trim())
-        newErrors[`ticketTypes.${index}.name`] = "Ticket name is required";
-      if (ticket.price <= 0)
-        newErrors[`ticketTypes.${index}.price`] =
-          "Price must be greater than 0";
-    });
+    if (!formData.ticketTypes.name.trim())
+      newErrors["ticketTypes.name"] = "Ticket name is required";
+    if (formData.ticketTypes.price <= 0)
+      newErrors["ticketTypes.price"] = "Price must be greater than 0";
 
-    // Tags validation
     if (formData.tags.length === 0)
       newErrors.tags = "At least one tag is required";
 
@@ -220,45 +231,62 @@ const EventForm: React.FC = () => {
       setSubmitSuccess(false);
 
       if (validateForm()) {
-        await createEvent(formData);
-      } else {
-        setIsSubmitting(false);
+        // Create the properly formatted data object
+        const eventData = {
+          name: formData.name,
+          description: formData.description,
+          emoji: formData.emoji,
+          category: formData.category,
+          tags: formData.tags,
+          datetime: formData.datetime,
+          organizer: formData.organizer,
+          popularity: formData.popularity,
+          ticketTypes: formData.ticketTypes,
+          venue: formData.venue,
+        };
+         console.log(formData)
+        await createEvent(eventData);
+
+        console.log("Event Data:", JSON.stringify(eventData, null, 2));
+        setSubmitSuccess(true);
+
+        // Reset form after successful submission
+        setFormData({
+          name: "",
+          description: "",
+          emoji: "🎉",
+          category: "",
+          tags: [],
+          datetime: "",
+          organizer: "",
+          popularity: "",
+          ticketTypes: { name: "", type: "GENERAL", price: 0 },
+          venue: {
+            name: "",
+            capacity: 0,
+            address: {
+              city: "",
+              state: "",
+              zipCode: "",
+              street: "",
+            },
+          },
+        });
       }
     } catch (error) {
       console.log((error as Error).message);
     } finally {
       setIsSubmitting(false);
-      setSubmitSuccess(true);
     }
   };
 
-  const addTicketType = () => {
-    setFormData((prev) => ({
-      ...prev,
-      ticketTypes: [
-        ...prev.ticketTypes,
-        { name: "", type: "GENERAL", price: 0 },
-      ],
-    }));
-  };
-
-  const removeTicketType = (index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      ticketTypes: prev.ticketTypes.filter((_, i) => i !== index),
-    }));
-  };
-
   const updateTicketType = (
-    index: number,
     field: keyof TicketType,
-    value: string
+    value: string | number
   ) => {
     setFormData((prev) => ({
       ...prev,
-      ticketTypes: prev.ticketTypes.map((ticket, i) =>
-        i === index ? { ...ticket, [field]: value } : ticket
-      ),
+      ticketTypes: { ...prev.ticketTypes, [field]: value },
     }));
   };
 
@@ -286,6 +314,11 @@ const EventForm: React.FC = () => {
     }
   };
 
+  const getAvailableCities = () => {
+    const selectedState = formData.venue.address.state;
+    return cities[selectedState as keyof typeof cities] || [];
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-4xl mx-auto">
@@ -304,8 +337,12 @@ const EventForm: React.FC = () => {
               <p className="text-green-800 font-medium">
                 ✅ Event created successfully!
               </p>
+              <pre className="mt-2 text-xs text-green-700 bg-green-100 p-2 rounded overflow-x-auto">
+                {JSON.stringify(formData, null, 2)}
+              </pre>
             </div>
           )}
+
           <form onSubmit={handleSubmit}>
             <div className="space-y-8">
               <div className="space-y-6">
@@ -651,7 +688,7 @@ const EventForm: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      State
+                      State/Region
                     </label>
                     <select
                       value={formData.venue.address.state}
@@ -674,7 +711,7 @@ const EventForm: React.FC = () => {
                           : "border-gray-300"
                       }`}
                     >
-                      <option value="">Select state</option>
+                      <option value="">Select state/region</option>
                       {states.map((state) => (
                         <option key={state} value={state}>
                           {state}
@@ -713,12 +750,12 @@ const EventForm: React.FC = () => {
                       }`}
                       disabled={!formData.venue.address.state}
                     >
-                      {formData.venue.address.state &&
-                        cities.CA.map((city) => (
-                          <option key={city} value={city}>
-                            {city}
-                          </option>
-                        ))}
+                      <option value="">Select city</option>
+                      {getAvailableCities().map((city) => (
+                        <option key={city} value={city}>
+                          {city}
+                        </option>
+                      ))}
                     </select>
                     {errors["venue.address.city"] && (
                       <p className="mt-1 text-sm text-red-600">
@@ -764,110 +801,83 @@ const EventForm: React.FC = () => {
 
               {/* Ticket Types */}
               <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-                    <Ticket className="w-5 h-5" />
-                    Ticket Types
-                  </h2>
-                  <button
-                    type="button"
-                    onClick={addTicketType}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Add Ticket
-                  </button>
-                </div>
+                <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+                  <Ticket className="w-5 h-5" />
+                  Ticket Information
+                </h2>
 
-                {formData.ticketTypes.map((ticket, index) => (
-                  <div
-                    key={index}
-                    className="p-4 border border-gray-200 rounded-lg space-y-4"
-                  >
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-medium text-gray-900">
-                        Ticket {index + 1}
-                      </h3>
-                      {formData.ticketTypes.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeTicketType(index)}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                <div className="p-4 border border-gray-200 rounded-lg space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Ticket Name
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.ticketTypes.name}
+                        onChange={(e) =>
+                          updateTicketType("name", e.target.value)
+                        }
+                        className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                          errors["ticketTypes.name"]
+                            ? "border-red-300"
+                            : "border-gray-300"
+                        }`}
+                        placeholder="Enter ticket name"
+                      />
+                      {errors["ticketTypes.name"] && (
+                        <p className="mt-1 text-sm text-red-600">
+                          {errors["ticketTypes.name"]}
+                        </p>
                       )}
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Ticket Name
-                        </label>
-                        <input
-                          type="text"
-                          value={ticket.name}
-                          onChange={(e) =>
-                            updateTicketType(index, "name", e.target.value)
-                          }
-                          className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                            errors[`ticketTypes.${index}.name`]
-                              ? "border-red-300"
-                              : "border-gray-300"
-                          }`}
-                          placeholder="Enter ticket name"
-                        />
-                        {errors[`ticketTypes.${index}.name`] && (
-                          <p className="mt-1 text-sm text-red-600">
-                            {errors[`ticketTypes.${index}.name`]}
-                          </p>
-                        )}
-                      </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Type
+                      </label>
+                      <select
+                        value={formData.ticketTypes.type}
+                        onChange={(e) =>
+                          updateTicketType("type", e.target.value)
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="GENERAL">General</option>
+                        <option value="VIP">VIP</option>
+                      </select>
+                    </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Type
-                        </label>
-                        <select
-                          value={ticket.type}
-                          onChange={(e) =>
-                            updateTicketType(index, "type", e.target.value)
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        >
-                          <option value="GENERAL">General</option>
-                          <option value="VIP">VIP</option>
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Price ($)
-                        </label>
-                        <input
-                          type="number"
-                          value={ticket.price || ""}
-                          onChange={(e) =>
-                            updateTicketType(index, "price", e.target.value)
-                          }
-                          className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                            errors[`ticketTypes.${index}.price`]
-                              ? "border-red-300"
-                              : "border-gray-300"
-                          }`}
-                          placeholder="Enter price"
-                          min="0"
-                          step="0.01"
-                        />
-                        {errors[`ticketTypes.${index}.price`] && (
-                          <p className="mt-1 text-sm text-red-600">
-                            {errors[`ticketTypes.${index}.price`]}
-                          </p>
-                        )}
-                      </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Price ($)
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.ticketTypes.price || ""}
+                        onChange={(e) =>
+                          updateTicketType(
+                            "price",
+                            parseFloat(e.target.value) || 0
+                          )
+                        }
+                        className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                          errors["ticketTypes.price"]
+                            ? "border-red-300"
+                            : "border-gray-300"
+                        }`}
+                        placeholder="Enter price"
+                        min="0"
+                        step="0.01"
+                      />
+                      {errors["ticketTypes.price"] && (
+                        <p className="mt-1 text-sm text-red-600">
+                          {errors["ticketTypes.price"]}
+                        </p>
+                      )}
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
 
               {/* Submit Button */}

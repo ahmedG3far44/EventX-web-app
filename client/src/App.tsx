@@ -18,6 +18,8 @@ import EventCategories from "./components/admin/EventCategories";
 import MyTickets from "./components/ui/MyTickets";
 import PaymentSuccessPage from "./pages/success";
 import EventForm from "./components/EventForm";
+import ProtectedRoute from "./components/ui/ProtectedRoute";
+import ProtectedUserRoutes from "./components/ui/ProtectedUserRoutes";
 
 const App = () => {
   return (
@@ -28,28 +30,30 @@ const App = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
 
-          {/* Protected user Routes */}
-          <Route path="/events" element={<EventsPage />} />
-          <Route path="/event/:id" element={<EventDetailsPage />} />
-          <Route path="/checkout/:eventId" element={<PaymentPage />} />
-          <Route path="/success" element={<PaymentSuccessPage />} />
-          <Route path="/tickets" element={<MyTickets />} />
+          <Route path="/" element={<ProtectedUserRoutes />}>
+            <Route path="/events" element={<EventsPage />} />
+            <Route path="/event/:id" element={<EventDetailsPage />} />
+            <Route path="/checkout/:eventId" element={<PaymentPage />} />
+            <Route path="/success" element={<PaymentSuccessPage />} />
+            <Route path="/tickets" element={<MyTickets />} />
+          </Route>
           <Route path="*" element={<NotFoundPage />} />
 
-          {/* Protected Admin Routes */}
-          <Route path="dashboard" element={<DashboardPage />}>
-            <Route path="add" element={<EventForm />} />
-            <Route path="insights" element={<Insights />} />
-            <Route path="manage-events" element={<ManageEvents />} />
-            <Route path="manage-events/:id" element={<EventDetails />} />
-            <Route
-              path="attendee-insights/:id"
-              element={<AttendeeInsights />}
-            />
-            <Route path="manage-users" element={<ManageUsers />} />
-            <Route path="analytics-reports" element={<AnalyticsReports />} />
-            <Route path="booking-tickets" element={<BookingTickets />} />
-            <Route path="event-categories" element={<EventCategories />} />
+          <Route path="/" element={<ProtectedRoute admin={true} />}>
+            <Route path="dashboard" element={<DashboardPage />}>
+              <Route path="add" element={<EventForm />} />
+              <Route path="insights" element={<Insights />} />
+              <Route path="manage-events" element={<ManageEvents />} />
+              <Route path="manage-events/:id" element={<EventDetails />} />
+              <Route
+                path="attendee-insights/:id"
+                element={<AttendeeInsights />}
+              />
+              <Route path="manage-users" element={<ManageUsers />} />
+              <Route path="analytics-reports" element={<AnalyticsReports />} />
+              <Route path="booking-tickets" element={<BookingTickets />} />
+              <Route path="event-categories" element={<EventCategories />} />
+            </Route>
           </Route>
 
           <Route path="*" element={<NotFoundPage />} />

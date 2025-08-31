@@ -11,10 +11,10 @@ const TicketTypeSchema = new mongoose.Schema({
     required: true,
     min: 0,
   },
-  available: {
-    type: Number,
+  type: {
+    type: String,
     required: true,
-    min: 0,
+    default: "general",
   },
 });
 

@@ -13,7 +13,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthProvider";
 
 interface FormData {
   email: string;
@@ -26,13 +27,13 @@ interface FormErrors {
 }
 
 const LoginPage: React.FC = () => {
+  const { login, loading } = useAuth();
   const [formData, setFormData] = useState<FormData>({
     email: "",
     password: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -76,22 +77,15 @@ const LoginPage: React.FC = () => {
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-
     if (!validateForm()) {
       return;
     }
-
-    setIsLoading(true);
-
-    // Simulate API call
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Login attempt:", formData);
-      alert("Login successful! (This is just a demo)");
+      const result = await login(formData.email, formData.password);
+      console.log(result?.redirect as string)
+      return <Navigate to={result?.redirect as string} />;
     } catch (error) {
       console.error("Login failed:", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -123,7 +117,7 @@ const LoginPage: React.FC = () => {
                 value={formData.email}
                 onChange={handleInputChange}
                 className={`pl-10 ${errors.email ? "border-red-500" : ""}`}
-                disabled={isLoading}
+                disabled={loading}
               />
             </div>
             {errors.email && (
@@ -145,13 +139,13 @@ const LoginPage: React.FC = () => {
                 className={`pl-10 pr-10 ${
                   errors.password ? "border-red-500" : ""
                 }`}
-                disabled={isLoading}
+                disabled={loading}
               />
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
                 className="absolute right-3 top-3 h-4 w-4 text-gray-400 hover:text-gray-600"
-                disabled={isLoading}
+                disabled={loading}
               >
                 {showPassword ? (
                   <EyeOff className="h-4 w-4" />
@@ -189,10 +183,10 @@ const LoginPage: React.FC = () => {
           <Button
             type="submit"
             className="w-full"
-            disabled={isLoading}
+            disabled={loading}
             onClick={handleSubmit}
           >
-            {isLoading ? "Logging in..." : "Login"}
+            {loading ? "Logging in..." : "Login"}
           </Button>
 
           <div className="text-center text-sm text-gray-600">

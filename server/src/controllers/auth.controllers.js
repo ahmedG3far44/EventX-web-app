@@ -7,6 +7,8 @@ export const login = async (req, res) => {
   try {
     const payload = req.body;
 
+    console.log(payload);
+
     if (!payload) {
       throw new Error("payload data is missing!!");
     }
@@ -22,7 +24,7 @@ export const login = async (req, res) => {
     if (!isPasswordCorrect) {
       throw new Error("your email or password is wrong!!");
     }
-    
+
     const user = await User.findOne({ email }).select({
       _id: 1,
       name: 1,
@@ -45,23 +47,26 @@ export const login = async (req, res) => {
       { ...user._doc, role: "USER" },
       process.env.JWT_SECRETE,
       {
-        expiresIn: "24h",
+        expiresIn: "7d",
       }
     );
 
-    res.cookie("authToken", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000,
-    });
+    // res.cookie("authToken", token, {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === "production",
+    //   sameSite: "strict",
+    //   maxAge: 24 * 60 * 60 * 1000,
+    // });
     const loggedUser = {
       ...user._doc,
     };
 
-    res
-      .status(200)
-      .json(formatResponse(loggedUser, true, "login complete success"));
+    res.status(200).json({
+      data: loggedUser,
+      token,
+      success: true,
+      message: "login complete success",
+    });
   } catch (error) {
     res
       .status(500)
@@ -74,6 +79,7 @@ export const login = async (req, res) => {
 export const register = async (req, res) => {
   try {
     const payload = req.body;
+    const salt = await bcrypt.genSalt(10);
 
     if (!payload) {
       throw new Error("payload data is missing!!");
@@ -81,12 +87,15 @@ export const register = async (req, res) => {
 
     console.log(payload);
 
-    const { name, gender, age, email, password, profile } = payload;
+    // const { name, gender, age, email, password, profile } = payload;
     // check if User exist before or not
 
-    // const hashedPassword = bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(payload.password, salt);
 
-    const user = await User.findOne({ email, password });
+    const user = await User.findOne({
+      email: payload.email,
+      password: hashedPassword,
+    });
 
     // compare email and passwords
     if (user) {
@@ -94,44 +103,60 @@ export const register = async (req, res) => {
     }
 
     // hash new User password before add
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(password, salt);
+    const hash = await bcrypt.hash(payload.password, salt);
 
+    const { profile, age, gender } = payload;
     const newUser = new User({
-      name,
-      email,
-      password: hash,
-      role: "USER",
-      gender,
+      name: payload.name,
+      email: payload.email,
       age,
+      gender,
+      password: hash,
       profileImage: profile,
     });
 
     await newUser.save();
 
     const token = jwt.sign(newUser._doc, process.env.JWT_SECRETE, {
-      expiresIn: "24h",
+      expiresIn: "7d",
     });
-    res.cookie("authToken", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000,
-    });
+    // res.cookie("authToken", token, {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === "production",
+    //   sameSite: "strict",
+    //   maxAge: 24 * 60 * 60 * 1000,
+    // });
+
+    const {
+      _id,
+      name,
+      email,
+      role,
+      profileImage,
+      address,
+      isVerified,
+      createdAt,
+      updatedAt,
+    } = newUser._doc;
 
     const registeredUser = {
-      ...newUser,
+      _id,
+      name,
+      email,
+      role,
+      profile: profileImage,
+      address,
+      isVerified,
+      createdAt,
+      updatedAt,
     };
 
-    res
-      .status(201)
-      .json(
-        formatResponse(
-          registeredUser,
-          true,
-          "a new User was registered  success"
-        )
-      );
+    res.status(201).json({
+      data: registeredUser,
+      token,
+      success: true,
+      message: "a new User was registered  success",
+    });
   } catch (error) {
     res
       .status(500)
@@ -161,12 +186,14 @@ export const createDefaultAdmin = async (req, res) => {
   try {
     const random = Math.floor(Math.random() * 191) + 10;
 
+    const hashedPassword = await bcrypt.hash("@Ranaa125", 10)
+
     const adminProfile =
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLKYamkRB_qMHdd_HvhrxBlHhExgcAW6Mquw&s";
     const newUser = new User({
       name: `Administrator ${random}`,
       email: `admin${random}@gmail.com`,
-      password: "admin@password",
+      password: hashedPassword,
       role: "ADMIN",
       gender: "male",
       age: 23,
@@ -195,12 +222,12 @@ export const createDefaultAdmin = async (req, res) => {
       }
     );
 
-    res.cookie("authToken", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000,
-    });
+    // res.cookie("authToken", token, {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === "production",
+    //   sameSite: "strict",
+    //   maxAge: 24 * 60 * 60 * 1000,
+    // });
 
     const registeredUser = {
       ...payloadUser,

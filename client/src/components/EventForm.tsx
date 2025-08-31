@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { Plus, Trash2, Shuffle, MapPin, Tag, Ticket } from "lucide-react";
+import { Plus, Shuffle, MapPin, Tag, Ticket } from "lucide-react";
 import { useEvents } from "@/contexts/EventsProvider";
-import { create } from "domain";
 
 export interface TicketType {
   name: string;
@@ -88,56 +87,6 @@ const EventForm: React.FC = () => {
   ];
 
   const states = [
-    "AL",
-    "AK",
-    "AZ",
-    "AR",
-    "CA",
-    "CO",
-    "CT",
-    "DE",
-    "FL",
-    "GA",
-    "HI",
-    "ID",
-    "IL",
-    "IN",
-    "IA",
-    "KS",
-    "KY",
-    "LA",
-    "ME",
-    "MD",
-    "MA",
-    "MI",
-    "MN",
-    "MS",
-    "MO",
-    "MT",
-    "NE",
-    "NV",
-    "NH",
-    "NJ",
-    "NM",
-    "NY",
-    "NC",
-    "ND",
-    "OH",
-    "OK",
-    "OR",
-    "PA",
-    "RI",
-    "SC",
-    "SD",
-    "TN",
-    "TX",
-    "UT",
-    "VT",
-    "VA",
-    "WA",
-    "WV",
-    "WI",
-    "WY",
     "Alexandria",
     "Cairo",
     "Giza",
@@ -147,16 +96,11 @@ const EventForm: React.FC = () => {
   ];
 
   const cities = {
-    CA: ["Los Angeles", "San Francisco", "San Diego", "Sacramento"],
-    NY: ["New York", "Buffalo", "Albany", "Rochester"],
-    TX: ["Houston", "Dallas", "Austin", "San Antonio"],
-    FL: ["Miami", "Orlando", "Tampa", "Jacksonville"],
-    MA: ["Boston", "Worcester", "Springfield", "Cambridge"],
-    IL: ["Chicago", "Rockford", "Peoria", "Springfield"],
-    WA: ["Seattle", "Spokane", "Tacoma", "Vancouver"],
     Alexandria: ["AL-Mandara", "Sidi Gaber", "Stanley", "Gleem"],
     Cairo: ["Downtown", "Maadi", "Zamalek", "Heliopolis"],
     Sharjah: ["Al Majaz", "Al Nahda", "Al Qasimia", "Al Taawun"],
+    Dubai: ["Al Majaz", "Al Nahda", "Al Qasimia", "Al Taawun"],
+    AbuDhabi: ["Al Majaz", "Al Nahda", "Al Qasimia", "Al Taawun"],
   };
 
   const emojis = [
@@ -244,7 +188,7 @@ const EventForm: React.FC = () => {
           ticketTypes: formData.ticketTypes,
           venue: formData.venue,
         };
-         console.log(formData)
+        console.log(formData);
         await createEvent(eventData);
 
         console.log("Event Data:", JSON.stringify(eventData, null, 2));
@@ -315,8 +259,11 @@ const EventForm: React.FC = () => {
   };
 
   const getAvailableCities = () => {
-    const selectedState = formData.venue.address.state;
-    return cities[selectedState as keyof typeof cities] || [];
+    const selectedState = formData.venue.address.state || "Alexandria";
+    const citiesList = Object.entries(cities).filter(
+      ([Key]) => Key.toLocaleLowerCase() === selectedState.toLocaleLowerCase()
+    );
+    return citiesList[0][1] || [];
   };
 
   return (

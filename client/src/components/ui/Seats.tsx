@@ -61,9 +61,9 @@ const Seats = ({
   const handleClickSeat = (row: number, column: number, newValue: number) => {
     const nameSeat = `${String.fromCharCode(65 + row)}-${column + 1}`;
     console.log(nameSeat);
-    // update 2D array Seats Map
+    
     updateMapSeats(row, column, newValue);
-    // add name seat to array
+  
     setSelectedSeats((prev) => {
       if (!prev.includes(nameSeat)) {
         return [...prev, nameSeat];

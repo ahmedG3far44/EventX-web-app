@@ -11,7 +11,7 @@ import {
   Upload,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthProvider";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 interface Address {
   area: string;
@@ -97,7 +97,6 @@ const areasByState: Record<string, string[]> = {
     "New Cairo",
   ],
   Giza: ["Dokki", "Mohandessin", "Agouza", "6th of October", "Sheikh Zayed"],
-
 };
 
 export default function SignupPage() {
@@ -126,14 +125,12 @@ export default function SignupPage() {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-
     if (!formData.name.trim()) {
       newErrors.name = "Name is required";
     } else if (formData.name.trim().length < 2) {
       newErrors.name = "Name must be at least 2 characters";
     }
 
-  
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email) {
       newErrors.email = "Email is required";
@@ -582,9 +579,12 @@ export default function SignupPage() {
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-600">
             Already have an account?{" "}
-            <a href="#" className="text-blue-600 hover:text-blue-500 underline">
-              Sign in
-            </a>
+            <Link
+              to="/login"
+              className="text-blue-600 hover:text-blue-500 underline"
+            >
+              Login
+            </Link>
           </p>
         </div>
       </div>

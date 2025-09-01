@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 
-// shadcn UI components
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Link, Navigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthProvider";
 
 interface FormData {
@@ -34,7 +33,7 @@ const LoginPage: React.FC = () => {
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [showPassword, setShowPassword] = useState<boolean>(false);
-
+  const navigate = useNavigate();
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -80,13 +79,14 @@ const LoginPage: React.FC = () => {
     if (!validateForm()) {
       return;
     }
-    try {
-      const result = await login(formData.email, formData.password);
-      console.log(result?.redirect as string)
-      return <Navigate to={result?.redirect as string} />;
-    } catch (error) {
-      console.error("Login failed:", error);
-    }
+    await login(formData.email, formData.password)
+      .then((result) => {
+        console.log(result?.redirect as string);
+        navigate(`${result?.redirect}`);
+      })
+      .catch((error) => {
+        console.log((error as Error).message);
+      });
   };
 
   const togglePasswordVisibility = () => {

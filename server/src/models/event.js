@@ -127,10 +127,7 @@ const EventSchema = new mongoose.Schema(
       required: true,
       enum: ["High Popularity", "Medium Popularity", "Low Popularity"],
     },
-    ticketTypes: {
-      type: TicketTypeSchema,
-      required: true,
-    },
+    ticketTypes: TicketTypeSchema,
     status: {
       type: String,
       required: true,
@@ -168,5 +165,4 @@ EventSchema.virtual("occupancyPercentage").get(function () {
 });
 
 const Event = mongoose.model("Event", EventSchema);
-
 export default Event;

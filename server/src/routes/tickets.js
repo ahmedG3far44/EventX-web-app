@@ -12,7 +12,7 @@ const router = Router();
 // get tickets by events (id)
 // post buy ticket
 router.post("/", buyTickets);
-router.get("/", getUserTickets);
-router.get("/", getTicketsByEventId);
+// router.get("/", getUserTickets);
+router.get("/:userId", getUserTickets);
 
 export default router;

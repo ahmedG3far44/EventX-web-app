@@ -13,9 +13,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Lock } from "lucide-react";
 import { useBookingTickets } from "@/contexts/BookingTicketsProvider";
 import { useEvents } from "@/contexts/EventsProvider";
+import { Navigate } from "react-router-dom";
 // import { Navigate } from "react-router-dom";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL as string;
+// const BASE_URL = import.meta.env.VITE_BASE_URL as string;
 
 export interface PaymentFormData {
   paymentMethod: "card" | "paypal";
@@ -26,9 +27,13 @@ export interface PaymentFormData {
 }
 
 const PaymentForm = ({ eventId }: { eventId: string }) => {
-  const { events } = useEvents();
+  const { events, eventDetails } = useEvents();
   console.log(eventId);
-  const { getTotalPrice, selectedSeats } = useBookingTickets();
+  console.log(eventDetails);
+  const { totalTicketsPrice, selectedSeats, handleTickets } =
+    useBookingTickets();
+
+  console.log(totalTicketsPrice);
   const [loading, setLoading] = useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [paymentDetails, setPaymentInfo] = useState<PaymentFormData>({
@@ -39,22 +44,19 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
     cvc: "",
   });
 
-  // Wait for contexts to be properly initialized
   useEffect(() => {
-    // Add a small delay to ensure contexts are fully loaded
     const timer = setTimeout(() => {
       setIsInitialized(true);
       console.log("PaymentForm Debug Info:");
       console.log("eventId:", eventId);
       console.log("events length:", events?.length);
       console.log("selectedSeats:", selectedSeats);
-      console.log("totalPrice:", getTotalPrice?.());
+      console.log("totalPrice:", totalTicketsPrice);
     }, 100);
 
     return () => clearTimeout(timer);
   }, []);
 
-  // Show loading while contexts initialize
   if (!isInitialized) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -70,34 +72,27 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
     );
   }
 
-  // const event = events?.find((event) => event._id === eventId);
-  // const totalPrice = getTotalPrice?.() || 0;
 
-  // Only redirect after contexts are initialized
-  // if (!eventId) {
-  //   console.error("No eventId found in URL params");
-  //   return <Navigate to="/events" replace />;
-  // }
+  if (!eventId) {
+    console.error("No eventId found in URL params");
+    return <Navigate to="/events" replace />;
+  }
 
-  // if (!events || events.length === 0) {
-  //   console.error("Events not loaded yet");
-  //   return <Navigate to="/events" replace />;
-  // }
+  if (!eventDetails) {
+    console.error("Events not loaded yet");
+    return <Navigate to="/events" replace />;
+  }
 
-  // if (!event) {
-  //   console.error("Event not found with ID:", eventId);
-  //   return <Navigate to="/events" replace />;
-  // }
 
-  // if (!selectedSeats || selectedSeats.length === 0) {
-  //   console.error("No seats selected, redirecting to event page");
-  //   return <Navigate to={`/events/${eventId}`} replace />;
-  // }
+  if (!selectedSeats || selectedSeats.length === 0) {
+    console.error("No seats selected, redirecting to event page");
+    return <Navigate to={`/event/${eventId}`} replace />;
+  }
 
-  // if (totalPrice === 0) {
-  //   console.error("Total price is 0, redirecting to event page");
-  //   return <Navigate to={`/events/${eventId}`} replace />;
-  // }
+  if (totalTicketsPrice === 0) {
+    console.error("Total price is 0, redirecting to event page");
+    return <Navigate to={`/event/${eventId}`} replace />;
+  }
 
   const handleInputChange = (field: keyof PaymentFormData, value: string) => {
     setPaymentInfo((prev) => ({
@@ -138,26 +133,9 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
       setLoading(true);
       console.log("Payment data:", paymentDetails);
 
-      const response = await fetch(`${BASE_URL}/tickets`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          eventId,
-          price: 0,
-          reservedSeats: selectedSeats,
-          paymentDetails,
-        }),
-      });
+      const result = await handleTickets(paymentDetails);
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Payment failed: ${response.status} ${errorText}`);
-      }
-
-      const data = await response.json();
-      console.log("Payment successful:", data);
+      console.log(result);
 
       // Reset form
       setPaymentInfo({
@@ -184,10 +162,12 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
             Payment Amount:
-            <span className="mx-4 font-bold text-green-500">${0}</span>
+            <span className="mx-4 font-bold text-green-500">
+              ${totalTicketsPrice}
+            </span>
           </CardTitle>
           <CardDescription className="text-center">
-            Complete your purchase for 
+            Complete your purchase for
           </CardDescription>
           <CardDescription className="text-center text-sm">
             Selected seats: {selectedSeats.length} seat
@@ -312,7 +292,7 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
               size="lg"
             >
               <Lock className="mr-2 h-4 w-4" />
-              {loading ? "Processing payment..." : `Pay $${0}`}
+              {loading ? "Processing payment..." : `Pay $${totalTicketsPrice}`}
             </Button>
 
             {/* Security Notice */}

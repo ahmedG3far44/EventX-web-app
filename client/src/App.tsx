@@ -20,6 +20,7 @@ import PaymentSuccessPage from "./pages/success";
 import EventForm from "./components/EventForm";
 import ProtectedRoute from "./components/ui/ProtectedRoute";
 import ProtectedUserRoutes from "./components/ui/ProtectedUserRoutes";
+import TicketPage from "./pages/ticket";
 
 const App = () => {
   return (
@@ -36,6 +37,7 @@ const App = () => {
             <Route path="/checkout/:eventId" element={<PaymentPage />} />
             <Route path="/success" element={<PaymentSuccessPage />} />
             <Route path="/tickets" element={<MyTickets />} />
+            <Route path="/tickets/:ticketId" element={<TicketPage  />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
 

@@ -1,11 +1,9 @@
-// import { useState } from "react";
-
-import { useState } from "react";
 import type { EventType } from "@/lib/types";
 import { Link } from "react-router-dom";
 import { Card } from "./card";
 import { Badge } from "./badge";
 import { Button } from "./button";
+import { useBookingTickets } from "@/contexts/BookingTicketsProvider";
 
 function getSeatStatusColor(seat: number): string {
   switch (seat) {
@@ -22,28 +20,26 @@ function getSeatStatusColor(seat: number): string {
 
 const Seats = ({
   event,
-  seatsMap,
   editState = false,
 }: {
   event?: EventType;
   seatsMap: number[][];
   editState: boolean;
 }) => {
-  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
-  const ticketPrice = event ? event.ticketTypes.price : 25;
-  const [seats, setNewSeatsMap] = useState<number[][]>(
-    seatsMap || [
-      [0, 2, 0, 0],
-      [0, 0, 0, 0, 0, 0],
-      [0, 2, 0, 1, 0, 0],
-      [0, 1, 1, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 1, 0, 0, 0],
-    ]
-  );
-  const [ticketState] = useState<"book" | "buy">("buy");
-  const [totalTicketsPrice, setTotalPrice] = useState(0);
+  const {
+    selectedSeats,
+    seats,
+    ticketState,
+    totalTicketsPrice,
+    ticketPrice,
+    setTicketState,
+    setTotalPrice,
+    setNewSeatsMap,
+    setSelectedSeats,
+  } = useBookingTickets();
 
-  const updateMapSeats = (
+
+    const updateMapSeats = (
     rowIndex: number,
     colIndex: number,
     newValue: number
@@ -52,18 +48,19 @@ const Seats = ({
       const newSeatsMap = [...prevGrid];
       newSeatsMap[rowIndex] = [...newSeatsMap[rowIndex]];
       newSeatsMap[rowIndex][colIndex] = newValue;
-      if (ticketState === "buy") {
-        setTotalPrice((prev) => prev + ticketPrice);
-      }
+      // if (ticketState === "buy" || ticketState === "reserve") {
+      //   setTotalPrice((prev) => prev + );
+      // }
+      console.log(newSeatsMap);
       return newSeatsMap;
     });
   };
+  // setNewSeatsMap(seatsMap);
+
   const handleClickSeat = (row: number, column: number, newValue: number) => {
     const nameSeat = `${String.fromCharCode(65 + row)}-${column + 1}`;
-    console.log(nameSeat);
-    
-    updateMapSeats(row, column, newValue);
-  
+    updateMapSeats(row, column, newValue)
+    setTotalPrice((prev => prev + ticketPrice))
     setSelectedSeats((prev) => {
       if (!prev.includes(nameSeat)) {
         return [...prev, nameSeat];
@@ -85,6 +82,26 @@ const Seats = ({
           <p>Reserved Seats: {event.seatsAmount - event.availableSeats}</p>
         </div>
       )}
+      <div className="flex justify-start items-center space-x-4">
+        <Button
+          className="disabled:bg-zinc-500 disabled:cursor-not-allowed"
+          disabled={ticketState === "reserve"}
+          onClick={() => {
+            setTicketState("reserve");
+          }}
+        >
+          Reserve
+        </Button>
+        <Button
+          className="disabled:bg-zinc-500 disabled:cursor-not-allowed"
+          disabled={ticketState === "buy"}
+          onClick={() => {
+            setTicketState("buy");
+          }}
+        >
+          Buy Ticket
+        </Button>
+      </div>
       <h1 className="text-center text-xl font-semibold my-4">
         Preview Seats Allocation:
       </h1>
@@ -144,7 +161,11 @@ const Seats = ({
                       handleClickSeat(
                         rowIndex,
                         colIndex,
-                        ticketState === "book" ? 1 : 2
+                        ticketState === "reserve"
+                          ? 1
+                          : ticketState === "buy"
+                          ? 2
+                          : 0
                       )
                     }
                     className={`w-12 h-12 cursor-pointer hover:opacity-85 duration-300   rounded-md  hover:scale-95 flex items-center justify-center  m-1 ${getSeatStatusColor(
@@ -173,14 +194,11 @@ const Seats = ({
 
           <div className="w-full space-x-8 flex justify-center items-center">
             <Link
-              className="block w-1/2 px-4 py-2  rounded-md bg-violet-500 text-center  text-sm text-white hover:bg-violet-600 duration-300 cursor-pointer "
+              className="w-full p-4  rounded-md bg-violet-500 text-center  text-sm text-white hover:bg-violet-600 duration-300 cursor-pointer "
               to={`/checkout/${event?._id}`}
             >
-              Buy Ticket
+              {ticketState.toUpperCase()} TICKETS
             </Link>
-            <Button className="w-1/2 px-4 py-2  rounded-md bg-violet-500 text-center  text-sm text-white hover:bg-violet-600 duration-300 cursor-pointer ">
-              Cancel Payment
-            </Button>
           </div>
         </>
       )}

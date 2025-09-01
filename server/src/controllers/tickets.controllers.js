@@ -1,14 +1,53 @@
-// import Event from "../models/event.js";
-// import Ticket from "../models/ticket.js";
+import Event from "../models/event.js";
+import Ticket from "../models/ticket.js";
+
 
 export const buyTickets = async (req, res) => {
   try {
-    const payload =  req.body;
 
-    console.log(payload)
-    
+    // Ticket.dropIndex("ticketNumber_1");
+    const payload = req.body;
+    // const user = req.user;
+
+    const eventId = payload.event;
+    const newSeatsMap = payload.seats;
+    const availableSeats = payload.quantity;
+    const updatedRevenue = payload.price;
+
+    // update event seats map
+    // update event available tickets reduce the number tickets
+    // update event revenue
+    const event = await Event.findByIdAndUpdate(
+      eventId,
+      {
+        $inc: { revenue: updatedRevenue },
+        availableSeats,
+        seatsMap: newSeatsMap,
+      },
+      { new: true }
+    );
+
+    console.log(event);
+
+    // create a new ticket to the user
+    const { user, ticketType, seatsNumber, price, quantity, paymentDetails } =
+      payload;
+    const ticket = new Ticket({
+      event: eventId,
+      user,
+      ticketType,
+      seatsNumber,
+      price,
+      quantity,
+      paymentDetails,
+    });
+
+    await ticket.save();
+
+    console.log(ticket);
+
     res.status(201).json({
-      data: "buyTickets",
+      data: ticket,
       success: true,
       message: "ticket checkout completed!!",
     });
@@ -22,10 +61,10 @@ export const buyTickets = async (req, res) => {
 };
 export const getTicketsByEventId = async (req, res) => {
   try {
-    const payload =  req.body;
+    const payload = req.body;
 
-    console.log(payload)
-    
+    console.log(payload);
+
     res.status(201).json({
       data: "buyTickets",
       success: true,
@@ -41,14 +80,19 @@ export const getTicketsByEventId = async (req, res) => {
 };
 export const getUserTickets = async (req, res) => {
   try {
-    const payload =  req.body;
+    const payload = req.body;
+    const { userId } = req.params;
 
-    console.log(payload)
-   
-    res.status(201).json({
-      data: "buyTickets",
+    console.log(payload);
+
+    console.log(userId);
+
+    const tickets = await Ticket.find({ user: userId });
+
+    res.status(200).json({
+      data: tickets,
       success: true,
-      message: "ticket checkout completed!!",
+      message: "get user tickets completed!!",
     });
   } catch (error) {
     res.status(500).json({

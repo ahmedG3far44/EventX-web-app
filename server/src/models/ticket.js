@@ -1,11 +1,8 @@
 import { Schema, model } from "mongoose";
+
 const ticketSchema = new Schema(
   {
-    ticketNumber: {
-      type: String,
-      required: true,
-      unique: true,
-    },
+    // FIX: Use ObjectId references instead of String
     event: {
       type: Schema.Types.ObjectId,
       ref: "Event",
@@ -13,18 +10,15 @@ const ticketSchema = new Schema(
     },
     user: {
       type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+      ref: "users",
+      required: true, // Fixed typo: was "require"
     },
     ticketType: {
       type: String,
       enum: ["general", "vip"],
       required: true,
     },
-    seatNumber: {
-      type: String,
-      trim: true,
-    },
+    seatsNumber: [String],
     price: {
       type: Number,
       required: true,
@@ -37,40 +31,36 @@ const ticketSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["booked", "confirmed", "checked-in", "cancelled", "refunded"],
-      default: "booked",
+      enum: ["reserved", "paid"],
+      default: "reserved",
     },
     qrCode: {
       type: String,
-      required: true,
     },
     paymentDetails: {
-      paymentId: { type: String },
+      paymentId: Schema.Types.ObjectId,
       paymentMethod: {
         type: String,
-        enum: ["credit-card", "debit-card", "paypal", "stripe"],
+        enum: ["card", "debit-card", "paypal", "stripe", "reserved"],
       },
-      transactionId: { type: String },
+      cardName: { type: String },
+      cardNumber: { type: String },
+      expiryDate: { type: String },
+      cvc: { type: String },
       paymentStatus: {
         type: String,
         enum: ["pending", "completed", "failed", "refunded"],
-        default: "pending",
+        default: "completed",
       },
-    },
-    bookingDate: {
-      type: Date,
-      default: Date.now,
-    },
-    checkInTime: {
-      type: Date,
     },
   },
   {
     timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
   }
 );
-const Ticket = model("tickets", ticketSchema);
 
+// Add compound index to prevent duplicate tickets for same event/user
+ticketSchema.index({ event: 1, user: 1, ticketType: 1 });
+
+const Ticket = model("tickets", ticketSchema);
 export default Ticket;

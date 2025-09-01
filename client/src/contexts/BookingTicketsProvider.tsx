@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+
 import {
   createContext,
   useContext,
@@ -7,158 +8,122 @@ import {
   type SetStateAction,
   type Dispatch,
 } from "react";
+import { useEvents } from "./EventsProvider";
+import type { PaymentFormData } from "@/components/ui/PaymentForm";
+import { useAuth } from "./AuthProvider";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL as string;
 
 export interface BookingContextType {
-  seats: SeatType[][];
-  setSeats: Dispatch<SetStateAction<SeatType[][]>>;
   selectedSeats: string[];
   setSelectedSeats: Dispatch<SetStateAction<string[]>>;
-  initialSeats: () => void;
-  handleSeatClick: (rowIndex: number, seatIndex: number) => void;
-  getSeatClassName: (
-    seat: SeatType,
-    rowIndex: number,
-    seatIndex: number
-  ) => string;
-  getSelectedSeatCount: () => number;
-  handleBooking: () => void;
-  getTotalPrice: () => number;
+  ticketPrice: number;
+  seats: number[][];
+  setNewSeatsMap: Dispatch<SetStateAction<number[][]>>;
+  ticketState: "buy" | "reserve";
+  setTicketState: Dispatch<SetStateAction<"buy" | "reserve">>;
+  totalTicketsPrice: number;
+  setTotalPrice: Dispatch<SetStateAction<number>>;
+  handleTickets: (paymentInfo: PaymentFormData) => Promise<void>;
   loading: boolean;
   error: string | null;
 }
-export interface SeatType {
-  id?: number;
-  row?: number;
-  number?: number;
-  status: SeatStatusType;
-}
 
-export type SeatStatusType = "available" | "selected" | "paid" | "reserved";
 export const BookingContext = createContext<BookingContextType>({
-  seats: [],
-  setSeats: () => {},
   selectedSeats: [],
   setSelectedSeats: () => {},
-  initialSeats: () => {},
-  handleSeatClick: () => {},
-  getSeatClassName: () => "",
-  getTotalPrice: () => 0,
-  getSelectedSeatCount: () => 0,
-  handleBooking: () => {},
+  ticketPrice: 0,
+  seats: [],
+  setNewSeatsMap: () => {},
+  ticketState: "buy",
+  setTicketState: () => {},
+  totalTicketsPrice: 0,
+  setTotalPrice: () => {},
+  handleTickets: () => Promise.resolve(),
   loading: false,
   error: null,
 });
 
 const BookingTicketsProvider = ({ children }: { children: ReactNode }) => {
-  const initialSeats = () => {
-    const seats = [];
-    const rows = 5;
-    const seatsPerRow = [6, 8, 10, 10, 10];
-    let seatId = 1;
-    for (let row = 0; row < rows; row++) {
-      const rowSeats = [];
-      for (let seat = 0; seat < seatsPerRow[row]; seat++) {
-        rowSeats.push({
-          id: seatId++,
-          row: row + 1,
-          number: seat + 1,
-          status: "available",
-        });
-      }
-      seats.push(rowSeats);
-    }
-    return seats;
-  };
-  const [seats, setSeats] = useState(initialSeats() as SeatType[][]);
+  const { eventDetails } = useEvents();
+  const { user, token } = useAuth();
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
-
-  //   [
-  //     "0-0",
-  //     "0-1",
-  //     "0-4",
-  //     "1-0",
-  //   ]
-  const [loading, setLoading] = useState<boolean>(false);
+  const ticketPrice = eventDetails ? eventDetails.ticketTypes.price : 25;
+  const [seats, setNewSeatsMap] = useState<number[][]>([
+    [0, 2, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 2, 0, 1, 0, 0],
+    [0, 1, 1, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0],
+  ]);
+  const [ticketState, setTicketState] = useState<"reserve" | "buy">("buy");
+  const [totalTicketsPrice, setTotalPrice] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getSeatClassName = (
-    seat: SeatType,
-    rowIndex: number,
-    seatIndex: number
-  ) => {
-    const baseClasses =
-      "w-8 h-8 rounded-md cursor-pointer transition-all duration-200 hover:scale-105 border-2";
-    const seatKey = `${rowIndex}-${seatIndex}`;
-    const isSelected = selectedSeats.includes(seatKey);
+  const handleTickets = async (paymentInfo: PaymentFormData) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const { cardName, cardNumber, cvc, expiryDate, paymentMethod } =
+        paymentInfo;
+      const formData = {
+        event: eventDetails._id,
+        user: user?._id,
+        ticketType: "general",
+        seatsNumber: selectedSeats,
+        price: totalTicketsPrice,
+        quantity: selectedSeats.length,
+        seats,
+        paymentDetails: {
+          paymentMethod,
+          cardName,
+          cardNumber,
+          expiryDate,
+          cvc,
+          paymentStatus: "completed",
+        },
+      };
+      const response = await fetch(`${BASE_URL}/tickets`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
 
-    if (seat.status === "paid") {
-      return `${baseClasses} bg-purple-600 border-purple-700 cursor-not-allowed`;
+      if (!response.ok) {
+        throw new Error("connection error can't reserve your tickets!!");
+      }
+
+      const data = await response.json();
+      console.log("handle buy or reserve tickets");
+      console.log(formData);
+      console.log(token);
+      console.log(data);
+      return data.data;
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setLoading(false);
     }
-    if (seat.status === "reserved") {
-      return `${baseClasses} bg-purple-400 border-purple-500 cursor-not-allowed`;
-    }
-    if (isSelected) {
-      return `${baseClasses} bg-green-500 border-green-600 shadow-lg`;
-    }
-    return `${baseClasses} bg-gray-300 border-gray-400 hover:bg-gray-200`;
   };
-
-  const getTotalPrice = () => {
-    return getSelectedSeatCount() * 25;
-  };
-
-  const getSelectedSeatCount = () => selectedSeats.length;
-
-  const handleBooking = () => {
-    if (selectedSeats.length === 0) return;
-    alert(`Booking ${selectedSeats.length} seat(s) for $${getTotalPrice()}`);
-
-    // Update seat status to reserved after booking
-    const newSeats = seats.map((row, rowIndex) =>
-      row.map((seat: SeatType, seatIndex: number) => {
-        const seatKey = `${rowIndex}-${seatIndex}`;
-        if (selectedSeats.includes(seatKey)) {
-          return { ...seat, status: "reserved" as SeatStatusType };
-        }
-        return seat;
-      })
-    );
-
-    setSeats(newSeats);
-    setSelectedSeats([]);
-  };
-  const handleSeatClick = (rowIndex: number, seatIndex: number) => {
-    const seat = seats[rowIndex][seatIndex];
-
-    if (seat.status === "paid" || seat.status === "reserved") return;
-
-    const seatKey = `${rowIndex}-${seatIndex}`;
-    const isSelected = selectedSeats.includes(seatKey);
-
-    if (isSelected) {
-      setSelectedSeats(selectedSeats.filter((s) => s !== seatKey));
-    } else {
-      setSelectedSeats([...selectedSeats, seatKey]);
-    }
-
-    console.log(selectedSeats);
-  };
-  console.log(setError, setLoading);
   return (
     <BookingContext.Provider
       value={{
         seats,
-        setSeats,
         selectedSeats,
         setSelectedSeats,
-        handleSeatClick,
-        getTotalPrice,
-        getSeatClassName,
-        getSelectedSeatCount,
-        handleBooking,
-        initialSeats,
-        error,
+        ticketPrice,
+        setNewSeatsMap,
+        ticketState,
+        setTicketState,
+        totalTicketsPrice,
+        setTotalPrice,
+        handleTickets,
         loading,
+        error,
       }}
     >
       {children}
@@ -167,5 +132,26 @@ const BookingTicketsProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const useBookingTickets = () => useContext(BookingContext);
-
 export default BookingTicketsProvider;
+
+//    {
+//     ticketId:"",
+//     eventId: "",
+//     user: "",
+//     ticketType:"general",
+//     seatNumber: ["A-1", "B-3", "C-2"],
+//     price:240,
+//     quantity: 3,
+//     status: "paid",
+//     qrCode: "base_url/tickets/ticketId",
+//     paymentDetails: {
+//       paymentId:"id",
+//       paymentMethod:"card",
+//       cardName:"Ahmed G3far",
+//       cardNumber: 4848 4848 4848 4848
+//       expiryDate: 08/29,
+//       cvc: 343,
+//       paymentStatus:"completed",
+//     },
+//     bookingDate: 31/8/2025,
+//   }

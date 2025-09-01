@@ -14,18 +14,13 @@ import { Card } from "./card";
 import { Button } from "./button";
 import { useAuth } from "@/contexts/AuthProvider";
 
-const EventCard = ({
-  event
-}: {
-  event: EventType;
-  isAdmin?: boolean;
-}) => {
+const EventCard = ({ event }: { event: EventType; isAdmin?: boolean }) => {
   const eventTime = new Date(event.datetime);
   const eventDate = new Date(event.datetime);
 
-  const formatCurrency = (amount: number) => {
-    return `${amount.toLocaleString()}EGP`;
-  };
+  // const formatCurrency = (amount: number) => {
+  //   return `${amount.toString()} EGP`;
+  // };
 
   const [openMenu, setOpenMenu] = useState(false);
   const { isAdmin } = useAuth();
@@ -34,12 +29,14 @@ const EventCard = ({
       <div className="flex items-start justify-start gap-2 mb-3">
         <span className="w-5 h-5">{event.emoji}</span>
         <h3 className="font-semibold text-gray-900 text-lg">{event.name}</h3>
-        {isAdmin && <button
-          onClick={() => setOpenMenu(!openMenu)}
-          className="ml-auto text-gray-400 hover:text-gray-600"
-        >
-          <MoreHorizontal className="w-5 h-5" />
-        </button>}
+        {isAdmin && (
+          <button
+            onClick={() => setOpenMenu(!openMenu)}
+            className="ml-auto text-gray-400 hover:text-gray-600"
+          >
+            <MoreHorizontal className="w-5 h-5" />
+          </button>
+        )}
       </div>
       {openMenu && <ActionMenu setOpenMenu={setOpenMenu} />}
       <div className="space-y-2 mb-4">
@@ -60,7 +57,7 @@ const EventCard = ({
       <div className="flex items-center justify-between text-sm">
         <div className="flex items-center space-x-4">
           <div className="flex items-center text-green-600">
-            {formatCurrency(event.ticketTypes.price)}
+            {event?.ticketTypes?.price.toLocaleString()} EGP
           </div>
           <div className="flex items-center text-red-600">
             <TrendingUp className="w-4 h-4 mr-1" />

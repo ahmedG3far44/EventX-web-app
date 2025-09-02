@@ -14,6 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useBookingTickets } from "@/contexts/BookingTicketsProvider";
+import { Navigate, useNavigate } from "react-router-dom";
 
 interface PaymentDetails {
   transactionId: string;
@@ -28,18 +29,19 @@ interface PaymentDetails {
 const PaymentSuccessPage: React.FC = () => {
   const [countdown, setCountdown] = useState<number>(10);
   const [isRedirecting, setIsRedirecting] = useState<boolean>(false);
-  const { getTotalPrice } = useBookingTickets();
+  const { totalTicketsPrice } = useBookingTickets();
 
   // Mock payment details - in real app, this would come from props or API
   const paymentDetails: PaymentDetails = {
     transactionId: "TXN-2024-08-25-001",
-    amount: getTotalPrice(),
+    amount: totalTicketsPrice,
     currency: "USD",
     paymentMethod: "Credit Card (**** 4242)",
     date: new Date().toLocaleString(),
     description: "Premium Subscription Plan",
     merchantName: "Your Company Name",
   };
+  const navigate = useNavigate();
 
   // Countdown timer effect
   useEffect(() => {
@@ -57,12 +59,13 @@ const PaymentSuccessPage: React.FC = () => {
     setIsRedirecting(true);
     // Simulate redirect to home page
     setTimeout(() => {
-      alert("Redirecting to home page... (This is just a demo)");
-      console.log("Redirecting to home page");
-      // In a real app, you would use router.push('/') or window.location.href = '/'
+      navigate("/");
     }, 500);
   };
 
+  if (totalTicketsPrice === 0) {
+    return <Navigate to={"/"} />;
+  }
   const handleGoHome = () => {
     setIsRedirecting(true);
     handleRedirect();
@@ -94,7 +97,7 @@ const PaymentSuccessPage: React.FC = () => {
   };
 
   return (
-    <div className="overflow-hidden min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
+    <div className="overflow-hidden  flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-2xl space-y-6">
         {/* Success Card */}
         <Card className="text-center shadow-lg">

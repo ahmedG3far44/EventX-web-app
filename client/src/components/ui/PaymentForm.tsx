@@ -13,7 +13,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Lock } from "lucide-react";
 import { useBookingTickets } from "@/contexts/BookingTicketsProvider";
 import { useEvents } from "@/contexts/EventsProvider";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 // import { Navigate } from "react-router-dom";
 
 // const BASE_URL = import.meta.env.VITE_BASE_URL as string;
@@ -28,6 +28,7 @@ export interface PaymentFormData {
 
 const PaymentForm = ({ eventId }: { eventId: string }) => {
   const { events, eventDetails } = useEvents();
+  const navigate = useNavigate();
   console.log(eventId);
   console.log(eventDetails);
   const { totalTicketsPrice, selectedSeats, handleTickets } =
@@ -72,7 +73,6 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
     );
   }
 
-
   if (!eventId) {
     console.error("No eventId found in URL params");
     return <Navigate to="/events" replace />;
@@ -82,7 +82,6 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
     console.error("Events not loaded yet");
     return <Navigate to="/events" replace />;
   }
-
 
   if (!selectedSeats || selectedSeats.length === 0) {
     console.error("No seats selected, redirecting to event page");
@@ -147,7 +146,7 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
       });
 
       // TODO: Navigate to success page
-      // navigate('/payment-success');
+      navigate("/success");
     } catch (error) {
       console.error("Payment error:", (error as Error).message);
       // TODO: Show error message to user

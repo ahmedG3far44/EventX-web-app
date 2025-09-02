@@ -19,7 +19,7 @@ const EventsPage = () => {
 
   if (error) return <div className="text-red-500 p-2 rounded-md">{error}</div>;
   return (
-    <div className="w-3/4 m-auto">
+    <div className="w-3/4 m-auto mt-20">
       <EventSearchFilter />
     </div>
   );

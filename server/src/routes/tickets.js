@@ -8,11 +8,8 @@ import {
 
 const router = Router();
 
-// get users tickets
-// get tickets by events (id)
-// post buy ticket
-router.post("/", buyTickets);
-// router.get("/", getUserTickets);
-router.get("/:userId", getUserTickets);
+
+router.post("/", verifyAccessToken, buyTickets);
+router.get("/:userId", verifyAccessToken, getUserTickets);
 
 export default router;

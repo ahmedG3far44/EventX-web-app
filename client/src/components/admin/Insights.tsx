@@ -12,6 +12,7 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import Seats from "../ui/Seats";
+import { useAnalytics } from "@/contexts/AnalyticsProvider";
 
 interface Event {
   id: number;
@@ -24,6 +25,10 @@ interface Event {
 const Insights: React.FC = () => {
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(null);
   const [hoveredSegment, setHoveredSegment] = useState<number | null>(null);
+
+  const { overAllAnalysis } = useAnalytics();
+
+  console.log(overAllAnalysis);
 
   const upcomingEvents: Event[] = [
     {
@@ -62,26 +67,6 @@ const Insights: React.FC = () => {
       bgColor: "bg-red-600",
     },
   ];
-
-  // const notifications: Notification[] = [
-  //   { id: 1, icon: "💸", message: "Paycheck released for artists @Wayo Event" },
-  //   {
-  //     id: 2,
-  //     icon: "🏦",
-  //     message: "Total revenue has been transferred to bank",
-  //   },
-  //   { id: 3, icon: "🎤", message: "@Alan Walker Event in 3 days" },
-  //   {
-  //     id: 4,
-  //     icon: "💸",
-  //     message: "Paycheck released for artists @Cyndrax Event",
-  //   },
-  //   {
-  //     id: 5,
-  //     icon: "💸",
-  //     message: "Paycheck released for artists @Get Together Event",
-  //   },
-  // ];
 
   // Line chart data
   const chartData = [
@@ -368,7 +353,9 @@ const Insights: React.FC = () => {
                 <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">
                   EVENTS
                 </p>
-                <p className="text-2xl font-bold text-blue-600">28 Events</p>
+                <p className="text-2xl font-bold text-blue-600">
+                  {overAllAnalysis.overview.totalEvents} Events
+                </p>
               </div>
             </div>
           </div>
@@ -383,7 +370,10 @@ const Insights: React.FC = () => {
                 <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">
                   BOOKINGS
                 </p>
-                <p className="text-2xl font-bold text-orange-600">2,7598</p>
+                <p className="text-2xl font-bold text-orange-600">
+                  {" "}
+                  {overAllAnalysis.overview.totalTickets}{" "}
+                </p>
               </div>
             </div>
           </div>
@@ -398,7 +388,9 @@ const Insights: React.FC = () => {
                 <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">
                   REVENUE
                 </p>
-                <p className="text-2xl font-bold text-green-600">623,500LKR</p>
+                <p className="text-2xl font-bold text-green-600">
+                  {overAllAnalysis.overview.totalRevenue} EGP
+                </p>
               </div>
             </div>
           </div>

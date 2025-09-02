@@ -143,7 +143,8 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
 
       const data = await response.json();
 
-      console.log(data.data);
+      console.log("Event Details Data:");
+      console.log(data);
       setEventDetails(data.data);
 
       return data.data;

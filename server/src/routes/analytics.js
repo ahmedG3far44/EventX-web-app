@@ -1,12 +1,16 @@
 import { Router } from "express";
-
-
+import {
+  getOverallAnalytics,
+  getEventAnalytics,
+  getUserAnalytics,
+  getRevenueAnalytics,
+} from "../controllers/analytics.controllers.js";
 
 const router = Router();
 
-router.get("/", async (req, res)=>{
-    res.send("analytics")
-});
-
+router.get("/overall", getOverallAnalytics);
+router.get("/event/:eventId", getEventAnalytics);
+router.get("/users", getUserAnalytics);
+router.get("/revenue", getRevenueAnalytics);
 
 export default router;

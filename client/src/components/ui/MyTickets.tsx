@@ -298,7 +298,7 @@ const MyTickets: React.FC = () => {
   const [selectedTicket, setSelectedTicket] = useState<TicketData | null>(null);
   const [showDetails, setShowDetails] = useState<boolean>(false);
 
-  const { token } = useAuth();
+  const { token, user } = useAuth();
 
   const dummyData: TicketData[] = [
     {
@@ -373,7 +373,7 @@ const MyTickets: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`${BASE_URL}/tickets`, {
+      const response = await fetch(`${BASE_URL}/tickets/${user?._id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

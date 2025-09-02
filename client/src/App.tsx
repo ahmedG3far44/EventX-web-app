@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/login";
-import Home from "./pages/home";
 import SignupPage from "./pages/signup";
 import DashboardPage from "./pages/dashboard";
 import EventDetailsPage from "./pages/event-details";
@@ -27,7 +26,7 @@ const App = () => {
     <div className="w-full overflow-x-hidden min-h-screen">
       <BrowserRouter>
         <Routes>
-          <Route index path="/" element={<Home />} />
+          <Route index path="/" element={<EventsPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
 
@@ -37,7 +36,7 @@ const App = () => {
             <Route path="/checkout/:eventId" element={<PaymentPage />} />
             <Route path="/success" element={<PaymentSuccessPage />} />
             <Route path="/tickets" element={<MyTickets />} />
-            <Route path="/tickets/:ticketId" element={<TicketPage  />} />
+            <Route path="/tickets/:ticketId" element={<TicketPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
 

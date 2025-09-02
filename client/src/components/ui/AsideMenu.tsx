@@ -17,6 +17,8 @@ import {
   Plus,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { Button } from "./button";
+import { useAuth } from "@/contexts/AuthProvider";
 
 export interface SidebarProps {
   className?: string;
@@ -36,6 +38,7 @@ export interface NavSection {
 
 const AsideMenu: React.FC<SidebarProps> = ({ className = "" }) => {
   const location = useLocation();
+  const { logout } = useAuth();
   const activeRoute = location.pathname.split("/").pop();
   const [expandedSections, setExpandedSections] = useState<string[]>([
     "Main Navigation",
@@ -88,10 +91,7 @@ const AsideMenu: React.FC<SidebarProps> = ({ className = "" }) => {
     },
     {
       title: "Account Management",
-      items: [
-        { icon: UserCog, href: "manage-users", label: "Manage Users" },
-        { icon: LogOut, href: "", label: "Logout" },
-      ],
+      items: [{ icon: UserCog, href: "manage-users", label: "Manage Users" }],
     },
   ];
 
@@ -122,37 +122,39 @@ const AsideMenu: React.FC<SidebarProps> = ({ className = "" }) => {
     const isExpanded = expandedSections.includes(section.title);
 
     return (
-      <div key={index} className="mb-6 ">
-        <button
-          onClick={() => toggleSection(section.title)}
-          className="w-full flex items-center justify-between px-4 py-2 text-gray-400 hover:text-white transition-colors group"
-          aria-expanded={isExpanded}
-          aria-controls={`section-${index}`}
-        >
-          <span className="text-xs font-semibold uppercase tracking-wider">
-            {section.title}
-          </span>
-          {isExpanded ? (
-            <ChevronDown className="w-4 h-4 transition-transform" />
-          ) : (
-            <ChevronRight className="w-4 h-4 transition-transform" />
-          )}
-        </button>
-
-        {isExpanded && (
-          <nav
-            id={`section-${index}`}
-            className="mt-2"
-            aria-label={section.title}
+      <>
+        <div key={index} className="mb-6 ">
+          <button
+            onClick={() => toggleSection(section.title)}
+            className="w-full flex items-center justify-between px-4 py-2 text-gray-400 hover:text-white transition-colors group"
+            aria-expanded={isExpanded}
+            aria-controls={`section-${index}`}
           >
-            <ul className="space-y-1">
-              {section.items.map((item, itemIndex) =>
-                renderNavItem(item, itemIndex)
-              )}
-            </ul>
-          </nav>
-        )}
-      </div>
+            <span className="text-xs font-semibold uppercase tracking-wider">
+              {section.title}
+            </span>
+            {isExpanded ? (
+              <ChevronDown className="w-4 h-4 transition-transform" />
+            ) : (
+              <ChevronRight className="w-4 h-4 transition-transform" />
+            )}
+          </button>
+
+          {isExpanded && (
+            <nav
+              id={`section-${index}`}
+              className="mt-2"
+              aria-label={section.title}
+            >
+              <ul className="space-y-1">
+                {section.items.map((item, itemIndex) =>
+                  renderNavItem(item, itemIndex)
+                )}
+              </ul>
+            </nav>
+          )}
+        </div>
+      </>
     );
   };
 
@@ -192,6 +194,13 @@ const AsideMenu: React.FC<SidebarProps> = ({ className = "" }) => {
 
       <div className="flex-1 overflow-y-auto py-4 px-2">
         {navSections.map((section, index) => renderSection(section, index))}
+        <Button
+          onClick={logout}
+          className="w-full flex items-start justify-start cursor-pointer  hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-start bg-gray-900 text-white"
+        >
+          {" "}
+          <LogOut /> Logout
+        </Button>
       </div>
     </aside>
   );

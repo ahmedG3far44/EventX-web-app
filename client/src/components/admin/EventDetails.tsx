@@ -23,33 +23,18 @@ const DOMAIN_URL = import.meta.env.VITE_DOMAIN_URL as string;
 const EventDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-
-  //   name: "Colombo Music Festival 2025",
-  //   date: "April 12, 2025",
-  //   venue: "Viharamahadevi Open Air Theater, Colombo",
-  //   time: "6:00PM - 10:30PM",
-  //   description:
-  //     "Get ready for Sri Lanka's biggest music festival - the Colombo Music Festival 2025! 🎵🔥 This electrifying open-air concert will feature top international and local artists, bringing an unforgettable night of music, lights, and energy to the heart of Colombo! Join 10,000+ music lovers at the Viharamahadevi Open Air Theater for a night filled with live performances, immersive stage effects, and a festival atmosphere like no other! Whether you're into pop, rock, EDM, or reggae, this festival has something for every music enthusiast!",
-  //   ticketPrice: 2500,
-  //   currency: "LKR",
-  //   seatAmount: 1200,
-  //   availableSeats: 523,
-  //   popularity: "High Popularity",
-  //   tags: ["#Music", "#Festival"],
-  //   expectedAttendance: 1000,
-  //   qrCode:
-  //     "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSIxMCIgeT0iMTAiIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgZmlsbD0iYmxhY2siLz4KPC9zdmc+",
-  // };
-  const { getEventById, eventDetails, loading } = useEvents();
+  const { getEventById, eventDetails,  loading } = useEvents();
   const [data, setEventData] = useState<EventType>(eventDetails);
 
+  console.log(id)
 
   useEffect(() => {
     (async () => {
       const event = await getEventById(id as string);
+      console.log(event, "data event")
       setEventData(event as EventType);
     })();
-  }, [id]);
+  }, []);
 
   if (loading)
     return (
@@ -164,7 +149,7 @@ const EventDetails = () => {
                 width={400}
                 height={400}
                 bgColor="#ffff"
-                value={`${DOMAIN_URL}/checkout/${data._id}`}
+                value={`${DOMAIN_URL}/checkout/${data?._id}`}
               />
               <p className="text-sm text-gray-600">
                 Scan QR code for easy payments
@@ -182,7 +167,7 @@ const EventDetails = () => {
             </label>
             <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border">
               <Calendar className="w-5 h-5 text-gray-400" />
-              <span>{new Date(data.datetime).toLocaleDateString()}</span>
+              <span>{new Date(data?.datetime).toLocaleDateString()}</span>
             </div>
           </div>
 
@@ -193,7 +178,7 @@ const EventDetails = () => {
             </label>
             <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border">
               <Clock className="w-5 h-5 text-gray-400" />
-              <span>{new Date(data.datetime).toLocaleTimeString()}</span>
+              <span>{new Date(data?.datetime).toLocaleTimeString()}</span>
             </div>
           </div>
 

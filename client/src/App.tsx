@@ -31,7 +31,6 @@ const App = () => {
           <Route path="/signup" element={<SignupPage />} />
 
           <Route path="/" element={<ProtectedUserRoutes />}>
-            <Route path="/events" element={<EventsPage />} />
             <Route path="/event/:id" element={<EventDetailsPage />} />
             <Route path="/checkout/:eventId" element={<PaymentPage />} />
             <Route path="/success" element={<PaymentSuccessPage />} />

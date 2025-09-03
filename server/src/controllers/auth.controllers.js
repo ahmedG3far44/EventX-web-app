@@ -105,14 +105,10 @@ export const register = async (req, res) => {
     // hash new User password before add
     const hash = await bcrypt.hash(payload.password, salt);
 
-    const { profile, age, gender } = payload;
+    // const { profileImage, age, gender } = payload;
     const newUser = new User({
-      name: payload.name,
-      email: payload.email,
-      age,
-      gender,
+      ...payload,
       password: hash,
-      profileImage: profile,
     });
 
     await newUser.save();
@@ -120,12 +116,6 @@ export const register = async (req, res) => {
     const token = jwt.sign(newUser._doc, process.env.JWT_SECRETE, {
       expiresIn: "7d",
     });
-    // res.cookie("authToken", token, {
-    //   httpOnly: true,
-    //   secure: process.env.NODE_ENV === "production",
-    //   sameSite: "strict",
-    //   maxAge: 24 * 60 * 60 * 1000,
-    // });
 
     const {
       _id,
@@ -144,7 +134,7 @@ export const register = async (req, res) => {
       name,
       email,
       role,
-      profile: profileImage,
+      profileImage,
       address,
       isVerified,
       createdAt,
@@ -186,7 +176,7 @@ export const createDefaultAdmin = async (req, res) => {
   try {
     const random = Math.floor(Math.random() * 191) + 10;
 
-    const hashedPassword = await bcrypt.hash("@Ranaa125", 10)
+    const hashedPassword = await bcrypt.hash("@Ranaa125", 10);
 
     const adminProfile =
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLKYamkRB_qMHdd_HvhrxBlHhExgcAW6Mquw&s";

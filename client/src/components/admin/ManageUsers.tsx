@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Search,
   Users,
@@ -11,97 +11,59 @@ import {
   User,
   Filter,
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthProvider";
 
 interface User {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   age: number;
-  profilePicture: string;
-  joinDate: Date;
-  status: "active" | "blocked";
-  role: "user" | "admin" | "moderator";
+  profileImage: string;
+  createdAt: Date;
+  updatedAt: Date;
+  status?: "active" | "blocked";
+  role: "user" | "admin";
 }
 
-const ManageUsers: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([
-    {
-      id: "1",
-      name: "Alice Johnson",
-      email: "alice.johnson@example.com",
-      age: 28,
-      profilePicture:
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
-      joinDate: new Date("2023-01-15"),
-      status: "active",
-      role: "admin",
-    },
-    {
-      id: "2",
-      name: "Bob Smith",
-      email: "bob.smith@example.com",
-      age: 34,
-      profilePicture:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-      joinDate: new Date("2023-03-22"),
-      status: "active",
-      role: "user",
-    },
-    {
-      id: "3",
-      name: "Carol Davis",
-      email: "carol.davis@example.com",
-      age: 31,
-      profilePicture:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
-      joinDate: new Date("2022-11-08"),
-      status: "blocked",
-      role: "user",
-    },
-    {
-      id: "4",
-      name: "David Wilson",
-      email: "david.wilson@example.com",
-      age: 29,
-      profilePicture:
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-      joinDate: new Date("2023-05-10"),
-      status: "active",
-      role: "moderator",
-    },
-    {
-      id: "5",
-      name: "Emma Brown",
-      email: "emma.brown@example.com",
-      age: 26,
-      profilePicture:
-        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face",
-      joinDate: new Date("2023-07-18"),
-      status: "active",
-      role: "user",
-    },
-    {
-      id: "6",
-      name: "Frank Miller",
-      email: "frank.miller@example.com",
-      age: 42,
-      profilePicture:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
-      joinDate: new Date("2022-09-03"),
-      status: "active",
-      role: "user",
-    },
-  ]);
+const BASE_URL = import.meta.env.VITE_BASE_URL as string;
 
+const ManageUsers: React.FC = () => {
+  const [users, setUsers] = useState<User[]>([]);
+  const { token } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<
     "all" | "active" | "blocked"
   >("all");
   const [roleFilter, setRoleFilter] = useState<
-    "all" | "user" | "admin" | "moderator"
+    "all" | "user" | "admin" 
   >("all");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
+  useEffect(() => {
+    async function getAllUsers() {
+      try {
+        const response = await fetch(`${BASE_URL}/users`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("connection error check your network !!");
+        }
+
+        const data = await response.json();
+
+        setUsers(data.data);
+
+        return data.data;
+      } catch (error) {
+        console.log((error as Error).message);
+      }
+    }
+    getAllUsers();
+  }, []);
   // Filter and search users
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
@@ -119,7 +81,7 @@ const ManageUsers: React.FC = () => {
   const toggleUserStatus = (userId: string) => {
     setUsers((prev) =>
       prev.map((user) =>
-        user.id === userId
+        user._id === userId
           ? { ...user, status: user.status === "active" ? "blocked" : "active" }
           : user
       )
@@ -216,7 +178,11 @@ const ManageUsers: React.FC = () => {
               <Filter className="h-4 w-4 text-muted-foreground" />
               <select
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
+                onChange={(e) =>
+                  setStatusFilter(
+                    e.target.value as "all" | "active" | "blocked"
+                  )
+                }
                 className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <option value="all">All Status</option>
@@ -229,12 +195,13 @@ const ManageUsers: React.FC = () => {
             <div className="flex items-center gap-2">
               <select
                 value={roleFilter}
-                onChange={(e) => setRoleFilter(e.target.value as any)}
+                onChange={(e) =>
+                  setRoleFilter(e.target.value as "admin" | "user" | "all")
+                }
                 className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <option value="all">All Roles</option>
                 <option value="admin">Admin</option>
-                <option value="moderator">Moderator</option>
                 <option value="user">User</option>
               </select>
             </div>
@@ -245,7 +212,7 @@ const ManageUsers: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredUsers.map((user) => (
             <div
-              key={user.id}
+              key={user._id}
               className="bg-white rounded-lg border shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="p-6">
@@ -254,7 +221,7 @@ const ManageUsers: React.FC = () => {
                   <div className="flex items-center gap-3">
                     <div className="relative">
                       <img
-                        src={user.profilePicture}
+                        src={user.profileImage}
                         alt={user.name}
                         className="w-12 h-12 rounded-full object-cover"
                       />
@@ -269,7 +236,7 @@ const ManageUsers: React.FC = () => {
                     <div>
                       <h3 className="font-semibold text-lg">{user.name}</h3>
                       <div className="flex items-center gap-2">
-                        {getStatusBadge(user.status)}
+                        {user.status && getStatusBadge(user.status)}
                         {getRoleBadge(user.role)}
                       </div>
                     </div>
@@ -294,7 +261,7 @@ const ManageUsers: React.FC = () => {
 
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Calendar className="h-4 w-4" />
-                    <span>Joined {formatDate(user.joinDate)}</span>
+                    <span>Joined {formatDate(new Date(user.createdAt))}</span>
                   </div>
                 </div>
 
@@ -309,7 +276,7 @@ const ManageUsers: React.FC = () => {
                   </button>
 
                   <button
-                    onClick={() => toggleUserStatus(user.id)}
+                    onClick={() => toggleUserStatus(user._id)}
                     className={`flex-1 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-9 px-3 ${
                       user.status === "active"
                         ? "bg-red-600 text-white hover:bg-red-700"
@@ -364,13 +331,13 @@ const ManageUsers: React.FC = () => {
 
                 <div className="text-center mb-6">
                   <img
-                    src={selectedUser.profilePicture}
+                    src={selectedUser.profileImage}
                     alt={selectedUser.name}
                     className="w-20 h-20 rounded-full mx-auto mb-4 object-cover"
                   />
                   <h3 className="text-lg font-semibold">{selectedUser.name}</h3>
                   <div className="flex items-center justify-center gap-2 mt-2">
-                    {getStatusBadge(selectedUser.status)}
+                    {selectedUser.status && getStatusBadge(selectedUser.status)}
                     {getRoleBadge(selectedUser.role)}
                   </div>
                 </div>
@@ -393,14 +360,14 @@ const ManageUsers: React.FC = () => {
                       Join Date
                     </label>
                     <p className="text-sm">
-                      {formatDate(selectedUser.joinDate)}
+                      {formatDate(new Date(selectedUser.createdAt))}
                     </p>
                   </div>
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">
                       User ID
                     </label>
-                    <p className="text-sm font-mono">{selectedUser.id}</p>
+                    <p className="text-sm font-mono">{selectedUser._id}</p>
                   </div>
                 </div>
               </div>

@@ -91,7 +91,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setToken(data.token);
 
       const redirectPath =
-        data.data.role === "ADMIN" ? "/dashboard/insights" : "/events";
+        data.data.role === "ADMIN" ? "/dashboard/insights" : "/";
       return { redirect: redirectPath };
     } catch (error) {
       setError((error as Error).message as string);
@@ -127,7 +127,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setToken(data.token);
 
       const redirectPath =
-        data.data.role === "ADMIN" ? "/dashboard/insights" : "/events";
+        data.data.role === "ADMIN" ? "/dashboard/insights" : "/";
       return { redirect: redirectPath };
     } catch (error) {
       setError((error as Error).message as string);

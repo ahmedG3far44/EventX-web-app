@@ -6,13 +6,15 @@ import {
   ChevronDown,
   Filter,
   Bell,
-  Search,
+
   User,
   ChevronRight,
   MoreHorizontal,
 } from "lucide-react";
-import Seats from "../ui/Seats";
+
 import { useAnalytics } from "@/contexts/AnalyticsProvider";
+import PreviewSeats from "../ui/PreviewSeats";
+import { useAuth } from "@/contexts/AuthProvider";
 
 interface Event {
   id: number;
@@ -294,15 +296,8 @@ const Insights: React.FC = () => {
       </div>
     );
   };
+  const { user } = useAuth();
 
-  // const randomEvent = Math.floor(Math.random() * events.length);
-
-  // console.log(randomEvent, "random");
-
-  // console.log(events);
-  // useEffect(() => {
-  //   getEventsList();
-  // }, []);
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
@@ -311,24 +306,22 @@ const Insights: React.FC = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                <User className="w-6 h-6" />
+                {user?.profileImage ? (
+                  <img
+                    className="w-full h-full object-cover rounded-full"
+                    src={user?.profileImage}
+                  />
+                ) : (
+                  <User className="w-6 h-6" />
+                )}
               </div>
               <div>
-                <h1 className="text-lg font-semibold">
-                  Welcome Rusiru De Silva
-                </h1>
+                <h1 className="text-lg font-semibold">Welcome {user?.name}</h1>
                 <p className="text-sm text-gray-400">System Administrator</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="relative hidden md:block">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="Search ..."
-                  className="bg-white text-gray-900 pl-10 pr-4 py-2 rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
-                />
-              </div>
+            
               <button className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700">
                 <Bell className="w-5 h-5" />
               </button>
@@ -496,9 +489,8 @@ const Insights: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1  gap-6">
-          <Seats
-            editState={true}
-            seatsMap={[
+          <PreviewSeats
+            seats={[
               [0, 0, 0, 0, 0],
               [0, 1, 0, 0, 0, 0],
               [0, 0, 0, 2, 2, 0],
@@ -507,6 +499,7 @@ const Insights: React.FC = () => {
               [0, 0, 0, 0, 0, 2, 0, 0],
               [0, 0, 0, 0, 1, 1, 2, 0, 0],
             ]}
+            seatSize="sm"
           />
         </div>
       </div>

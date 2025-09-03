@@ -541,72 +541,82 @@ export const getRevenueAnalytics = async (req, res) => {
   }
 };
 
-// all events:
-// total number of events
-// total number of tickets
-// total number of revenue
-// top 5 events revenue
-// ticket sales data
-
-// only one event :
-//
-
-//   const interestsData = [
-//     { name: "Live Music", value: 50, percentage: "34.5%", color: "#3B82F6" },
-//     { name: "Innovation", value: 35, percentage: "24.1%", color: "#10B981" },
-//     { name: "EDM Music", value: 25, percentage: "17.2%", color: "#F59E0B" },
-//     {
-//       name: "Food Festivals",
-//       value: 35,
-//       percentage: "24.1%",
-//       color: "#EF4444",
-//     },
-//   ];
-
-//   // Locations bar chart data
-//   const locationsBarData = [
-//     { name: "Colombo", value: 227, color: "#3B82F6", percentage: "36.9%" },
-//     { name: "Kandy", value: 123, color: "#EF4444", percentage: "20.0%" },
-//     { name: "Galle", value: 143, color: "#EC4899", percentage: "23.3%" },
-//     { name: "Jaffna", value: 70, color: "#F59E0B", percentage: "11.4%" },
-//     { name: "International", value: 52, color: "#10B981", percentage: "8.5%" },
-//   ];
-
-//   // Social media engagement data
-//   const socialMediaData = [
-//     {
-//       platform: "Instagram Mentions",
-//       count: 5200,
-//       icon: Instagram,
-//       color: "text-pink-500",
-//     },
-//     {
-//       platform: "Facebook Shares",
-//       count: 3800,
-//       icon: Facebook,
-//       color: "text-blue-600",
-//     },
-//     {
-//       platform: "Twitter Tweets",
-//       count: 1200,
-//       icon: Twitter,
-//       color: "text-sky-500",
-//     },
-//     {
-//       platform: "Event Check-ins",
-//       count: 9500,
-//       icon: QrCode,
-//       color: "text-gray-600",
-//     },
-//   ];
-
-//   const navigate = useNavigate();
-
-//   // Location table data
-//   const locationTableData = [
-//     { location: "Colombo", count: 227, color: "bg-blue-500" },
-//     { location: "Kandy", count: 123, color: "bg-red-500" },
-//     { location: "Galle", count: 143, color: "bg-pink-500" },
-//     { location: "Jaffna", count: 70, color: "bg-yellow-500" },
-//     { location: "International", count: 52, color: "bg-green-500" },
-//   ];
+export const getAgeDistributionFromAgeField = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    
+    let query = {};
+    if (eventId) {
+      query = { event: eventId };
+    }
+    
+    const ageDistribution = await Ticket.aggregate([
+      { $match: query },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'userData'
+        }
+      },
+      { $unwind: '$userData' },
+      { $match: { 'userData.age': { $exists: true, $ne: null } } },
+      {
+        $addFields: {
+          ageGroup: {
+            $switch: {
+              branches: [
+                { case: { $lt: ['$userData.age', 18] }, then: 'Under 18' },
+                { case: { $and: [{ $gte: ['$userData.age', 18] }, { $lt: ['$userData.age', 25] }] }, then: '18-24' },
+                { case: { $and: [{ $gte: ['$userData.age', 25] }, { $lt: ['$userData.age', 35] }] }, then: '25-34' },
+                { case: { $and: [{ $gte: ['$userData.age', 35] }, { $lt: ['$userData.age', 45] }] }, then: '35-44' },
+                { case: { $and: [{ $gte: ['$userData.age', 45] }, { $lt: ['$userData.age', 55] }] }, then: '45-54' },
+                { case: { $and: [{ $gte: ['$userData.age', 55] }, { $lt: ['$userData.age', 65] }] }, then: '55-64' },
+                { case: { $gte: ['$userData.age', 65] }, then: '65+' }
+              ],
+              default: 'Unknown'
+            }
+          }
+        }
+      },
+      {
+        $group: {
+          _id: '$ageGroup',
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          name: '$_id',
+          count: 1
+        }
+      }
+    ]);
+    
+    const allAgeGroups = ['Under 18', '18-24', '25-34', '35-44', '45-54', '55-64', '65+'];
+    
+    const result = allAgeGroups.map(group => {
+      const found = ageDistribution.find(item => item.name === group);
+      return {
+        name: group,
+        count: found ? found.count : 0
+      };
+    });
+    
+    res.status(200).json({
+      success: true,
+      data: result,
+      total: result.reduce((sum, item) => sum + item.count, 0)
+    });
+    
+  } catch (error) {
+    console.error('Error getting age distribution:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get age distribution',
+      error: error.message
+    });
+  }
+};

@@ -8,6 +8,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { useAuth } from "./AuthProvider";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL as string;
 
@@ -21,45 +22,12 @@ const EventsContext = createContext<{
     newStatus: string
   ) => Promise<EventType | void>;
   deleteEventById: (id: string) => Promise<EventType | void>;
-  eventDetails: EventType;
+  eventDetails: EventType | null;
   loading: boolean;
   error: null | string;
 }>({
   events: [],
-  eventDetails: {
-    _id: "",
-    name: "",
-    description: "",
-    emoji: "",
-    category: "",
-    tags: [],
-    availableSeats: 0,
-    seatsAmount: 0,
-    seatsMap: [[0, 0, 0, 0]],
-    updatedAt: new Date(),
-    createdAt: new Date(),
-    datetime: new Date(),
-    organizer: "",
-    popularity: "High Popularity",
-    revenue: 0,
-    status: "active",
-    ticketTypes: {
-      available: 34,
-      name: "",
-      price: 40,
-      _id: "",
-    },
-    venue: {
-      address: {
-        city: "",
-        state: "",
-        zipCode: "",
-        street: "",
-      },
-      capacity: 0,
-      name: "",
-    },
-  },
+  eventDetails: null,
   getEventById: () => Promise.resolve(),
   getEventsList: () => Promise.resolve(),
   createEvent: () => Promise.resolve(),
@@ -69,41 +37,10 @@ const EventsContext = createContext<{
   error: null,
 });
 const EventsProvider = ({ children }: { children: ReactNode }) => {
+  const auth = useAuth();
+  const token = auth?.token as string;
   const [events, setEvents] = useState<EventType[]>([]);
-  const [eventDetails, setEventDetails] = useState<EventType>({
-    _id: "",
-    name: "",
-    description: "",
-    emoji: "",
-    category: "",
-    tags: [],
-    availableSeats: 0,
-    seatsAmount: 0,
-    seatsMap: [[0, 0, 0, 0]],
-    updatedAt: new Date(),
-    createdAt: new Date(),
-    datetime: new Date(),
-    organizer: "",
-    popularity: "High Popularity",
-    revenue: 0,
-    status: "active",
-    ticketTypes: {
-      available: 34,
-      name: "",
-      price: 40,
-      _id: "",
-    },
-    venue: {
-      address: {
-        city: "",
-        state: "",
-        zipCode: "",
-        street: "",
-      },
-      capacity: 0,
-      name: "",
-    },
-  });
+  const [eventDetails, setEventDetails] = useState<EventType | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -112,7 +49,13 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`${BASE_URL}/events`);
+      const response = await fetch(`${BASE_URL}/events`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (!response.ok) {
         throw new Error("connection error check your network !!");
@@ -120,7 +63,6 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
 
       const data = await response.json();
 
-      console.log(data.data);
       setEvents(data.data);
 
       return data;
@@ -135,7 +77,13 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`${BASE_URL}/events/${id}`);
+      const response = await fetch(`${BASE_URL}/events/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (!response.ok) {
         throw new Error("connection error check your network !!");
@@ -143,10 +91,7 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
 
       const data = await response.json();
 
-      console.log("Event Details Data:");
-      console.log(data);
       setEventDetails(data.data);
-
       return data.data;
     } catch (error) {
       setError((error as Error).message);
@@ -164,7 +109,7 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer token`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(newEvent),
       });
@@ -174,11 +119,9 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
       }
 
       const data = await response.json();
-
-      console.log(data);
       alert("a new event created successfully");
+      return data.data;
     } catch (error) {
-      console.log((error as Error).message);
       setError((error as Error).message);
     } finally {
       setLoading(false);
@@ -193,7 +136,7 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer token`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ status: newStatus }),
       });
@@ -203,11 +146,9 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
       }
 
       const data = await response.json();
-
-      console.log(data);
       alert("event status was updated successfully");
+      return data.data;
     } catch (error) {
-      console.log((error as Error).message);
       setError((error as Error).message);
     } finally {
       setLoading(false);
@@ -220,6 +161,9 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
 
       const response = await fetch(`${BASE_URL}/events/${eventId}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (!response.ok) {
@@ -228,10 +172,9 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
 
       const data = await response.json();
 
-      console.log(data);
       alert("event  was deleted successfully");
+      return data;
     } catch (error) {
-      console.log((error as Error).message);
       setError((error as Error).message);
     } finally {
       setLoading(false);

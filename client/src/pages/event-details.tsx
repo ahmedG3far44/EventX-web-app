@@ -9,6 +9,7 @@ import { useParams } from "react-router-dom";
 
 const EventDetailsPage = () => {
   const { id } = useParams();
+  
   const [isOpen, setOpen] = useState(false);
 
   const { getEventById, loading, error, eventDetails } = useEvents();
@@ -31,9 +32,7 @@ const EventDetailsPage = () => {
         {isOpen && (
           <PopupWrapper setOpen={setOpen}>
             <Seats
-              seatsMap={eventDetails?.seatsMap as number[][]}
-              event={eventDetails as EventType}
-              editState={false}
+              eventDetails={eventDetails as EventType}
             />
           </PopupWrapper>
         )}

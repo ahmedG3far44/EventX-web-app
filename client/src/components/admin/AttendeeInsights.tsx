@@ -1,6 +1,4 @@
 import {
-  Search,
-  Filter,
   Users,
   Instagram,
   Facebook,
@@ -19,34 +17,27 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import AgeDistributionChart from "../ui/AgeDistributionChart ";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-// interface AttendeeInsightsProps {}
+import { useEvents } from "@/contexts/EventsProvider";
+import { useEffect, useState } from "react";
+import { useAnalytics } from "@/contexts/AnalyticsProvider";
 
 const AttendeeInsights = () => {
-  // Age distribution data
+  const { eventDetails, getEventById } = useEvents();
+  const { overAllAnalysis } = useAnalytics();
 
-  // Interests pie chart data
-  const interestsData = [
-    { name: "Live Music", value: 50, percentage: "34.5%", color: "#3B82F6" },
-    { name: "Innovation", value: 35, percentage: "24.1%", color: "#10B981" },
-    { name: "EDM Music", value: 25, percentage: "17.2%", color: "#F59E0B" },
-    {
-      name: "Food Festivals",
-      value: 35,
-      percentage: "24.1%",
-      color: "#EF4444",
-    },
-  ];
+  const params = useParams();
+  const eventId = params?.id as string;
+
+  const [interestsData, setInterestsData] = useState(
+    overAllAnalysis.locationsBarData
+  );
 
   // Locations bar chart data
-  const locationsBarData = [
-    { name: "Colombo", value: 227, color: "#3B82F6", percentage: "36.9%" },
-    { name: "Kandy", value: 123, color: "#EF4444", percentage: "20.0%" },
-    { name: "Galle", value: 143, color: "#EC4899", percentage: "23.3%" },
-    { name: "Jaffna", value: 70, color: "#F59E0B", percentage: "11.4%" },
-    { name: "International", value: 52, color: "#10B981", percentage: "8.5%" },
-  ];
+  const [locationsBarData, setLocationsBarData] = useState(
+    overAllAnalysis.locationsBarData
+  );
 
   // Social media engagement data
   const socialMediaData = [
@@ -79,65 +70,60 @@ const AttendeeInsights = () => {
   const navigate = useNavigate();
 
   // Location table data
-  const locationTableData = [
-    { location: "Colombo", count: 227, color: "bg-blue-500" },
-    { location: "Kandy", count: 123, color: "bg-red-500" },
-    { location: "Galle", count: 143, color: "bg-pink-500" },
-    { location: "Jaffna", count: 70, color: "bg-yellow-500" },
-    { location: "International", count: 52, color: "bg-green-500" },
-  ];
+  const locationTableData = overAllAnalysis.locationTableData;
 
-  //   const CustomBarShape = (props: any) => {
-  //     const { fill, ...rest } = props;
-  //     return <Bar {...rest} fill={props.payload.color} radius={[4, 4, 0, 0]} />;
-  //   };
+  useEffect(() => {
+    getEventById(eventId);
+    setInterestsData(overAllAnalysis.interestsData);
+    setLocationsBarData(overAllAnalysis.locationsBarData);
+  }, [eventId]);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       {/* Header */}
-      <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate(-1)}
-              className="p-2 hover:bg-gray-100 rounded-full"
-            >
-              <ArrowLeft size={20} />
-            </button>
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900">
-                Attendee Insights - Colombo Music Festival 2025
-              </h1>
-              <div className="text-sm text-gray-600 mt-1 space-y-1">
-                <div>Event Venue: Viharamahadevi Open Air Theater, Colombo</div>
-                <div>Event Date: April 12, 2025</div>
-                <div>Event Time: 6:00PM - 10:30PM</div>
+      {eventDetails && (
+        <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate(-1)}
+                className="p-2 hover:bg-gray-100 rounded-full"
+              >
+                <ArrowLeft size={20} />
+              </button>
+              <div>
+                <h1 className="text-xl font-semibold text-gray-900">
+                  {eventDetails?.name}
+                </h1>
+                <div className="text-sm text-gray-600 mt-1 space-y-1">
+                  <div>
+                    Event Venue: {eventDetails?.venue.address.state},{" "}
+                    {eventDetails?.venue.address.city},{" "}
+                    {eventDetails?.venue.address.street}{" "}
+                  </div>
+                  <div>
+                    Event Date:{" "}
+                    {new Date(eventDetails?.datetime).toLocaleDateString()}
+                  </div>
+                  <div>
+                    Event Time:{" "}
+                    {new Date(eventDetails?.datetime).toLocaleTimeString()}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
+                <Users size={16} className="text-gray-600" />
+                <span className="text-sm font-medium">
+                  Attendees:{" "}
+                  {eventDetails?.seatsAmount - eventDetails?.availableSeats}
+                </span>
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <Search
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                size={16}
-              />
-              <input
-                type="text"
-                placeholder="Search..."
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
-              <Users size={16} className="text-gray-600" />
-              <span className="text-sm font-medium">Attendees: 523</span>
-            </div>
-            <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-              <Filter size={16} />
-              <span>Filter</span>
-            </button>
-          </div>
         </div>
-      </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column */}

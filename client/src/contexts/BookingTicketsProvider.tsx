@@ -49,17 +49,13 @@ const BookingTicketsProvider = ({ children }: { children: ReactNode }) => {
   const { user, token } = useAuth();
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const ticketPrice = eventDetails ? eventDetails.ticketTypes.price : 25;
-  const [seats, setNewSeatsMap] = useState<number[][]>([
-    [0, 2, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 2, 0, 1, 0, 0],
-    [0, 1, 1, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 0, 0, 0],
-  ]);
   const [ticketState, setTicketState] = useState<"reserve" | "buy">("buy");
   const [totalTicketsPrice, setTotalPrice] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [seats, setNewSeatsMap] = useState<number[][]>(
+    eventDetails?.seatsMap as number[][]
+  );
 
   const handleTickets = async (paymentInfo: PaymentFormData) => {
     try {
@@ -68,7 +64,7 @@ const BookingTicketsProvider = ({ children }: { children: ReactNode }) => {
       const { cardName, cardNumber, cvc, expiryDate, paymentMethod } =
         paymentInfo;
       const formData = {
-        event: eventDetails._id,
+        event: eventDetails?._id,
         user: user?._id,
         ticketType: "general",
         seatsNumber: selectedSeats,
@@ -98,10 +94,9 @@ const BookingTicketsProvider = ({ children }: { children: ReactNode }) => {
       }
 
       const data = await response.json();
-      console.log("handle buy or reserve tickets");
-      console.log(formData);
-      console.log(token);
-      console.log(data);
+      setSelectedSeats([])
+      setTotalPrice(0);
+      
       return data.data;
     } catch (error) {
       setError((error as Error).message);
@@ -109,6 +104,7 @@ const BookingTicketsProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     }
   };
+
   return (
     <BookingContext.Provider
       value={{
@@ -132,26 +128,5 @@ const BookingTicketsProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const useBookingTickets = () => useContext(BookingContext);
-export default BookingTicketsProvider;
 
-//    {
-//     ticketId:"",
-//     eventId: "",
-//     user: "",
-//     ticketType:"general",
-//     seatNumber: ["A-1", "B-3", "C-2"],
-//     price:240,
-//     quantity: 3,
-//     status: "paid",
-//     qrCode: "base_url/tickets/ticketId",
-//     paymentDetails: {
-//       paymentId:"id",
-//       paymentMethod:"card",
-//       cardName:"Ahmed G3far",
-//       cardNumber: 4848 4848 4848 4848
-//       expiryDate: 08/29,
-//       cvc: 343,
-//       paymentStatus:"completed",
-//     },
-//     bookingDate: 31/8/2025,
-//   }
+export default BookingTicketsProvider;

@@ -28,6 +28,11 @@ const userSchema = new Schema(
       enum: ["USER", "ADMIN"],
       default: "USER",
     },
+    status: {
+      type: String,
+      enum: ["active", "blocked"],
+      default: "active",
+    },
     profileImage: {
       type: String,
       default: "default-avatar.jpg",

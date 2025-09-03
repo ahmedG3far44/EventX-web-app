@@ -1,12 +1,11 @@
 import { Router } from "express";
+import { getUsersList } from "../controllers/users.controllers.js";
 
 
 
 const router = Router();
 
-router.use("/", async (req, res)=>{
-    res.send("users")
-});
+router.get("/", getUsersList);
 
 
 export default router;

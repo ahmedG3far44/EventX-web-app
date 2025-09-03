@@ -1,44 +1,32 @@
-import {
-  Calendar,
-  Clock,
-  MapPin,
-  MoreHorizontal,
-  TrendingUp,
-  Users,
-} from "lucide-react";
+import { Calendar, Clock, MapPin, TrendingUp, Users } from "lucide-react";
 
 import { Link } from "react-router-dom";
 import type { EventType } from "@/lib/types";
-import { useState } from "react";
-import { Card } from "./card";
-import { Button } from "./button";
+
 import { useAuth } from "@/contexts/AuthProvider";
+import EventMenu from "./EventMenu";
+import { useEvents } from "@/contexts/EventsProvider";
 
 const EventCard = ({ event }: { event: EventType; isAdmin?: boolean }) => {
   const eventTime = new Date(event.datetime);
   const eventDate = new Date(event.datetime);
+  const { updateEventStatus, deleteEventById } = useEvents();
 
-  // const formatCurrency = (amount: number) => {
-  //   return `${amount.toString()} EGP`;
-  // };
-
-  const [openMenu, setOpenMenu] = useState(false);
   const { isAdmin } = useAuth();
   return (
     <div className="relative bg-white w-full rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow">
-      <div className="flex items-start justify-start gap-2 mb-3">
-        <span className="w-5 h-5">{event.emoji}</span>
-        <h3 className="font-semibold text-gray-900 text-lg">{event.name}</h3>
-        {isAdmin && (
-          <button
-            onClick={() => setOpenMenu(!openMenu)}
-            className="ml-auto text-gray-400 hover:text-gray-600"
-          >
-            <MoreHorizontal className="w-5 h-5" />
-          </button>
-        )}
+      <div className="flex items-center justify-between">
+        <div className="flex items-start justify-start gap-2 mb-3">
+          <span className="w-5 h-5">{event.emoji}</span>
+          <h3 className="font-semibold text-gray-900 text-lg">{event.name}</h3>
+        </div>
+        <EventMenu
+          event={event as EventType}
+          onStatusUpdate={updateEventStatus}
+          onDelete={deleteEventById}
+        />
       </div>
-      {openMenu && <ActionMenu setOpenMenu={setOpenMenu} />}
+
       <div className="space-y-2 mb-4">
         <div className="flex items-center text-sm text-gray-600">
           <MapPin className="w-4 h-4 mr-2 text-gray-400 " />
@@ -82,22 +70,3 @@ const EventCard = ({ event }: { event: EventType; isAdmin?: boolean }) => {
 };
 
 export default EventCard;
-
-function ActionMenu({ setOpenMenu }: { setOpenMenu: (open: boolean) => void }) {
-  return (
-    <Card className="w-40 p-4 border rounded-2xl shadow-2xl z-50 flex flex-col justify-center items-center gap-2 absolute top-0 right-0">
-      <Button className="w-full px-4 py-2 rounded-md hover:opacity-65  cursor-pointer duration-300">
-        update
-      </Button>
-      <Button className="w-full px-4 py-2 rounded-md hover:opacity-65  cursor-pointer duration-300">
-        delete
-      </Button>
-      <Button
-        onClick={() => setOpenMenu(false)}
-        className="w-full px-4 py-2 rounded-md hover:opacity-65 duration-300 cursor-pointer "
-      >
-        close
-      </Button>
-    </Card>
-  );
-}

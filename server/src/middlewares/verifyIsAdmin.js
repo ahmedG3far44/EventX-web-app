@@ -1,29 +1,21 @@
 import jwt from "jsonwebtoken";
 import formatResponse from "../utils/formatResponse.js";
 
-
 const verifyIsAdmin = async (req, res, next) => {
   try {
-    // get the token from req headers or cookies
-    const token = req.headers.cookie.split("=")[1];
-
+    const token = req.headers.authorization.split(" ")[1];
     if (!token) {
       throw new Error("token is missing!!");
-    } 
-
-
-    const payload = jwt.verify(token, process.env.JWT_SECRETE);
-
-    console.log(payload);
-    if (!payload) {
-      throw new Error("not payload returns");
     }
+    const decode = jwt.verify(token, process.env.JWT_SECRETE);
 
-    if (payload.role !== "ADMIN") {
+    console.log(decode)
+
+    if (decode.role !== "ADMIN") {
       throw new Error("only admins can access this!!");
     }
 
-    req.user = payload;
+    req.user = decode;
 
     next();
   } catch (error) {

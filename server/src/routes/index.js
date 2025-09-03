@@ -8,16 +8,12 @@ import usersRouter from "./users.js";
 
 const router = Router();
 
-//api/auth/login
-//api/auth/register
-//api/auth/logout
-//api/auth/reset-password
+
 
 router.use("/auth", authRouter);
 router.use("/events", eventsRouter);
 router.use("/tickets", ticketsRouter);
 router.use("/analytics", analyticsRouter);
 router.use("/users", usersRouter);
-// router.use("/notifications", notificationsRouter);
 
 export default router;

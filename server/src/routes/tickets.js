@@ -3,7 +3,7 @@ import verifyAccessToken from "../middlewares/verifyAccessToken.js";
 import {
   buyTickets,
   getUserTickets,
-  getTicketsByEventId,
+  getAllTickets,
 } from "../controllers/tickets.controllers.js";
 
 const router = Router();
@@ -11,5 +11,6 @@ const router = Router();
 
 router.post("/", verifyAccessToken, buyTickets);
 router.get("/:userId", verifyAccessToken, getUserTickets);
+router.get("/", getAllTickets);
 
 export default router;

@@ -113,7 +113,7 @@ const AgeDistributionChart: React.FC = () => {
                 <Tooltip content={<CustomTooltip />} />
                 <Legend verticalAlign="top" height={36} />
                 <Bar name="Age Groups" dataKey="count">
-                  {data.map((entry, index) => (
+                  {data.map((_, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={colors[index % colors.length]}

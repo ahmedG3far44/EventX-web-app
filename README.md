@@ -154,5 +154,6 @@ Frontend Deployment
     Build the React application: pnpm run build
 
     Deployed to Netlify
-## Live Demo:
-    <a target="_blank" href="https://nimble-taiyaki-547585.netlify.app/">Live Demo</a>
+## [Google][google]
+...
+[google]: https://www.google.com "Visit Google"

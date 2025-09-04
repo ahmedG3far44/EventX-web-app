@@ -23,24 +23,32 @@ EventX is a full-stack event management system designed to help organizers manag
 
 1. Navigate to the server directory:
 ### Backend Setup
-```bash
+```
 cd server
+```
+
+```
 npm install
 
+```
 PORT=8000
 NODE_ENV=dev
 JWT_SECRETE=your_secrets
 DATABASE_URL=mongodb://localhost:27017/eventx
 SSL_CERT=/etc/letsencrypt/live/domain_name/fullchain.pem
 SSL_KEY=/etc/letsencrypt/live/domain_name/privkey.pem
-
+```
+```
 npm run dev
+```
 
+```
 cd client
-
+```
+```
 pnpm install
-
-
+```
+```
 eventx-app/
 ├── client/                 # React frontend
 │   ├── public/            # Static files
@@ -63,6 +71,7 @@ eventx-app/
 │   │── .env/            # Environment file
 │   ├── package.json
 └── README.md
+```
 
 Features Implemented
 Admin Features

@@ -154,6 +154,20 @@ Frontend Deployment
     Build the React application: pnpm run build
 
     Deployed to Netlify
+
+## Demo Accounts
+
+Two accounts are pre-configured for testing:
+User Account
+
+    Email: testuser@gmail.com
+    Password: @User125
+
+Admin Account
+
+    Email: adminuser@gmail.com
+    Password: @Admin125
+    
 ## [Live Demo]
 ...
 [https://www.eventxstudios.com](https://nimble-taiyaki-547585.netlify.app/) 

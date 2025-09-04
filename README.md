@@ -26,27 +26,27 @@ EventX is a full-stack event management system designed to help organizers manag
 ```
 cd server
 ```
-
 ```
 npm install
 
-``
 PORT=8000
 NODE_ENV=dev
 JWT_SECRETE=your_secrets
 DATABASE_URL=mongodb://localhost:27017/eventx
 SSL_CERT=/etc/letsencrypt/live/domain_name/fullchain.pem
 SSL_KEY=/etc/letsencrypt/live/domain_name/privkey.pem
-``
+
+```
 
 ```
 npm run dev
+cd client
 ```
 
 ```
-cd client
-```
 pnpm install
+```
+
 ```
 eventx-app/
 ├── client/                 # React frontend
@@ -81,11 +81,11 @@ Admin Features
 
     Analytics dashboard with charts for:
 
-        Total revenue, attendees, and tickets sold
+    Total revenue, attendees, and tickets sold
 
-        Attendee demographics (age, gender, location)
+    Attendee demographics (age, gender, location)
 
-        Event popularity and engagement metrics
+    Event popularity and engagement metrics
 
 User Features
 

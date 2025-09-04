@@ -1,5 +1,6 @@
 import Seats from "@/components/ui/Seats";
 import ShowEventDetails from "@/components/ui/ShowEventDetails";
+import Spinner from "@/components/ui/Spinner";
 
 import { useEvents } from "@/contexts/EventsProvider";
 import type { EventType } from "@/lib/types";
@@ -9,7 +10,7 @@ import { useParams } from "react-router-dom";
 
 const EventDetailsPage = () => {
   const { id } = useParams();
-  
+
   const [isOpen, setOpen] = useState(false);
 
   const { getEventById, loading, error, eventDetails } = useEvents();
@@ -17,7 +18,15 @@ const EventDetailsPage = () => {
     getEventById(id as string);
   }, [id]);
 
-  if (loading) return <div>loading...</div>;
+  if (loading)
+    return (
+      <div className="w-full min-h-screen flex items-center justify-center bg-zinc-50">
+        <div className="flex flex-col justify-center items-center gap-8">
+          <h4>loading...</h4>
+          <Spinner />
+        </div>
+      </div>
+    );
   if (error) return <div className="text-red-500">{error}</div>;
   return (
     <div className="flex min-h-screen justify-center gap-4 p-4 items-center m-auto">
@@ -31,9 +40,7 @@ const EventDetailsPage = () => {
         )}
         {isOpen && (
           <PopupWrapper setOpen={setOpen}>
-            <Seats
-              eventDetails={eventDetails as EventType}
-            />
+            <Seats eventDetails={eventDetails as EventType} />
           </PopupWrapper>
         )}
       </div>

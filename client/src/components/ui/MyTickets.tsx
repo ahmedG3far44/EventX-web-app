@@ -51,6 +51,7 @@ interface ApiResponse {
 }
 
 const BASE_URL = import.meta.env.VITE_BASE_URL as string;
+const DOMAIN_URL = import.meta.env.VITE_DOMAIN_URL as string;
 export interface TicketInfoDetailsProps {
   ticket: TicketData;
   onClose: () => void;
@@ -352,7 +353,7 @@ const MyTickets: React.FC = () => {
   }, []);
 
   const generateQRCode = (ticketId: string) => {
-    const ticketUrl = `http://localhost:3000/ticket/${ticketId}`;
+    const ticketUrl = `${DOMAIN_URL}/ticket/${ticketId}`;
     return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
       ticketUrl
     )}`;
@@ -439,12 +440,9 @@ const MyTickets: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-96">
-        <div className="flex flex-col items-center space-y-4">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-          <p className="text-gray-600 flex items-center justify-center gap-2">
-            <Spinner />
-            <h4>Loading your tickets...</h4>
-          </p>
+        <div className="flex flex-col gap-4 items-center ">
+          <Spinner />
+          <h4>Loading your tickets...</h4>
         </div>
       </div>
     );

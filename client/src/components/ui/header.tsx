@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "./button";
 import User from "./User";
 import { useState } from "react";
+import { CalendarFold, LayoutDashboard, LucideLogOut, Tickets } from "lucide-react";
 
 const Header = () => {
   const { user, isAdmin, isAuthenticated, logout } = useAuth();
@@ -47,31 +48,32 @@ const Header = () => {
                     className="text-gray-700 hover:text-green-600 font-medium transition-colors duration-300 relative after:absolute after:w-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-green-600 after:transition-all after:duration-300 hover:after:w-full"
                     to="/dashboard/insights"
                   >
-                    Dashboard
+                    <LayoutDashboard /> Dashboard
                   </Link>
                 ) : (
-                  <div className="flex items-center space-x-6">
+                  <div className="flex items-center mx-10 gap-4">
                     <Link
-                      className="text-gray-700 hover:text-green-600 font-medium transition-colors duration-300 relative after:absolute after:w-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-green-600 after:transition-all after:duration-300 hover:after:w-full"
+                      className="text-gray-700 hover:text-green-600 font-medium transition-colors duration-300 relative after:absolute after:w-0 after:h-0.5 after:bottom-0 after:left-0 flex items-center gap-2 after:bg-green-600 after:transition-all after:duration-300 hover:after:w-full"
                       to="/"
                     >
-                      Events
+                      <CalendarFold size={15} /> <span>Events</span>
                     </Link>
                     <Link
-                      className="text-gray-700 hover:text-green-600 font-medium transition-colors duration-300 relative after:absolute after:w-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-green-600 after:transition-all after:duration-300 hover:after:w-full"
+                      className="text-gray-700 hover:text-green-600 font-medium transition-colors duration-300 relative after:absolute after:w-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-green-600 after:transition-all  flex items-center gap-2 after:duration-300 hover:after:w-full"
                       to="/tickets"
                     >
-                      My Tickets
+                      <Tickets size={15} />
+                      <span>My Tickets</span>
                     </Link>
                   </div>
                 )}
                 <div className="flex items-center space-x-4">
                   <User user={user as UserType} />
                   <Button
-                    className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium transition-all duration-300"
+                    className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium transition-all duration-300 cursor-pointer flex items-center gap-2"
                     onClick={logout}
                   >
-                    Logout
+                    <LucideLogOut size={15}/> <span>Logout</span>
                   </Button>
                 </div>
               </div>

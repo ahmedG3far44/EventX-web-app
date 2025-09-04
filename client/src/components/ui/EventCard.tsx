@@ -20,11 +20,13 @@ const EventCard = ({ event }: { event: EventType; isAdmin?: boolean }) => {
           <span className="w-5 h-5">{event.emoji}</span>
           <h3 className="font-semibold text-gray-900 text-lg">{event.name}</h3>
         </div>
-        <EventMenu
-          event={event as EventType}
-          onStatusUpdate={updateEventStatus}
-          onDelete={deleteEventById}
-        />
+        {isAdmin && (
+          <EventMenu
+            event={event as EventType}
+            onStatusUpdate={updateEventStatus}
+            onDelete={deleteEventById}
+          />
+        )}
       </div>
 
       <div className="space-y-2 mb-4">

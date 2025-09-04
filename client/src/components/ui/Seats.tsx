@@ -195,7 +195,7 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
           </h2>
 
           {/* Legend */}
-          <div className="flex flex-wrap justify-center gap-6 mb-8 p-4 bg-gray-50 rounded-xl">
+          <div className="flex flex-wrap justify-center gap-6 mb-8 p-4  rounded-xl">
             {[0, 1, 2].map((status) => (
               <div key={status} className="flex items-center gap-2">
                 <div
@@ -212,10 +212,10 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
 
           {/* Seats Grid */}
 
-          <div className="flex justify-center mb-8">
+          <div className="flex items-center justify-center mb-8">
             <div className="inline-block">
               {eventDetails?.seatsMap?.map((row, rowIndex) => (
-                <div key={rowIndex} className="flex items-center gap-2 mb-2">
+                <div key={rowIndex} className="flex justify-center items-center gap-2 mb-2">
                   <div className="w-8 h-8 flex items-center justify-center font-bold text-gray-600 text-sm">
                     {getRowLabel(rowIndex)}
                   </div>

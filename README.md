@@ -156,4 +156,4 @@ Frontend Deployment
     Deployed to Netlify
 ## [Live Demo]
 ...
-[liveDemo]: [https://www.google.com](https://nimble-taiyaki-547585.netlify.app/) 
+[https://www.eventxstudios.com](https://nimble-taiyaki-547585.netlify.app/) 

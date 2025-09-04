@@ -30,13 +30,15 @@ cd server
 ```
 npm install
 
-```
+``
 PORT=8000
 NODE_ENV=dev
 JWT_SECRETE=your_secrets
 DATABASE_URL=mongodb://localhost:27017/eventx
 SSL_CERT=/etc/letsencrypt/live/domain_name/fullchain.pem
 SSL_KEY=/etc/letsencrypt/live/domain_name/privkey.pem
+``
+
 ```
 npm run dev
 ```

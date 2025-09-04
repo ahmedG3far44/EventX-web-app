@@ -26,7 +26,7 @@ interface FormErrors {
 }
 
 const LoginPage: React.FC = () => {
-  const { login, loading } = useAuth();
+  const { login, loading, error } = useAuth();
   const [formData, setFormData] = useState<FormData>({
     email: "",
     password: "",
@@ -79,14 +79,11 @@ const LoginPage: React.FC = () => {
     if (!validateForm()) {
       return;
     }
-    await login(formData.email, formData.password)
-      .then((result) => {
-        console.log(result?.redirect as string);
-        navigate(`${result?.redirect}`);
-      })
-      .catch((error) => {
-        console.log((error as Error).message);
-      });
+    const result = await login(formData.email, formData.password);
+    if (result) {
+      console.log(result.redirect as string);
+      navigate(`${result.redirect}`);
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -105,6 +102,11 @@ const LoginPage: React.FC = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {error && (
+            <div className="p-4 rounded-md text-red-500 font-semibold border bg-red-100 text-sm">
+              {error}
+            </div>
+          )}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <div className="relative">

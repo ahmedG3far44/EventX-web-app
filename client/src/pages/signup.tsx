@@ -100,7 +100,7 @@ const areasByState: Record<string, string[]> = {
 };
 
 export default function SignupPage() {
-  const { register, loading, isAuthenticated, isAdmin } = useAuth();
+  const { register, loading, isAuthenticated, isAdmin, error } = useAuth();
 
   const [formData, setFormData] = useState<SignupData>({
     name: "",
@@ -210,7 +210,7 @@ export default function SignupPage() {
   };
 
   if (isAuthenticated) {
-    return <Navigate to={isAdmin ? "/dashboard/insights" : "/events"} />;
+    return <Navigate to={isAdmin ? "/dashboard/insights" : "/"} />;
   }
   const handleSubmit = async () => {
     if (!validateForm()) {
@@ -218,7 +218,10 @@ export default function SignupPage() {
     }
     try {
       const result = await register(formData);
-      return <Navigate to={`${result?.redirect as string}`} />;
+
+      if (result) {
+        return <Navigate to={result.redirect} />;
+      }
     } catch (error) {
       console.error("Submission error:", error);
     }
@@ -258,6 +261,11 @@ export default function SignupPage() {
         </div>
 
         <div className="space-y-4">
+          {error && (
+            <div className="p-4 rounded-md text-red-500 font-semibold border bg-red-100 text-sm">
+              {error}
+            </div>
+          )}
           {/* Name */}
           <div>
             <label className="text-sm font-medium text-gray-700 block mb-1">

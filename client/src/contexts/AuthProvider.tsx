@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import type {  SignupData } from "@/pages/signup";
+import type { SignupData } from "@/pages/signup";
 import { createContext, useContext, useState, type ReactNode } from "react";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL as string;
@@ -40,9 +40,9 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   user: null,
   token: null,
-  login: async () => {}, // Changed to async function
+  login: async () => {},
   logout: () => {},
-  register: async () => {}, // Already correct
+  register: async () => {},
   loading: false,
   isAdmin: false,
   error: null,
@@ -85,14 +85,17 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       const data = await response.json();
 
-      localStorage.setItem("user", JSON.stringify(data.data));
-      localStorage.setItem("accessToken", JSON.stringify(data.token));
-      setUser(data.data);
-      setToken(data.token);
-
-      const redirectPath =
-        data.data.role === "ADMIN" ? "/dashboard/insights" : "/";
-      return { redirect: redirectPath };
+      if (data.success) {
+        localStorage.setItem("user", JSON.stringify(data.data));
+        localStorage.setItem("accessToken", JSON.stringify(data.token));
+        setUser(data.data);
+        setToken(data.token);
+        const redirectPath =
+          data.data.role === "ADMIN" ? "/dashboard/insights" : "/";
+        return { redirect: redirectPath };
+      } else {
+        return { redirect: "/login" };
+      }
     } catch (error) {
       setError((error as Error).message as string);
     } finally {
@@ -106,7 +109,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setLoading(true);
       setError(null);
-      console.log("form data type:", formData)
+      console.log("form data type:", formData);
       const response = await fetch(`${BASE_URL}/auth/register`, {
         method: "POST",
         headers: {
@@ -120,15 +123,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       const data = await response.json();
 
-      console.log(data);
-      localStorage.setItem("user", JSON.stringify(data.data));
-      localStorage.setItem("accessToken", JSON.stringify(data.token)); //
-      setUser(data.data);
-      setToken(data.token);
-
-      const redirectPath =
-        data.data.role === "ADMIN" ? "/dashboard/insights" : "/";
-      return { redirect: redirectPath };
+      if (data.success) {
+        localStorage.setItem("user", JSON.stringify(data.data));
+        localStorage.setItem("accessToken", JSON.stringify(data.token));
+        setUser(data.data);
+        setToken(data.token);
+        return { redirect: "/" };
+      }
     } catch (error) {
       setError((error as Error).message as string);
     } finally {

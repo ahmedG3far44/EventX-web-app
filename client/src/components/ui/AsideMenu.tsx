@@ -96,7 +96,7 @@ const AsideMenu: React.FC<SidebarProps> = ({ className = "" }) => {
   ];
 
   const renderNavItem = (item: NavItem, index: number) => (
-    <li key={index}>
+    <li key={`${item.label}-${index}`}>
       <Link
         to={`${item.href}`}
         className={`${
@@ -122,39 +122,37 @@ const AsideMenu: React.FC<SidebarProps> = ({ className = "" }) => {
     const isExpanded = expandedSections.includes(section.title);
 
     return (
-      <>
-        <div key={index} className="mb-6 ">
-          <button
-            onClick={() => toggleSection(section.title)}
-            className="w-full flex items-center justify-between px-4 py-2 text-gray-400 hover:text-white transition-colors group"
-            aria-expanded={isExpanded}
-            aria-controls={`section-${index}`}
-          >
-            <span className="text-xs font-semibold uppercase tracking-wider">
-              {section.title}
-            </span>
-            {isExpanded ? (
-              <ChevronDown className="w-4 h-4 transition-transform" />
-            ) : (
-              <ChevronRight className="w-4 h-4 transition-transform" />
-            )}
-          </button>
-
-          {isExpanded && (
-            <nav
-              id={`section-${index}`}
-              className="mt-2"
-              aria-label={section.title}
-            >
-              <ul className="space-y-1">
-                {section.items.map((item, itemIndex) =>
-                  renderNavItem(item, itemIndex)
-                )}
-              </ul>
-            </nav>
+      <div key={section.title} className="mb-6">
+        <button
+          onClick={() => toggleSection(section.title)}
+          className="w-full flex items-center justify-between px-4 py-2 text-gray-400 hover:text-white transition-colors group"
+          aria-expanded={isExpanded}
+          aria-controls={`section-${index}`}
+        >
+          <span className="text-xs font-semibold uppercase tracking-wider">
+            {section.title}
+          </span>
+          {isExpanded ? (
+            <ChevronDown className="w-4 h-4 transition-transform" />
+          ) : (
+            <ChevronRight className="w-4 h-4 transition-transform" />
           )}
-        </div>
-      </>
+        </button>
+
+        {isExpanded && (
+          <nav
+            id={`section-${index}`}
+            className="mt-2"
+            aria-label={section.title}
+          >
+            <ul className="space-y-1">
+              {section.items.map((item, itemIndex) =>
+                renderNavItem(item, itemIndex)
+              )}
+            </ul>
+          </nav>
+        )}
+      </div>
     );
   };
 
@@ -198,7 +196,6 @@ const AsideMenu: React.FC<SidebarProps> = ({ className = "" }) => {
           onClick={logout}
           className="w-full flex items-start justify-start cursor-pointer  hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200 text-start bg-gray-900 text-white"
         >
-          {" "}
           <LogOut /> Logout
         </Button>
       </div>

@@ -45,10 +45,10 @@ const Header = () => {
               <div className="flex items-center space-x-6">
                 {isAdmin ? (
                   <Link
-                    className="text-gray-700 hover:text-green-600 font-medium transition-colors duration-300 relative after:absolute after:w-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-green-600 after:transition-all after:duration-300 hover:after:w-full"
+                    className="text-gray-700 hover:text-green-600 font-medium transition-colors duration-300 relative after:absolute after:w-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-green-600 after:transition-all after:duration-300 flex items-center gap-2 hover:after:w-full"
                     to="/dashboard/insights"
                   >
-                    <LayoutDashboard /> Dashboard
+                    <LayoutDashboard /> <span>Dashboard</span>
                   </Link>
                 ) : (
                   <div className="flex items-center mx-10 gap-4">

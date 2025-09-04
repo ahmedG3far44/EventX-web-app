@@ -18,7 +18,7 @@ import QRCode from "react-qr-code";
 import PreviewSeats from "../ui/PreviewSeats";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL as string;
-const DOMAIN_URL = import.meta.env.VITE_DOMAIN_URL as string;
+const DOMAIN_URL = window.location.origin;
 
 const EventDetails = () => {
   const { id } = useParams();

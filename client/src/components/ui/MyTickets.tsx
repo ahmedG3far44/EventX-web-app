@@ -51,7 +51,7 @@ interface ApiResponse {
 }
 
 const BASE_URL = import.meta.env.VITE_BASE_URL as string;
-const DOMAIN_URL = import.meta.env.VITE_DOMAIN_URL as string;
+const DOMAIN_URL = window.location.origin;
 export interface TicketInfoDetailsProps {
   ticket: TicketData;
   onClose: () => void;

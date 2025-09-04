@@ -168,6 +168,5 @@ Admin Account
     Email: adminuser@gmail.com
     Password: @Admin125
     
-## [Live Demo]
-...
+## [Live Demo]: 
 [https://www.eventxstudios.com](https://reliable-churros-048f84.netlify.app/) 

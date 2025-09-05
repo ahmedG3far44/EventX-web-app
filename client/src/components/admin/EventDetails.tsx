@@ -91,11 +91,11 @@ const EventDetails = () => {
             <h1 className="text-2xl font-bold">Event Details</h1>
           </div>
 
-          {/* Main Content Grid */}
+          
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left Column */}
+            
             <div className="space-y-6">
-              {/* Event Name */}
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Event Name
@@ -106,7 +106,7 @@ const EventDetails = () => {
                 </div>
               </div>
 
-              {/* Event Venue */}
+              
               {event?.venue && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -122,7 +122,7 @@ const EventDetails = () => {
                 </div>
               )}
 
-              {/* Event Description */}
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Event Description
@@ -134,7 +134,7 @@ const EventDetails = () => {
                 </div>
               </div>
 
-              {/* Stats Grid */}
+              
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-4 bg-gray-50 rounded-lg border">
                   <div className="flex items-center gap-2 mb-2">
@@ -198,9 +198,9 @@ const EventDetails = () => {
               </div>
             </div>
 
-            {/* Right Column */}
+            
             <div className="space-y-6">
-              {/* Event Date */}
+          
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Event Date
@@ -211,7 +211,7 @@ const EventDetails = () => {
                 </div>
               </div>
 
-              {/* Event Time */}
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Event Time
@@ -223,7 +223,7 @@ const EventDetails = () => {
               </div>
 
               <PreviewSeats seats={event.seatsMap} />
-              {/* Tags and Attendance */}
+              
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -257,7 +257,7 @@ const EventDetails = () => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
+              
               <div className="flex gap-4">
                 <button className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 px-6 rounded-lg transition-colors">
                   EDIT

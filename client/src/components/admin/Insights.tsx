@@ -70,7 +70,7 @@ const Insights: React.FC = () => {
     },
   ];
 
-  // Line chart data
+  
   const chartData = [
     { x: 50, y: 180, value: 35000, change: -17.3 },
     { x: 120, y: 120, value: 48000, change: -27.7 },
@@ -80,7 +80,7 @@ const Insights: React.FC = () => {
     { x: 400, y: 160, value: 24500, change: 11.1 },
   ];
 
-  // Generate SVG path for line chart
+  
   const generatePath = (data: typeof chartData) => {
     return data.reduce((path, point, index) => {
       const command = index === 0 ? "M" : "L";
@@ -88,11 +88,11 @@ const Insights: React.FC = () => {
     }, "");
   };
 
-  // Custom Line Chart Component
+  
   const LineChart = () => (
     <div className="h-64 relative bg-white">
       <svg width="450" height="240" className="w-full h-full">
-        {/* Chart line */}
+        
         <path
           d={generatePath(chartData)}
           fill="none"
@@ -101,7 +101,7 @@ const Insights: React.FC = () => {
           className="drop-shadow-sm"
         />
 
-        {/* Data points */}
+        
         {chartData.map((point, index) => (
           <g key={index}>
             <circle
@@ -115,7 +115,7 @@ const Insights: React.FC = () => {
               onMouseEnter={() => setHoveredPoint(index)}
               onMouseLeave={() => setHoveredPoint(null)}
             />
-            {/* Data labels */}
+            
             <g className="text-xs">
               <text
                 x={point.x}
@@ -140,7 +140,7 @@ const Insights: React.FC = () => {
           </g>
         ))}
 
-        {/* Tooltip */}
+        
         {hoveredPoint !== null && (
           <g>
             <rect
@@ -165,7 +165,6 @@ const Insights: React.FC = () => {
     </div>
   );
 
-  // Custom Doughnut Chart Component
   const DoughnutChart = () => {
     const data = [
       { name: "Event A", value: 450, color: "#7c3aed", percentage: 29.4 },
@@ -263,7 +262,7 @@ const Insights: React.FC = () => {
           })}
         </svg>
 
-        {/* Center text */}
+  
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
             <div className="text-2xl font-bold text-gray-900">1,530</div>
@@ -271,7 +270,7 @@ const Insights: React.FC = () => {
           </div>
         </div>
 
-        {/* Value labels around the chart */}
+        
         <div className="absolute top-4 left-8 text-sm font-medium text-gray-700">
           250
         </div>
@@ -334,9 +333,9 @@ const Insights: React.FC = () => {
       </header>
 
       <div className="p-6 max-w-7xl mx-auto">
-        {/* Stats Cards Row */}
+    
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          {/* Events Card */}
+          
           <div className="bg-white rounded-lg p-6 shadow-sm">
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -353,7 +352,7 @@ const Insights: React.FC = () => {
             </div>
           </div>
 
-          {/* Bookings Card */}
+          
           <div className="bg-white rounded-lg p-6 shadow-sm">
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -371,7 +370,7 @@ const Insights: React.FC = () => {
             </div>
           </div>
 
-          {/* Revenue Card */}
+          
           <div className="bg-white rounded-lg p-6 shadow-sm">
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
@@ -388,7 +387,7 @@ const Insights: React.FC = () => {
             </div>
           </div>
 
-          {/* Upcoming Events Card */}
+          
           <div className="bg-white rounded-lg p-4 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
@@ -419,9 +418,9 @@ const Insights: React.FC = () => {
           </div>
         </div>
 
-        {/* Main Content Grid */}
+        
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          {/* Net Sales Chart */}
+    
           <div className="lg:col-span-2 bg-white rounded-lg p-6 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-2">
@@ -458,7 +457,7 @@ const Insights: React.FC = () => {
             <LineChart />
           </div>
 
-          {/* Customer Engagement */}
+          
           <div className="bg-white rounded-lg p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-gray-900 mb-6">
               Customer

@@ -105,7 +105,7 @@ const EventCategory: React.FC = () => {
       isValid = false;
     }
 
-    // Check if category name already exists
+
     if (
       categories.some(
         (cat) => cat.name.toLowerCase() === formData.name.trim().toLowerCase()
@@ -148,7 +148,7 @@ const EventCategory: React.FC = () => {
   return (
     <div className="w-full min-h-screen bg-white">
       <div className="max-w-4xl mx-auto p-6 space-y-8">
-        {/* Header */}
+        
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">
             Category Manager
@@ -158,7 +158,7 @@ const EventCategory: React.FC = () => {
           </p>
         </div>
 
-        {/* Add Category Form */}
+        
         <div className="bg-white rounded-lg border shadow-sm">
           <div className="border-b px-6 py-4">
             <h2 className="text-xl font-semibold flex items-center gap-2">
@@ -169,7 +169,7 @@ const EventCategory: React.FC = () => {
 
           <div className="p-6 space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Category Name Input */}
+              
               <div className="space-y-2">
                 <label
                   htmlFor="name"
@@ -197,7 +197,7 @@ const EventCategory: React.FC = () => {
                 )}
               </div>
 
-              {/* Emoji Input */}
+              
               <div className="space-y-2">
                 <label
                   htmlFor="emoji"
@@ -245,7 +245,7 @@ const EventCategory: React.FC = () => {
           </div>
         </div>
 
-        {/* Categories List */}
+        
         <div className="bg-white rounded-lg border shadow-sm">
           <div className="border-b px-6 py-4">
             <h2 className="text-xl font-semibold flex items-center gap-2">

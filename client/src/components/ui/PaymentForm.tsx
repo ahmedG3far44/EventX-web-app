@@ -14,9 +14,6 @@ import { Lock } from "lucide-react";
 import { useBookingTickets } from "@/contexts/BookingTicketsProvider";
 import { useEvents } from "@/contexts/EventsProvider";
 import { Navigate, useNavigate } from "react-router-dom";
-// import { Navigate } from "react-router-dom";
-
-// const BASE_URL = import.meta.env.VITE_BASE_URL as string;
 
 export interface PaymentFormData {
   paymentMethod: "card" | "paypal";
@@ -101,7 +98,6 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
   };
 
   const handleCardNumberChange = (value: string) => {
-    // Format card number with spaces every 4 digits
     const formattedValue = value
       .replace(/\s/g, "")
       .replace(/(\d{4})/g, "$1 ")
@@ -111,7 +107,6 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
   };
 
   const handleExpiryDateChange = (value: string) => {
-    // Format expiry date as MM/YY
     const formattedValue = value
       .replace(/\D/g, "")
       .replace(/(\d{2})(\d)/, "$1/$2")
@@ -120,7 +115,6 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
   };
 
   const handleCvcChange = (value: string) => {
-    // Limit CVC to 3-4 digits
     const formattedValue = value.replace(/\D/g, "").slice(0, 4);
     handleInputChange("cvc", formattedValue);
   };
@@ -130,13 +124,7 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
 
     try {
       setLoading(true);
-      console.log("Payment data:", paymentDetails);
-
-      const result = await handleTickets(paymentDetails);
-
-      console.log(result);
-
-      // Reset form
+      await handleTickets(paymentDetails);
       setPaymentInfo({
         paymentMethod: "card",
         cardName: "",
@@ -144,12 +132,9 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
         expiryDate: "",
         cvc: "",
       });
-
-      // TODO: Navigate to success page
       navigate("/success");
     } catch (error) {
       console.error("Payment error:", (error as Error).message);
-      // TODO: Show error message to user
     } finally {
       setLoading(false);
     }
@@ -175,7 +160,6 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Payment Method Selection */}
             <div className="space-y-4">
               <Label className="text-base font-semibold">Payment Method</Label>
               <RadioGroup
@@ -216,7 +200,6 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
 
             {paymentDetails.paymentMethod === "card" && (
               <div className="space-y-4">
-                {/* Card Name */}
                 <div className="space-y-2">
                   <Label htmlFor="cardName">Name on Card</Label>
                   <Input
@@ -230,8 +213,6 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
                     className="focus:ring-2 focus:ring-primary"
                   />
                 </div>
-
-                {/* Card Number */}
                 <div className="space-y-2">
                   <Label htmlFor="cardNumber">Card Number</Label>
                   <Input
@@ -244,8 +225,6 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
                     className="focus:ring-2 focus:ring-primary"
                   />
                 </div>
-
-                {/* Expiry Date and CVC */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="expiryDate">Expiry Date</Label>
@@ -282,8 +261,6 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
                 </p>
               </div>
             )}
-
-            {/* Submit Button */}
             <Button
               disabled={loading}
               type="submit"
@@ -293,8 +270,6 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
               <Lock className="mr-2 h-4 w-4" />
               {loading ? "Processing payment..." : `Pay $${totalTicketsPrice}`}
             </Button>
-
-            {/* Security Notice */}
             <div className="text-center text-sm text-muted-foreground">
               <p>Your payment details are encrypted and secure</p>
             </div>

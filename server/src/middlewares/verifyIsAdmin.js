@@ -8,15 +8,10 @@ const verifyIsAdmin = async (req, res, next) => {
       throw new Error("token is missing!!");
     }
     const decode = jwt.verify(token, process.env.JWT_SECRETE);
-
-    console.log(decode)
-
     if (decode.role !== "ADMIN") {
       throw new Error("only admins can access this!!");
     }
-
     req.user = decode;
-
     next();
   } catch (error) {
     res

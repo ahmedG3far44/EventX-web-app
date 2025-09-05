@@ -18,7 +18,7 @@ import Spinner from "./Spinner";
 import QRCode from "react-qr-code";
 import { Link } from "react-router-dom";
 
-// TypeScript interfaces
+
 interface PaymentDetails {
   paymentMethod: string;
   cardName: string;
@@ -94,7 +94,7 @@ const TicketInfoDetails: React.FC<TicketInfoDetailsProps> = ({
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        {/* Header */}
+
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-blue-100 rounded-lg">
@@ -118,7 +118,7 @@ const TicketInfoDetails: React.FC<TicketInfoDetailsProps> = ({
         </div>
 
         <div className="p-6 space-y-6">
-          {/* Status Badges */}
+
           <div className="flex flex-wrap gap-2">
             <span
               className={`px-3 py-1 text-sm font-medium rounded-full ${
@@ -263,8 +263,6 @@ const TicketInfoDetails: React.FC<TicketInfoDetailsProps> = ({
               </div>
             </div>
           </div>
-
-          {/* Actions */}
           <div className="flex space-x-3 pt-4 border-t border-gray-200">
             <Link
               to={`http://localhost:3000/tickets/${ticket._id}`}
@@ -411,20 +409,6 @@ const MyTickets: React.FC = () => {
       minute: "2-digit",
     });
   };
-
-  // const getStatusIcon = (status: string) => {
-  //   switch (status) {
-  //     case "completed":
-  //       return <CheckCircle className="w-5 h-5 text-green-500" />;
-  //     case "pending":
-  //       return <Clock className="w-5 h-5 text-yellow-500" />;
-  //     case "failed":
-  //       return <XCircle className="w-5 h-5 text-red-500" />;
-  //     default:
-  //       return <Clock className="w-5 h-5 text-gray-500" />;
-  //   }
-  // };
-
   const getTicketTypeColor = (type: string) => {
     return type === "vip"
       ? "bg-purple-100 text-purple-800 border-purple-200"
@@ -491,7 +475,6 @@ const MyTickets: React.FC = () => {
               key={ticket._id}
               className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-200 overflow-hidden"
             >
-              {/* Header */}
               <div className="p-6 border-b border-gray-100">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-2">
@@ -522,10 +505,7 @@ const MyTickets: React.FC = () => {
                   Event #{ticket.event.slice(-8).toUpperCase()}
                 </h3>
               </div>
-
-              {/* Ticket Details */}
               <div className="p-6 space-y-4">
-                {/* Seats */}
                 <div className="flex items-start space-x-3">
                   <MapPin className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
                   <div>
@@ -542,8 +522,6 @@ const MyTickets: React.FC = () => {
                     </div>
                   </div>
                 </div>
-
-                {/* Quantity & Price */}
                 <div className="flex items-start space-x-3">
                   <Users className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
                   <div>
@@ -557,8 +535,6 @@ const MyTickets: React.FC = () => {
                     </p>
                   </div>
                 </div>
-
-                {/* Purchase Date */}
                 <div className="flex items-start space-x-3">
                   <Calendar className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
                   <div>
@@ -594,8 +570,6 @@ const MyTickets: React.FC = () => {
           ))}
         </div>
       )}
-
-      {/* Refresh Button */}
       {tickets.length > 0 && (
         <div className="mt-8 text-center">
           <button
@@ -608,8 +582,6 @@ const MyTickets: React.FC = () => {
           </button>
         </div>
       )}
-
-      {/* Ticket Details Modal */}
       {showDetails && selectedTicket && (
         <TicketInfoDetails
           ticket={selectedTicket}

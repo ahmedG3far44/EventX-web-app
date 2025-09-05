@@ -20,12 +20,6 @@ import {
 import type { EventType } from "@/lib/types";
 import { useNavigate } from "react-router-dom";
 
-// interface TicketType {
-//   name: string;
-//   price: number;
-//   available: number;
-// }
-
 const ShowEventDetails = ({
   event,
   isOpen,
@@ -35,8 +29,6 @@ const ShowEventDetails = ({
   isOpen: boolean;
   setOpen: (open: boolean) => void;
 }) => {
-  // Sample event data
-
   const [showSeatsMap, setShowSeatsMap] = useState(false);
   const navigate = useNavigate();
   const formatDate = (dateString: string) => {
@@ -94,7 +86,6 @@ const ShowEventDetails = ({
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
-      {/* Header */}
       <Card>
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -125,9 +116,7 @@ const ShowEventDetails = ({
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Event Information */}
           <Card>
             <CardHeader>
               <CardTitle>Event Information</CardTitle>
@@ -181,8 +170,6 @@ const ShowEventDetails = ({
               </div>
             </CardContent>
           </Card>
-
-          {/* Seating Information */}
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -271,8 +258,6 @@ const ShowEventDetails = ({
               )}
             </CardContent>
           </Card>
-
-          {/* Tags */}
           <Card>
             <CardHeader>
               <CardTitle>Tags</CardTitle>
@@ -288,10 +273,7 @@ const ShowEventDetails = ({
             </CardContent>
           </Card>
         </div>
-
-        {/* Sidebar */}
         <div className="space-y-6">
-          {/* Quick Stats */}
           <Card>
             <CardHeader>
               <CardTitle>Quick Stats</CardTitle>
@@ -328,8 +310,6 @@ const ShowEventDetails = ({
               </div>
             </CardContent>
           </Card>
-
-          {/* Ticket Information */}
           <Card>
             <CardHeader>
               <CardTitle>Ticket Information</CardTitle>
@@ -363,8 +343,6 @@ const ShowEventDetails = ({
               </div>
             </CardContent>
           </Card>
-
-          {/* Timestamps */}
           <Card>
             <CardHeader>
               <CardTitle>Event Timeline</CardTitle>

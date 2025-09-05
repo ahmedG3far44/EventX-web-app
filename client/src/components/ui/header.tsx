@@ -17,14 +17,12 @@ const Header = () => {
     <header className="sticky top-0 left-0 z-50 bg-white backdrop-blur-md border-b border-gray-200 ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+
           <div className="flex-shrink-0">
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
               Event<span className="text-green-600">X</span> Studios
             </h1>
           </div>
-
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {!isAuthenticated ? (
               <>
@@ -79,8 +77,6 @@ const Header = () => {
               </div>
             )}
           </nav>
-
-          {/* Mobile menu button */}
           <div className="md:hidden">
             <button
               onClick={toggleMobileMenu}
@@ -105,8 +101,6 @@ const Header = () => {
             </button>
           </div>
         </div>
-
-        {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <div className="md:hidden border-t border-gray-200 bg-white/95 backdrop-blur-sm">
             <div className="px-2 pt-2 pb-3 space-y-1">

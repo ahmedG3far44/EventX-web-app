@@ -45,7 +45,6 @@ interface SocialMediaData {
   color: string;
 }
 
-// ====================================================
 
 interface Address {
   street: string;
@@ -275,8 +274,6 @@ const AnalyticsProvider = ({ children }: { children: ReactNode }) => {
         throw new Error("can't get analysis data");
       }
       const data = await response.json();
-
-      console.log(data);
       setOverAllAnalysis(data.data);
       return data.data;
     } catch (error) {
@@ -300,8 +297,6 @@ const AnalyticsProvider = ({ children }: { children: ReactNode }) => {
         throw new Error("can't get analysis data");
       }
       const data = await response.json();
-
-      console.log(data);
       setEventAnalysis(data.data);
       return data.data;
     } catch (error) {
@@ -326,8 +321,6 @@ const AnalyticsProvider = ({ children }: { children: ReactNode }) => {
         throw new Error("can't get analysis data");
       }
       const data = await response.json();
-
-      console.log(data);
       setRevenueAnalysis(data.data);
       return data.data;
     } catch (error) {
@@ -351,8 +344,6 @@ const AnalyticsProvider = ({ children }: { children: ReactNode }) => {
         throw new Error("can't get analysis data");
       }
       const data = await response.json();
-
-      console.log(data);
       setUsersAnalysis(data.data);
       return data.data;
     } catch (error) {

@@ -2,7 +2,6 @@ import { Schema, model } from "mongoose";
 
 const ticketSchema = new Schema(
   {
-    // FIX: Use ObjectId references instead of String
     event: {
       type: Schema.Types.ObjectId,
       ref: "Event",
@@ -11,7 +10,7 @@ const ticketSchema = new Schema(
     user: {
       type: Schema.Types.ObjectId,
       ref: "users",
-      required: true, // Fixed typo: was "require"
+      required: true,
     },
     ticketType: {
       type: String,
@@ -58,9 +57,6 @@ const ticketSchema = new Schema(
     timestamps: true,
   }
 );
-
-// Add compound index to prevent duplicate tickets for same event/user
 ticketSchema.index({ event: 1, user: 1, ticketType: 1 });
-
 const Ticket = model("tickets", ticketSchema);
 export default Ticket;

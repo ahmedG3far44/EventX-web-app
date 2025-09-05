@@ -12,7 +12,6 @@ export const getUsersList = async (req, res) => {
       updatedAt: 1,
       role: 1,
     });
-
     res.status(200).json({
       success: true,
       count: users.length,

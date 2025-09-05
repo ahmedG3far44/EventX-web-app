@@ -10,19 +10,19 @@ const ManageEvents: React.FC = () => {
   const [sortBy, setSortBy] = useState("status");
   const [selectedDate, setSelectedDate] = useState("");
   console.log(selectedDate, setSelectedDate);
-  // Sample data based on your interface
+
   const { events } = useEvents();
 
   console.log(events, "event mange s");
 
-  // Filter and search events
+  
   const filteredEvents = useMemo(() => {
     return events.filter((event: EventType) =>
       event.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [events, searchTerm]);
 
-  // Group events by status
+  
   const groupedEvents = useMemo(() => {
     const grouped = {
       upcoming: filteredEvents.filter(
@@ -41,18 +41,7 @@ const ManageEvents: React.FC = () => {
     return grouped;
   }, [filteredEvents]);
 
-  //   const getStatusColor = (status: string) => {
-  //     switch (status) {
-  //       case "upcoming":
-  //         return "text-blue-600 bg-blue-50 border-blue-200";
-  //       case "pending":
-  //         return "text-green-600 bg-green-50 border-green-200";
-  //       case "closed":
-  //         return "text-red-600 bg-red-50 border-red-200";
-  //       default:
-  //         return "text-gray-600 bg-gray-50 border-gray-200";
-  //     }
-  //   };
+  
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -108,13 +97,13 @@ const ManageEvents: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-4 lg:p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
+        
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-900 mb-6">
             Event Management Section
           </h1>
 
-          {/* Controls */}
+          
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
@@ -167,7 +156,7 @@ const ManageEvents: React.FC = () => {
           </div>
         </div>
 
-        {/* Events Sections */}
+      
         <div className="space-y-8">
           <StatusSection status="upcoming" events={groupedEvents.upcoming} />
           <StatusSection status="pending" events={groupedEvents.pending} />
@@ -175,7 +164,7 @@ const ManageEvents: React.FC = () => {
           <StatusSection status="canceled" events={groupedEvents.canceled} />
         </div>
 
-        {/* No results */}
+        
         {filteredEvents.length === 0 && searchTerm && (
           <div className="text-center py-12">
             <div className="text-gray-500 mb-2">

@@ -41,14 +41,12 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
   const token = auth?.token as string;
   const [events, setEvents] = useState<EventType[]>([]);
   const [eventDetails, setEventDetails] = useState<EventType | null>(null);
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const getEventsList = async () => {
     try {
       setLoading(true);
       setError(null);
-
       const response = await fetch(`${BASE_URL}/events`, {
         method: "GET",
         headers: {
@@ -60,11 +58,8 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
       if (!response.ok) {
         throw new Error("connection error check your network !!");
       }
-
       const data = await response.json();
-
       setEvents(data.data);
-
       return data;
     } catch (error) {
       setError((error as Error).message);
@@ -76,7 +71,6 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
     try {
       setLoading(true);
       setError(null);
-
       const response = await fetch(`${BASE_URL}/events/${id}`, {
         method: "GET",
         headers: {
@@ -84,13 +78,10 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-
       if (!response.ok) {
         throw new Error("connection error check your network !!");
       }
-
       const data = await response.json();
-
       setEventDetails(data.data);
       return data.data;
     } catch (error) {
@@ -99,12 +90,10 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     }
   };
-
   const createEvent = async (newEvent: EventFormData) => {
     try {
       setLoading(true);
       setError(null);
-
       const response = await fetch(`${BASE_URL}/events`, {
         method: "POST",
         headers: {
@@ -113,11 +102,9 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
         },
         body: JSON.stringify(newEvent),
       });
-
       if (!response.ok) {
         throw new Error("connection error check your network !!");
       }
-
       const data = await response.json();
       alert("a new event created successfully");
       return data.data;
@@ -131,7 +118,6 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
     try {
       setLoading(true);
       setError(null);
-
       const response = await fetch(`${BASE_URL}/events/${eventId}`, {
         method: "PUT",
         headers: {
@@ -140,11 +126,9 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
         },
         body: JSON.stringify({ status: newStatus }),
       });
-
       if (!response.ok) {
         throw new Error("connection error check your network !!");
       }
-
       const data = await response.json();
       alert("event status was updated successfully");
       return data.data;
@@ -158,20 +142,16 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
     try {
       setLoading(true);
       setError(null);
-
       const response = await fetch(`${BASE_URL}/events/${eventId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
       if (!response.ok) {
         throw new Error("connection error check your network !!");
       }
-
       const data = await response.json();
-
       alert("event  was deleted successfully");
       return data;
     } catch (error) {

@@ -7,16 +7,14 @@ import {
   getEvents,
   updateEventStatus,
 } from "../controllers/events.controllers.js";
-
-// import verifyIsAdmin from "../middlewares/verifyIsAdmin.js";
-import verifyAccessToken from "../middlewares/verifyAccessToken.js";
+import verifyIsAdmin from "../middlewares/verifyIsAdmin.js";
 
 const router = Router();
 
 router.get("/:eventId", getEvent);
 router.get("/", getEvents);
-router.post("/", verifyAccessToken, createEvent);
-router.put("/:id", verifyAccessToken, updateEventStatus);
-router.delete("/:id", verifyAccessToken, deleteEvent);
+router.post("/", verifyIsAdmin, createEvent);
+router.put("/:id", verifyIsAdmin, updateEventStatus);
+router.delete("/:id", verifyIsAdmin, deleteEvent);
 
 export default router;

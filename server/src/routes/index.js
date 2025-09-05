@@ -8,8 +8,6 @@ import usersRouter from "./users.js";
 
 const router = Router();
 
-
-
 router.use("/auth", authRouter);
 router.use("/events", eventsRouter);
 router.use("/tickets", ticketsRouter);

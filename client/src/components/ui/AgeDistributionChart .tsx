@@ -60,8 +60,8 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
 
 const AgeDistributionChart: React.FC = () => {
   const [data] = useState<AgeGroupData[]>(initialData);
-  //   const [newAgeGroup, setNewAgeGroup] = useState<string>("");
-  //   const [newCount, setNewCount] = useState<string>("");
+  
+  
 
   const colors = [
     "#8884d8",

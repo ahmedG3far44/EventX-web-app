@@ -92,11 +92,9 @@ const BookingTicketsProvider = ({ children }: { children: ReactNode }) => {
       if (!response.ok) {
         throw new Error("connection error can't reserve your tickets!!");
       }
-
       const data = await response.json();
       setSelectedSeats([])
       setTotalPrice(0);
-      
       return data.data;
     } catch (error) {
       setError((error as Error).message);

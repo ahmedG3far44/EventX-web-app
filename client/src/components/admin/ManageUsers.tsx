@@ -64,7 +64,7 @@ const ManageUsers: React.FC = () => {
     }
     getAllUsers();
   }, []);
-  // Filter and search users
+  
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
       const matchesSearch =
@@ -134,7 +134,7 @@ const ManageUsers: React.FC = () => {
   return (
     <div className="w-full min-h-screen bg-white">
       <div className="max-w-7xl mx-auto p-6 space-y-6">
-        {/* Header */}
+        
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Manage Users</h1>
@@ -158,10 +158,10 @@ const ManageUsers: React.FC = () => {
           </div>
         </div>
 
-        {/* Filters and Search */}
+        
         <div className="bg-white rounded-lg border shadow-sm p-6">
           <div className="flex flex-col lg:flex-row gap-4">
-            {/* Search */}
+            
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <input
@@ -173,7 +173,7 @@ const ManageUsers: React.FC = () => {
               />
             </div>
 
-            {/* Status Filter */}
+            
             <div className="flex items-center gap-2">
               <Filter className="h-4 w-4 text-muted-foreground" />
               <select
@@ -191,7 +191,7 @@ const ManageUsers: React.FC = () => {
               </select>
             </div>
 
-            {/* Role Filter */}
+            
             <div className="flex items-center gap-2">
               <select
                 value={roleFilter}
@@ -208,7 +208,7 @@ const ManageUsers: React.FC = () => {
           </div>
         </div>
 
-        {/* Users Grid */}
+        
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredUsers.map((user) => (
             <div
@@ -216,7 +216,7 @@ const ManageUsers: React.FC = () => {
               className="bg-white rounded-lg border shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="p-6">
-                {/* User Header */}
+                
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className="relative">
@@ -247,7 +247,7 @@ const ManageUsers: React.FC = () => {
                   </button>
                 </div>
 
-                {/* User Details */}
+    
                 <div className="space-y-3 mb-4">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Mail className="h-4 w-4" />
@@ -265,7 +265,7 @@ const ManageUsers: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Actions */}
+                
                 <div className="flex items-center gap-2 pt-4 border-t">
                   <button
                     onClick={() => setSelectedUser(user)}
@@ -301,7 +301,7 @@ const ManageUsers: React.FC = () => {
           ))}
         </div>
 
-        {/* No Results */}
+        
         {filteredUsers.length === 0 && (
           <div className="text-center py-12">
             <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
@@ -314,7 +314,7 @@ const ManageUsers: React.FC = () => {
           </div>
         )}
 
-        {/* User Detail Modal (Simple overlay) */}
+        
         {selectedUser && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">

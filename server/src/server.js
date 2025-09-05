@@ -17,11 +17,8 @@ const ENV = process.env.NODE_ENV;
 
 connectDB().then(() => {
   app.use(cors(originOptions));
-
   app.use(express.json());
-
   app.use(cookieParser());
-
   app.get("/", (req, res) => {
     res.send("<h1> server is running good !! </h1>");
   });

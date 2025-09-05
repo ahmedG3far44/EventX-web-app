@@ -28,15 +28,12 @@ const PreviewSeats: React.FC<PreviewSeatsProps> = ({
       iconColor: "text-yellow-600",
     },
     2: {
-      // ✅ was 3
       label: "Paid",
       bgColor: "bg-red-100",
       borderColor: "border-red-300",
       iconColor: "text-red-600",
     },
   };
-
-  // Size configurations
   const sizeConfig = {
     sm: {
       seat: "w-8 h-8",
@@ -59,18 +56,12 @@ const PreviewSeats: React.FC<PreviewSeatsProps> = ({
   };
 
   const currentSizeConfig = sizeConfig[seatSize];
-
-  // Calculate rows with letters (A, B, C, etc.)
   const getRowLabel = (index: number): string => {
-    return String.fromCharCode(65 + index); // A=65 in ASCII
+    return String.fromCharCode(65 + index); 
   };
-
-  // Get seat number (1-indexed)
   const getSeatNumber = (index: number): number => {
     return index + 1;
   };
-
-  // Count seats by status
   const countSeatsByStatus = () => {
     const counts = { 0: 0, 1: 0, 3: 0 };
     seats.forEach((row) => {
@@ -87,9 +78,6 @@ const PreviewSeats: React.FC<PreviewSeatsProps> = ({
 
   return (
     <div className={`w-full  ${className}`}>
-      {/* Screen/Stage indicator */}
-
-      {/* Seats Grid */}
       <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
         <div className="flex justify-center mb-8">
           <div className="flex items-center gap-2 px-6 py-3 bg-gray-800 text-white rounded-lg shadow-lg">
@@ -104,14 +92,11 @@ const PreviewSeats: React.FC<PreviewSeatsProps> = ({
                 key={rowIndex}
                 className={`flex justify-center items-center ${currentSizeConfig.gap} mb-2`}
               >
-                {/* Row label */}
                 <div
                   className={`${currentSizeConfig.seat} flex items-center justify-center font-bold text-gray-700 ${currentSizeConfig.text}`}
                 >
                   {getRowLabel(rowIndex)}
                 </div>
-
-                {/* Seats in row */}
                 {row.map((seatStatus, seatIndex) => {
                   const config =
                     seatStatusConfig[
@@ -136,8 +121,6 @@ const PreviewSeats: React.FC<PreviewSeatsProps> = ({
                       <Armchair
                         className={`${currentSizeConfig.icon} ${config.iconColor}`}
                       />
-
-                      {/* Tooltip */}
                       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
                         {getRowLabel(rowIndex)}
                         {getSeatNumber(seatIndex)} - {config.label}
@@ -145,8 +128,6 @@ const PreviewSeats: React.FC<PreviewSeatsProps> = ({
                     </div>
                   );
                 })}
-
-                {/* Seat numbers on the right */}
                 <div
                   className={`${currentSizeConfig.seat} flex items-center justify-center font-bold text-gray-700 ${currentSizeConfig.text}`}
                 >
@@ -157,8 +138,6 @@ const PreviewSeats: React.FC<PreviewSeatsProps> = ({
           </div>
         </div>
       </div>
-
-      {/* Legend */}
       {showLegend && (
         <div className="mt-6 bg-gray-50 rounded-lg p-4 border border-gray-200">
           <h3 className="font-semibold text-gray-800 mb-3">Legend</h3>
@@ -179,8 +158,6 @@ const PreviewSeats: React.FC<PreviewSeatsProps> = ({
               </div>
             ))}
           </div>
-
-          {/* Summary */}
           <div className="mt-4 pt-3 border-t border-gray-300">
             <div className="flex flex-wrap gap-4 text-sm text-gray-600">
               <span>Total Seats: {seats.flat().length}</span>

@@ -1,24 +1,18 @@
 import { useState } from "react";
+import { Outlet } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { LucideMenu, LucideX } from "lucide-react";
-import AsideMenu from "@/components/ui/AsideMenu";
-
-import { Outlet } from "react-router-dom";
 import MobileMenu from "@/components/ui/MobileMenu";
+import AsideMenu from "@/components/ui/AsideMenu";
 
 const DashboardPage = () => {
   const [isMenuOpen, setMenuOpen] = useState<boolean>(false);
-
   const handleOpenMenu = () => {
     setMenuOpen(!isMenuOpen);
   };
-
   return (
     <div className="w-full flex min-h-screen relative">
-    
-
       {isMenuOpen ? <MobileMenu /> : <AsideMenu />}
-
       <main
         className={`bg-zinc-200 min-h-screen w-full transition-all duration-300`}
       >

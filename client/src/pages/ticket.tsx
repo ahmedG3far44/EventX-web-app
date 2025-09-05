@@ -1,4 +1,3 @@
-
 import {
   Calendar,
   CheckCircle,
@@ -10,8 +9,6 @@ import {
   XCircle,
 } from "lucide-react";
 import QRCode from "react-qr-code";
-
-
 const TicketPage = () => {
   const ticket = {
     _id: "68b5f8cf462c2920bf464725",
@@ -61,7 +58,6 @@ const TicketPage = () => {
   return (
     <div className="w-full  flex items-start justify-center p-4">
       <div className="bg-white rounded-xl border  max-w-1/2 w-full  overflow-y-hidden">
-        {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-blue-100 rounded-lg">
@@ -77,9 +73,7 @@ const TicketPage = () => {
             </div>
           </div>
         </div>
-
         <div className="p-6 space-y-6">
-          {/* Status Badges */}
           <div className="flex flex-wrap gap-2">
             <span
               className={`px-3 py-1 text-sm font-medium rounded-full ${

@@ -188,13 +188,9 @@ const EventForm: React.FC = () => {
           ticketTypes: formData.ticketTypes,
           venue: formData.venue,
         };
-        console.log(formData);
+      
         await createEvent(eventData);
-
-        console.log("Event Data:", JSON.stringify(eventData, null, 2));
         setSubmitSuccess(true);
-
-        // Reset form after successful submission
         setFormData({
           name: "",
           description: "",
@@ -285,7 +281,7 @@ const EventForm: React.FC = () => {
                 ✅ Event created successfully!
               </p>
               <pre className="mt-2 text-xs text-green-700 bg-green-100 p-2 rounded overflow-x-auto">
-                {JSON.stringify(formData, null, 2)}
+                a new event was created successfully
               </pre>
             </div>
           )}
@@ -487,8 +483,6 @@ const EventForm: React.FC = () => {
                     )}
                   </div>
                 </div>
-
-                {/* Tags */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Tags
@@ -532,8 +526,6 @@ const EventForm: React.FC = () => {
                   )}
                 </div>
               </div>
-
-              {/* Venue Information */}
               <div className="space-y-6">
                 <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
                   <MapPin className="w-5 h-5" />
@@ -745,8 +737,6 @@ const EventForm: React.FC = () => {
                   </div>
                 </div>
               </div>
-
-              {/* Ticket Types */}
               <div className="space-y-6">
                 <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
                   <Ticket className="w-5 h-5" />
@@ -826,8 +816,6 @@ const EventForm: React.FC = () => {
                   </div>
                 </div>
               </div>
-
-              {/* Submit Button */}
               <div className="pt-6">
                 <button
                   type="submit"

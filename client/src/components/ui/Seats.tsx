@@ -51,14 +51,12 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
   } = useBookingTickets();
 
   const isModeChosen = ticketState === "reserve" || ticketState === "buy";
-  // Safer label (falls back to 'reserve')
   const actionLabel = (ticketState ?? "reserve").toUpperCase();
-
   useEffect(() => {
     if (eventDetails?.seatsMap) {
       setNewSeatsMap(eventDetails.seatsMap);
     }
-  }, [eventDetails?._id]);
+  }, []);
 
   const updateMapSeats = (
     rowIndex: number,
@@ -69,7 +67,6 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
       const newSeatsMap = [...prevGrid];
       newSeatsMap[rowIndex] = [...newSeatsMap[rowIndex]];
       newSeatsMap[rowIndex][colIndex] = newValue;
-
       return newSeatsMap;
     });
   };
@@ -78,7 +75,6 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
 
   const handleClickSeat = (row: number, column: number, newValue: number) => {
     const nameSeat = `${String.fromCharCode(65 + row)}-${column + 1}`;
-
     setSelectedSeats((prev) => {
       if (!prev.includes(nameSeat)) {
         updateMapSeats(row, column, newValue);
@@ -148,8 +144,6 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
             </div>
           </Card>
         )}
-
-        {/* Action Buttons */}
         <Card className="mb-8 p-6 shadow-lg border-0 bg-white/90 backdrop-blur-sm">
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button
@@ -176,10 +170,7 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
             </Button>
           </div>
         </Card>
-
-        {/* Seats Section */}
         <Card className="p-6 md:p-8 shadow-xl border-0 bg-white/95 backdrop-blur-sm">
-          {/* Stage/Screen */}
           <div className="flex justify-center mb-8">
             <div className="bg-gradient-to-r from-gray-800 to-gray-900 text-white px-8 py-3 rounded-lg shadow-lg">
               <div className="flex items-center gap-2">
@@ -188,13 +179,9 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
               </div>
             </div>
           </div>
-
-          {/* Title */}
           <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
             Seat Selection
           </h2>
-
-          {/* Legend */}
           <div className="flex flex-wrap justify-center gap-6 mb-8 p-4  rounded-xl">
             {[0, 1, 2].map((status) => (
               <div key={status} className="flex items-center gap-2">
@@ -209,25 +196,21 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
               </div>
             ))}
           </div>
-
-          {/* Seats Grid */}
-
           <div className="flex items-center justify-center mb-8">
             <div className="inline-block">
               {eventDetails?.seatsMap?.map((row, rowIndex) => (
-                <div key={rowIndex} className="flex justify-center items-center gap-2 mb-2">
+                <div
+                  key={rowIndex}
+                  className="flex justify-center items-center gap-2 mb-2"
+                >
                   <div className="w-8 h-8 flex items-center justify-center font-bold text-gray-600 text-sm">
                     {getRowLabel(rowIndex)}
                   </div>
-
-                  {/* Seats */}
                   <div className="flex gap-1">
                     {row.map((seatStatus, colIndex) => {
                       const isAvailable = seatStatus === 0;
                       const isReserved = seatStatus === 1;
                       const isPaid = seatStatus === 2;
-
-                      // Pick styles based on status
                       let seatStyles = "";
                       if (isAvailable) {
                         seatStyles =
@@ -241,7 +224,6 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
                         seatStyles =
                           "bg-gray-100 border-gray-300 text-gray-500";
                       }
-
                       return (
                         <div
                           key={colIndex}
@@ -269,10 +251,8 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
                               isReserved &&
                               ticketState === "reserve"
                             ) {
-                              // Allow unreserve
                               handleClickSeat(rowIndex, colIndex, 0);
                             } else if (isPaid && ticketState === "buy") {
-                              // Allow refund/reset (optional)
                               handleClickSeat(rowIndex, colIndex, 0);
                             }
                           }}
@@ -291,8 +271,6 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
                       );
                     })}
                   </div>
-
-                  {/* Row Label Right */}
                   <div className="w-8 h-8 flex items-center justify-center font-bold text-gray-600 text-sm">
                     {getRowLabel(rowIndex)}
                   </div>
@@ -300,8 +278,6 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
               ))}
             </div>
           </div>
-
-          {/* Selected Seats Summary */}
           {selectedSeats.length > 0 && (
             <Card className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 p-6 mb-6">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -343,8 +319,6 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
               </Button>
             </div>
           )}
-
-          {/* Checkout Button */}
           {selectedSeats.length > 0 && (
             <div className="flex justify-center">
               {actionLabel === "BUY" ? (

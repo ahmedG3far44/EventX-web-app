@@ -137,15 +137,11 @@ export default function SignupPage() {
     } else if (!emailRegex.test(formData.email)) {
       newErrors.email = "Please enter a valid email address";
     }
-
-    // Password validation
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters";
     }
-
-    // Profile image validation
     if (!formData.profileImage.trim()) {
       newErrors.profileImage = "Profile image URL is required";
     } else {
@@ -155,13 +151,9 @@ export default function SignupPage() {
         newErrors.profileImage = "Please enter a valid URL";
       }
     }
-
-    // Gender validation
     if (!formData.gender) {
       newErrors.gender = "Please select a gender";
     }
-
-    // Age validation
     if (!formData.age || formData.age < 1) {
       newErrors.age = "Please enter a valid age";
     } else if (formData.age < 13) {
@@ -169,16 +161,12 @@ export default function SignupPage() {
     } else if (formData.age > 120) {
       newErrors.age = "Please enter a valid age";
     }
-
-    // Phone validation (optional)
     if (formData.phone && formData.phone.trim()) {
       const phoneRegex = /^[\+]?[1-9][\d]{7,14}$/;
       if (!phoneRegex.test(formData.phone.replace(/[\s\-\(\)]/g, ""))) {
         newErrors.phone = "Please enter a valid phone number";
       }
     }
-
-    // Address validation
     newErrors.address = {};
     if (!formData.address.state) {
       newErrors.address.state = "State is required";
@@ -194,13 +182,9 @@ export default function SignupPage() {
     } else if (!/^\d{5}$/.test(formData.address.zipCode)) {
       newErrors.address.zipCode = "ZIP code must be 5 digits";
     }
-
-    // Remove address errors if all are empty
     if (Object.keys(newErrors.address).length === 0) {
       delete newErrors.address;
     }
-
-    // Terms validation
     if (!formData.acceptTerms) {
       newErrors.acceptTerms = "You must accept the terms and conditions";
     }
@@ -266,7 +250,6 @@ export default function SignupPage() {
               {error}
             </div>
           )}
-          {/* Name */}
           <div>
             <label className="text-sm font-medium text-gray-700 block mb-1">
               Full Name
@@ -287,8 +270,6 @@ export default function SignupPage() {
               <p className="text-xs text-red-600 mt-1">{errors.name}</p>
             )}
           </div>
-
-          {/* Email */}
           <div>
             <label className="text-sm font-medium text-gray-700 block mb-1">
               Email
@@ -309,8 +290,6 @@ export default function SignupPage() {
               <p className="text-xs text-red-600 mt-1">{errors.email}</p>
             )}
           </div>
-
-          {/* Password */}
           <div>
             <label className="text-sm font-medium text-gray-700 block mb-1">
               Password
@@ -342,8 +321,6 @@ export default function SignupPage() {
               <p className="text-xs text-red-600 mt-1">{errors.password}</p>
             )}
           </div>
-
-          {/* Profile Image */}
           <div>
             <label className="text-sm font-medium text-gray-700 block mb-1">
               Profile Image URL
@@ -364,8 +341,6 @@ export default function SignupPage() {
               <p className="text-xs text-red-600 mt-1">{errors.profileImage}</p>
             )}
           </div>
-
-          {/* Gender & Age Row */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-gray-700 block mb-1">
@@ -406,8 +381,6 @@ export default function SignupPage() {
               )}
             </div>
           </div>
-
-          {/* Phone (Optional) */}
           <div>
             <label className="text-sm font-medium text-gray-700 block mb-1">
               Phone Number{" "}
@@ -429,8 +402,6 @@ export default function SignupPage() {
               <p className="text-xs text-red-600 mt-1">{errors.phone}</p>
             )}
           </div>
-
-          {/* Address Section */}
           <div className="border-t pt-4">
             <div className="flex items-center mb-3">
               <MapPin className="h-4 w-4 text-gray-400 mr-2" />
@@ -438,8 +409,6 @@ export default function SignupPage() {
                 Address Information
               </h3>
             </div>
-
-            {/* State & Area Row */}
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-1">
@@ -449,7 +418,6 @@ export default function SignupPage() {
                   value={formData.address.state}
                   onChange={(e) => {
                     updateAddress("state", e.target.value);
-                    // Reset area when state changes
                     updateAddress("area", "");
                   }}
                   className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
@@ -469,7 +437,6 @@ export default function SignupPage() {
                   </p>
                 )}
               </div>
-
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-1">
                   Area
@@ -496,8 +463,6 @@ export default function SignupPage() {
                 )}
               </div>
             </div>
-
-            {/* Street */}
             <div className="mb-4">
               <label className="text-sm font-medium text-gray-700 block mb-1">
                 Street Address
@@ -517,8 +482,6 @@ export default function SignupPage() {
                 </p>
               )}
             </div>
-
-            {/* ZIP Code */}
             <div>
               <label className="text-sm font-medium text-gray-700 block mb-1">
                 ZIP Code
@@ -540,13 +503,10 @@ export default function SignupPage() {
               )}
             </div>
           </div>
-
-          {/* Terms and Conditions */}
           <div className="flex items-start space-x-2">
             <input
               type="checkbox"
               id="terms"
-              // checked={formData.acceptTerms}
               onChange={(e) =>
                 updateField("acceptTerms", e.target.checked ? true : false)
               }
@@ -572,8 +532,6 @@ export default function SignupPage() {
           {errors.acceptTerms && (
             <p className="text-xs text-red-600">{errors.acceptTerms}</p>
           )}
-
-          {/* Submit Button */}
           <button
             type="button"
             onClick={handleSubmit}

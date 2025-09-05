@@ -1,12 +1,8 @@
 import Event from "../models/event.js";
 
-// @desc    Get all events
-// @route   GET /api/events
-// @access  Public
 export const getEvents = async (req, res) => {
   try {
     const events = await Event.find();
-
     res.status(200).json({
       success: true,
       count: events.length,
@@ -20,26 +16,19 @@ export const getEvents = async (req, res) => {
   }
 };
 
-// @desc    Get single event
-// @route   GET /api/events/:id
-// @access  Public
 export const getEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
-
     if (!eventId) {
       throw new Error("id is missing!!");
     }
-
     const event = await Event.findById(eventId);
-
     if (!event) {
       return res.status(404).json({
         success: false,
         message: "Event not found",
       });
     }
-
     res.status(200).json({
       success: true,
       data: event,
@@ -51,7 +40,6 @@ export const getEvent = async (req, res) => {
     });
   }
 };
-
 const createSeatsMap = (capacity) => {
   const cols = Math.ceil(Math.sqrt(capacity * 1.2));
   const rows = Math.ceil(capacity / cols);
@@ -76,11 +64,6 @@ export const createEvent = async (req, res) => {
     const seatsAmount = totalSeats;
     const availableSeats = totalSeats;
     const initialRevenue = 0;
-
-    // console.log(payload);
-
-    // console.log();
-
     const event = new Event({
       ...payload,
       seatsMap,
@@ -102,74 +85,21 @@ export const createEvent = async (req, res) => {
   }
 };
 
-/*
-EXAMPLE REQUEST BODY STRUCTURE (WITHOUT seatsMap):
-{
-  "name": "Valorant Game Event",
-  "description": "Professional e-sports tournament",
-  "emoji": "🎮",
-  "category": "E-Sports",
-  "tags": ["gaming", "e-sports", "tournament", "valorant"],
-  "datetime": "2024-05-15T16:00:00",
-  "organizer": "Gaming League",
-  "popularity": "High Popularity",
-  "revenue": 0,
-  "ticketTypes": {
-    "type": "VIP",
-    "name": "Premium Gaming Experience",
-    "price": 75
-  },
-  "venue": {
-    "name": "Gaming Arena",
-    "capacity": 200,           // seatsMap will be generated to match this capacity
-    "address": {
-      "street": "123 Gaming Blvd",
-      "city": "Boston",
-      "state": "MA",
-      "zipCode": "02101"
-    }
-  }
-}
-
-GENERATED OUTPUT:
-- seatsMap: 2D array of zeros (e.g., for capacity 200 → ~14x15 grid of zeros)
-- availableSeats: 200 (matches venue.capacity)
-- totalSeats: 200 (calculated from generated seatsMap)
-
-VALIDATION RULES:
-1. venue.capacity is used to generate seatsMap
-2. seatsMap is automatically created as 2D array of zeros
-3. availableSeats equals venue.capacity initially
-4. revenue defaults to 0 for new events
-5. All required fields must be present and properly formatted
-*/
-
 export const updateEventStatus = async (req, res) => {
   try {
     const { id } = req.params;
-
     const payload = req.body;
-
-    console.log(payload);
-
     const status = payload.status;
-
     const event = await Event.findByIdAndUpdate(id, {
       status,
     });
-
-    
-    
     if (!event) {
       return res.status(404).json({
         success: false,
         message: "Event not found",
       });
     }
-    
     await event.save();
-
-
     res.status(200).json({
       success: true,
       message: `Event status updated to ${status}`,
@@ -187,16 +117,13 @@ export const updateEventStatus = async (req, res) => {
 export const deleteEvent = async (req, res) => {
   try {
     const { id } = req.params;
-
     const event = await Event.findByIdAndDelete(id);
-
     if (!event) {
       return res.status(404).json({
         success: false,
         message: "Event id is not found",
       });
     }
-
     res.status(200).json({
       success: true,
       data: "Event deleted successfully",

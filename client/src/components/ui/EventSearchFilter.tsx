@@ -40,7 +40,7 @@ export default function EventSearchFilter({
   const { events } = useEvents();
   const [showFilters, setShowFilters] = useState(false);
 
-  // Extract unique values for filter options
+
   const filterOptions = useMemo(() => {
     const categories = [...new Set(events.map((e) => e.category))];
     const statuses = [...new Set(events.map((e) => e.status))];
@@ -49,10 +49,10 @@ export default function EventSearchFilter({
     return { categories, statuses, popularities };
   }, [events]);
 
-  // Filter logic
+
   const filteredEvents = useMemo(() => {
     const filtered: EventType[] = events.filter((event) => {
-      // Search filter
+
       if (filters.search) {
         const searchTerm = filters.search.toLowerCase();
         const matchesSearch =
@@ -64,19 +64,15 @@ export default function EventSearchFilter({
         if (!matchesSearch) return false;
       }
 
-      // Category filter
+
       if (filters.category && event.category !== filters.category) return false;
 
-      // Status filter
+
       if (filters.status && event.status !== filters.status) return false;
 
-      // Popularity filter
+      
       if (filters.popularity && event.popularity !== filters.popularity)
         return false;
-
-      // City filter
-
-      // Date range filter
       if (filters.dateRange) {
         const eventDate = new Date(event.datetime);
         const today = new Date();
@@ -96,7 +92,7 @@ export default function EventSearchFilter({
         }
       }
 
-      // Availability filter
+      
       if (filters.availabilityFilter) {
         const availabilityRatio = event.availableSeats / event.seatsAmount;
         switch (filters.availabilityFilter) {
@@ -115,7 +111,7 @@ export default function EventSearchFilter({
       return true;
     });
 
-    // Notify parent component
+    
     onFilteredEvents(filtered);
     return filtered;
   }, [events, filters, onFilteredEvents]);
@@ -153,7 +149,6 @@ export default function EventSearchFilter({
         />
       </div>
 
-      {/* Filter Toggle */}
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={() => setShowFilters(!showFilters)}
@@ -179,10 +174,10 @@ export default function EventSearchFilter({
         )}
       </div>
 
-      {/* Filter Panel */}
+
       {showFilters && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-md">
-          {/* Category Filter */}
+
           <div>
             <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
               <Tag className="h-4 w-4 mr-1" />
@@ -201,8 +196,6 @@ export default function EventSearchFilter({
               ))}
             </select>
           </div>
-
-          {/* Status Filter */}
           <div>
             <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
               <Users className="h-4 w-4 mr-1" />
@@ -221,8 +214,6 @@ export default function EventSearchFilter({
               ))}
             </select>
           </div>
-
-          {/* Popularity Filter */}
           <div>
             <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
               <Star className="h-4 w-4 mr-1" />
@@ -242,7 +233,6 @@ export default function EventSearchFilter({
             </select>
           </div>
 
-          {/* Date Range Filter */}
           <div>
             <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
               <Calendar className="h-4 w-4 mr-1" />
@@ -260,7 +250,7 @@ export default function EventSearchFilter({
             </select>
           </div>
 
-          {/* Availability Filter */}
+
           <div>
             <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
               <Users className="h-4 w-4 mr-1" />
@@ -282,7 +272,7 @@ export default function EventSearchFilter({
         </div>
       )}
 
-      {/* Results Summary */}
+
       <div className="flex items-center justify-between pt-4 border-t border-gray-200">
         <p className="text-sm text-gray-600">
           Showing {filteredEvents.length} of {events.length} events
@@ -331,7 +321,7 @@ export default function EventSearchFilter({
         )}
       </div>
 
-      {/* Sample Event Cards for Demo */}
+
       <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
         {filteredEvents.map((event) => (
           <EventCard key={event._id} event={event} />

@@ -34,12 +34,12 @@ const AttendeeInsights = () => {
     overAllAnalysis.locationsBarData
   );
 
-  // Locations bar chart data
+
   const [locationsBarData, setLocationsBarData] = useState(
     overAllAnalysis.locationsBarData
   );
 
-  // Social media engagement data
+
   const socialMediaData = [
     {
       platform: "Instagram Mentions",
@@ -69,7 +69,7 @@ const AttendeeInsights = () => {
 
   const navigate = useNavigate();
 
-  // Location table data
+  
   const locationTableData = overAllAnalysis.locationTableData;
 
   useEffect(() => {
@@ -80,7 +80,6 @@ const AttendeeInsights = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
-      {/* Header */}
       {eventDetails && (
         <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
           <div className="flex items-center justify-between flex-wrap gap-4">
@@ -126,9 +125,8 @@ const AttendeeInsights = () => {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column */}
+
         <div className="lg:col-span-2 space-y-6">
-          {/* Attendee Age Chart */}
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               ATTENDEE AGE
@@ -152,13 +150,12 @@ const AttendeeInsights = () => {
               </div>
             </div>
 
-            {/* Age Distribution Visualization */}
+
             <AgeDistributionChart />
           </div>
 
-          {/* Bottom Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Attendee Interests */}
+            
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 ATTENDEE INTERESTS
@@ -224,8 +221,6 @@ const AttendeeInsights = () => {
                 </div>
               </div>
             </div>
-
-            {/* Attendee Locations Bar Chart */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 ATTENDEE LOCATIONS
@@ -262,9 +257,9 @@ const AttendeeInsights = () => {
           </div>
         </div>
 
-        {/* Right Column */}
+        
         <div className="space-y-6">
-          {/* Engagement & Social Media Reach */}
+          
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-2">
               Engagement & Social Media Reach
@@ -299,7 +294,7 @@ const AttendeeInsights = () => {
             </div>
           </div>
 
-          {/* Attendee Locations Table */}
+          
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               ATTENDEE LOCATIONS

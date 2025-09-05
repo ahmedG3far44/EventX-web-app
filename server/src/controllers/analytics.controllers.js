@@ -1,8 +1,6 @@
 import User from "../models/user.js";
 import Event from "../models/event.js";
 import Ticket from "../models/ticket.js";
-
-// Helper function to generate colors for charts
 const generateColors = () => [
   "#3B82F6",
   "#10B981",
@@ -15,17 +13,10 @@ const generateColors = () => [
   "#F97316",
   "#6366F1",
 ];
-
-// Get overall analytics (all events)
 export const getOverallAnalytics = async (req, res) => {
   try {
-    // Total number of events
     const totalEvents = await Event.countDocuments();
-
-    // Total number of tickets sold
     const totalTickets = await Ticket.countDocuments({ status: "paid" });
-
-    // Total revenue from all paid tickets
     const revenueResult = await Ticket.aggregate([
       { $match: { status: "paid" } },
       {
@@ -36,8 +27,6 @@ export const getOverallAnalytics = async (req, res) => {
       },
     ]);
     const totalRevenue = revenueResult[0]?.totalRevenue || 0;
-
-    // Top 5 events by revenue
     const topEventsByRevenue = await Ticket.aggregate([
       { $match: { status: "paid" } },
       {
@@ -68,11 +57,8 @@ export const getOverallAnalytics = async (req, res) => {
         },
       },
     ]);
-
-    // Ticket sales data by month (last 6 months)
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-
     const ticketSalesData = await Ticket.aggregate([
       {
         $match: {
@@ -109,8 +95,6 @@ export const getOverallAnalytics = async (req, res) => {
         },
       },
     ]);
-
-    // Event categories distribution (interests data)
     const categoriesData = await Event.aggregate([
       {
         $group: {
@@ -121,13 +105,11 @@ export const getOverallAnalytics = async (req, res) => {
       { $sort: { count: -1 } },
       { $limit: 10 },
     ]);
-
     const totalCategoryEvents = categoriesData.reduce(
       (sum, cat) => sum + cat.count,
       0
     );
     const colors = generateColors();
-
     const interestsData = categoriesData.map((category, index) => ({
       name: category._id,
       value: category.count,
@@ -136,8 +118,6 @@ export const getOverallAnalytics = async (req, res) => {
       )}%`,
       color: colors[index % colors.length],
     }));
-
-    // Locations data based on venue city
     const locationsData = await Event.aggregate([
       { $match: { "venue.address.city": { $exists: true, $ne: null } } },
       {
@@ -182,8 +162,6 @@ export const getOverallAnalytics = async (req, res) => {
         ][index % 10]
       }-500`,
     }));
-
-    // Mock social media data (you can integrate with real APIs later)
     const socialMediaData = [
       {
         platform: "Instagram Mentions",
@@ -238,12 +216,9 @@ export const getOverallAnalytics = async (req, res) => {
   }
 };
 
-// Get analytics for a specific event
 export const getEventAnalytics = async (req, res) => {
   try {
     const { eventId } = req.params;
-
-    // Get event details
     const event = await Event.findById(eventId);
     if (!event) {
       return res.status(404).json({
@@ -251,17 +226,11 @@ export const getEventAnalytics = async (req, res) => {
         message: "Event not found",
       });
     }
-
-    // Get tickets for this event
-    const eventTickets = await Ticket.find({ event: eventId, status: "paid" });
-
-    // Calculate revenue for this event
+    const eventTickets = await Ticket.find({ event: eventId, status: "paid" })
     const eventRevenue = eventTickets.reduce(
       (sum, ticket) => sum + ticket.price * ticket.quantity,
       0
     );
-
-    // Ticket type distribution
     const ticketTypeData = await Ticket.aggregate([
       { $match: { event: eventId, status: "paid" } },
       {
@@ -278,7 +247,6 @@ export const getEventAnalytics = async (req, res) => {
       0
     );
     const colors = generateColors();
-
     const ticketTypesData = ticketTypeData.map((type, index) => ({
       name: type._id,
       value: type.count,
@@ -286,14 +254,11 @@ export const getEventAnalytics = async (req, res) => {
       color: colors[index % colors.length],
       revenue: type.revenue,
     }));
-
-    // Daily ticket sales for this event (last 30 days or since event creation)
     const eventCreated = new Date(event.createdAt);
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     const startDate =
       eventCreated > thirtyDaysAgo ? eventCreated : thirtyDaysAgo;
-
     const dailySales = await Ticket.aggregate([
       {
         $match: {
@@ -313,8 +278,6 @@ export const getEventAnalytics = async (req, res) => {
       },
       { $sort: { _id: 1 } },
     ]);
-
-    // Payment methods distribution
     const paymentMethodsData = await Ticket.aggregate([
       { $match: { event: eventId, status: "paid" } },
       {
@@ -324,19 +287,15 @@ export const getEventAnalytics = async (req, res) => {
         },
       },
     ]);
-
     const paymentMethods = paymentMethodsData.map((method, index) => ({
       method: method._id || "Unknown",
       count: method.count,
       color: colors[index % colors.length],
     }));
-
-    // Event capacity analytics
     const occupancyRate = (
       ((event.seatsAmount - event.availableSeats) / event.seatsAmount) *
       100
     ).toFixed(1);
-
     res.status(200).json({
       success: true,
       data: {
@@ -378,14 +337,9 @@ export const getEventAnalytics = async (req, res) => {
     });
   }
 };
-
-// Get user analytics
 export const getUserAnalytics = async (req, res) => {
   try {
-    // Total users
-    const totalUsers = await User.countDocuments();
-
-    // Users by role
+    const totalUsers = await User.countDocuments()
     const usersByRole = await User.aggregate([
       {
         $group: {
@@ -394,11 +348,8 @@ export const getUserAnalytics = async (req, res) => {
         },
       },
     ]);
-
-    // Recent user registrations (last 30 days)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
     const recentRegistrations = await User.aggregate([
       { $match: { createdAt: { $gte: thirtyDaysAgo } } },
       {
@@ -411,8 +362,6 @@ export const getUserAnalytics = async (req, res) => {
       },
       { $sort: { _id: 1 } },
     ]);
-
-    // User verification status
     const verificationStats = await User.aggregate([
       {
         $group: {
@@ -421,7 +370,6 @@ export const getUserAnalytics = async (req, res) => {
         },
       },
     ]);
-
     res.status(200).json({
       success: true,
       data: {
@@ -440,13 +388,10 @@ export const getUserAnalytics = async (req, res) => {
     });
   }
 };
-
-// Get revenue analytics
 export const getRevenueAnalytics = async (req, res) => {
   try {
     const { period = "6months" } = req.query;
-
-    let startDate = new Date();
+  let startDate = new Date();
     switch (period) {
       case "1month":
         startDate.setMonth(startDate.getMonth() - 1);
@@ -463,8 +408,6 @@ export const getRevenueAnalytics = async (req, res) => {
       default:
         startDate.setMonth(startDate.getMonth() - 6);
     }
-
-    // Revenue by period
     const revenueByPeriod = await Ticket.aggregate([
       {
         $match: {
@@ -501,8 +444,6 @@ export const getRevenueAnalytics = async (req, res) => {
         },
       },
     ]);
-
-    // Revenue by event category
     const revenueByCategory = await Ticket.aggregate([
       { $match: { status: "paid" } },
       {
@@ -523,7 +464,6 @@ export const getRevenueAnalytics = async (req, res) => {
       },
       { $sort: { revenue: -1 } },
     ]);
-
     res.status(200).json({
       success: true,
       data: {

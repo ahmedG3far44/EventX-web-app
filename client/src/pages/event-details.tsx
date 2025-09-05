@@ -1,23 +1,19 @@
 import Seats from "@/components/ui/Seats";
 import ShowEventDetails from "@/components/ui/ShowEventDetails";
 import Spinner from "@/components/ui/Spinner";
-
 import { useEvents } from "@/contexts/EventsProvider";
-import type { EventType } from "@/lib/types";
 import { LucideX } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { useParams } from "react-router-dom";
+import type { EventType } from "@/lib/types";
 
 const EventDetailsPage = () => {
   const { id } = useParams();
-
   const [isOpen, setOpen] = useState(false);
-
   const { getEventById, loading, error, eventDetails } = useEvents();
   useEffect(() => {
     getEventById(id as string);
   }, [id]);
-
   if (loading)
     return (
       <div className="w-full min-h-screen flex items-center justify-center bg-zinc-50">

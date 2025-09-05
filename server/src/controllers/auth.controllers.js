@@ -6,25 +6,15 @@ import formatResponse from "../utils/formatResponse.js";
 export const login = async (req, res) => {
   try {
     const payload = req.body;
-
-    console.log(payload);
-
     if (!payload) {
       throw new Error("payload data is missing!!");
     }
-
     const { email, password } = payload;
-
-    // check if User exist before or not
-
     const hash = await bcrypt.hash(password, 10);
-
     const isPasswordCorrect = await bcrypt.compare(password, hash);
-
     if (!isPasswordCorrect) {
       throw new Error("your email or password is wrong!!");
     }
-
     const user = await User.findOne({ email }).select({
       _id: 1,
       name: 1,
@@ -34,15 +24,9 @@ export const login = async (req, res) => {
       gender: 1,
       profileImage: 1,
     });
-
-    console.log(user._doc);
-    // compare email and passwords
     if (!user) {
       throw new Error("user not found your email or password is wrong!!");
     }
-
-    // generate new token
-
     const token = jwt.sign(
       { ...user._doc, role: "USER" },
       process.env.JWT_SECRETE,
@@ -50,13 +34,6 @@ export const login = async (req, res) => {
         expiresIn: "7d",
       }
     );
-
-    // res.cookie("authToken", token, {
-    //   httpOnly: true,
-    //   secure: process.env.NODE_ENV === "production",
-    //   sameSite: "strict",
-    //   maxAge: 24 * 60 * 60 * 1000,
-    // });
     const loggedUser = {
       ...user._doc,
     };
@@ -80,32 +57,18 @@ export const register = async (req, res) => {
   try {
     const payload = req.body;
     const salt = await bcrypt.genSalt(10);
-
     if (!payload) {
       throw new Error("payload data is missing!!");
     }
-
-    console.log(payload);
-
-    // const { name, gender, age, email, password, profile } = payload;
-    // check if User exist before or not
-
     const hashedPassword = await bcrypt.hash(payload.password, salt);
-
     const user = await User.findOne({
       email: payload.email,
       password: hashedPassword,
     });
-
-    // compare email and passwords
     if (user) {
       throw new Error("this User is already exist!!");
     }
-
-    // hash new User password before add
     const hash = await bcrypt.hash(payload.password, salt);
-
-    // const { profileImage, age, gender } = payload;
     const newUser = new User({
       ...payload,
       password: hash,
@@ -175,9 +138,7 @@ export const logout = async (req, res) => {
 export const createDefaultAdmin = async (req, res) => {
   try {
     const random = Math.floor(Math.random() * 191) + 10;
-
     const hashedPassword = await bcrypt.hash("@Ranaa125", 10);
-
     const adminProfile =
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLKYamkRB_qMHdd_HvhrxBlHhExgcAW6Mquw&s";
     const newUser = new User({
@@ -189,13 +150,9 @@ export const createDefaultAdmin = async (req, res) => {
       age: 23,
       profileImage: adminProfile,
     });
-
     await newUser.save();
-
     const payloadUser = newUser._doc;
-
     const { _id, name, email, age, gender, profileImage, role } = payloadUser;
-
     const token = jwt.sign(
       {
         _id,
@@ -211,14 +168,6 @@ export const createDefaultAdmin = async (req, res) => {
         expiresIn: "7d",
       }
     );
-
-    // res.cookie("authToken", token, {
-    //   httpOnly: true,
-    //   secure: process.env.NODE_ENV === "production",
-    //   sameSite: "strict",
-    //   maxAge: 24 * 60 * 60 * 1000,
-    // });
-
     const registeredUser = {
       ...payloadUser,
     };

@@ -6,18 +6,10 @@ export const buyTickets = async (req, res) => {
   try {
     const payload = req.body;
     const user = req.user;
-
-    console.log(payload);
-    console.log(user);
-
     const eventId = payload.event;
     const newSeatsMap = payload.seats;
     const availableSeats = payload.quantity;
     const updatedRevenue = payload.price;
-
-    // update event seats map
-    // update event available tickets reduce the number tickets
-    // update event revenue
     await Event.findByIdAndUpdate(
       eventId,
       {
@@ -27,7 +19,6 @@ export const buyTickets = async (req, res) => {
       },
       { new: true }
     );
-
     const { ticketType, seatsNumber, price, quantity, paymentDetails } =
       payload;
     const ticket = new Ticket({
@@ -39,11 +30,7 @@ export const buyTickets = async (req, res) => {
       quantity,
       paymentDetails,
     });
-
     await ticket.save();
-
-    console.log(ticket);
-
     res.status(201).json({
       data: ticket,
       success: true,
@@ -61,18 +48,12 @@ export const buyTickets = async (req, res) => {
 export const getAllTickets = async (req, res) => {
   try {
     const payload = req.body;
-    console.log(payload);
     const tickets = await Ticket.find();
-    console.log(tickets);
-
     let ticketsInfo = [];
-
     for (const ticket of tickets) {
       const user = await User.findOne({ _id: ticket.user });
-
       ticketsInfo.push({ user, ticket });
     }
-
     res.status(200).json({
       data: ticketsInfo,
       success: true,
@@ -91,13 +72,7 @@ export const getUserTickets = async (req, res) => {
   try {
     const payload = req.body;
     const { userId } = req.params;
-
-    console.log(payload);
-
-    console.log(userId);
-
     const tickets = await Ticket.find({ user: userId });
-
     res.status(200).json({
       data: tickets,
       success: true,

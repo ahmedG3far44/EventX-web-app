@@ -27,7 +27,7 @@ export interface AuthContextType {
   login: (
     email: string,
     password: string
-  ) => Promise<{ redirect: string } | void>; // Changed to Promise<void>
+  ) => Promise<{ redirect: string } | void>; 
   register: (formData: SignupData) => Promise<{ redirect: string } | void>;
   token: null | string;
   logout: () => { redirect: string } | void;
@@ -71,7 +71,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setLoading(true);
       setError(null);
-
       const response = await fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
         headers: {
@@ -82,9 +81,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (!response.ok) {
         throw new Error("login failed, your email or password is wrong!!");
       }
-
       const data = await response.json();
-
       if (data.success) {
         localStorage.setItem("user", JSON.stringify(data.data));
         localStorage.setItem("accessToken", JSON.stringify(data.token));
@@ -109,7 +106,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setLoading(true);
       setError(null);
-      console.log("form data type:", formData);
       const response = await fetch(`${BASE_URL}/auth/register`, {
         method: "POST",
         headers: {
@@ -120,9 +116,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (!response.ok) {
         throw new Error("Registration failed, please check your information!!");
       }
-
       const data = await response.json();
-
       if (data.success) {
         localStorage.setItem("user", JSON.stringify(data.data));
         localStorage.setItem("accessToken", JSON.stringify(data.token));
@@ -136,14 +130,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     }
   };
-
   const logout = () => {
-    localStorage.clear();
+    localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
     setToken(null);
     setUser(null);
     return { redirect: "/login" };
   };
-
   return (
     <AuthContext.Provider
       value={{

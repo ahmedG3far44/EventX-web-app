@@ -211,7 +211,7 @@ const BookingTickets: React.FC = () => {
 
   return (
     <div className="space-y-6 p-6">
-      {/* Header */}
+      
       <div className="space-y-1 ">
         <h1 className="text-2xl font-semibold tracking-tight">
           Booking Tickets
@@ -221,7 +221,7 @@ const BookingTickets: React.FC = () => {
         </p>
       </div>
 
-      {/* Search */}
+      
       <div className="relative max-w-sm bg-white border-none">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <input
@@ -233,7 +233,7 @@ const BookingTickets: React.FC = () => {
         />
       </div>
 
-      {/* Stats */}
+      
       <div className="grid gap-4 md:grid-cols-3">
         <div className="rounded-lg border bg-card p-4">
           <div className="text-2xl font-bold">{filteredTickets.length}</div>
@@ -259,7 +259,7 @@ const BookingTickets: React.FC = () => {
         </div>
       </div>
 
-      {/* Tickets */}
+      
       {filteredTickets.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12">
           <Search className="h-10 w-10 text-muted-foreground" />
@@ -298,7 +298,7 @@ const BookingTickets: React.FC = () => {
                 )}
 
                 <div className="mt-6 grid gap-6 md:grid-cols-3">
-                  {/* Ticket Info */}
+                  
                   <div className="space-y-3">
                     <h4 className="text-sm font-medium">Ticket Details</h4>
                     <div className="space-y-2 text-sm">
@@ -331,7 +331,7 @@ const BookingTickets: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Payment Info */}
+                  
                   <div className="space-y-3">
                     <h4 className="text-sm font-medium flex items-center gap-2">
                       <CreditCard className="h-4 w-4" />
@@ -363,7 +363,7 @@ const BookingTickets: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Dates */}
+                  
                   <div className="space-y-3">
                     <h4 className="text-sm font-medium flex items-center gap-2">
                       <Calendar className="h-4 w-4" />

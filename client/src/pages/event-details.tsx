@@ -56,13 +56,13 @@ function PopupWrapper({
 }) {
   return (
     <div className="fixed lef-0 top-0 w-full min-h-screen bg-black/90 z-40 flex items-center justify-center">
-      <div className="w-[40%] relative">
+      <div className="relative">
         <span
           role="button"
           onClick={() => setOpen(false)}
-          className="p-2 rounded-full bg-zinc-200 absolute right-5 top-5 cursor-pointer hover:bg-zinc-100 duration-300 z-50 "
+          className="p-1 rounded-full bg-zinc-200 absolute right-2 top-2 cursor-pointer hover:bg-zinc-100 duration-300 z-50 "
         >
-          <LucideX size={20} />
+          <LucideX size={15} />
         </span>
 
         {children}

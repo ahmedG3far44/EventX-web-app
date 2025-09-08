@@ -1,0 +1,270 @@
+[
+  {
+    "name": "Tech Expo 2025",
+    "description": "Explore the latest advancements in technology and innovation.",
+    "category": "Technology",
+    "datetime": "2025-10-15T10:00:00Z",
+    "organizer": "InnovateNow",
+    "emoji": "💻",
+    "seatsAmount": 500,
+    "availableSeats": 120,
+    "seatsMap": [
+      [1, 1, 1, 1],
+      [1, 0, 1, 1],
+      [1, 1, 1, 0]
+    ],
+    "revenue": 38000,
+    "popularity": "High Popularity",
+    "ticketTypes": {
+      "name": "VIP Access",
+      "price": 150,
+      "type": "vip"
+    },
+    "status": "active",
+    "tags": ["tech", "expo", "innovation"],
+    "venue": {
+      "name": "Tech Convention Center",
+      "address": {
+        "street": "123 Innovation Dr",
+        "city": "San Francisco",
+        "state": "CA",
+        "zipCode": "94103"
+      },
+      "capacity": 500
+    }
+  },
+  {
+    "name": "Jazz Under the Stars",
+    "description": "An evening of soulful jazz under the open sky.",
+    "category": "Music",
+    "datetime": "2025-09-20T19:30:00Z",
+    "organizer": "City Sounds",
+    "emoji": "🎷",
+    "seatsAmount": 200,
+    "availableSeats": 50,
+    "seatsMap": [
+      [1, 1, 1],
+      [1, 1, 0],
+      [1, 1, 1]
+    ],
+    "revenue": 12500,
+    "popularity": "Medium Popularity",
+    "ticketTypes": {
+      "name": "General Admission",
+      "price": 50,
+      "type": "general"
+    },
+    "status": "active",
+    "tags": ["jazz", "music", "night"],
+    "venue": {
+      "name": "Central Park Amphitheater",
+      "address": {
+        "street": "456 Harmony Lane",
+        "city": "Chicago",
+        "state": "IL",
+        "zipCode": "60601"
+      },
+      "capacity": 200
+    }
+  },
+  {
+    "name": "Startup Pitch Night",
+    "description": "Startups pitch to investors in a fast-paced showcase.",
+    "category": "Business",
+    "datetime": "2025-09-30T18:00:00Z",
+    "organizer": "VentureRise",
+    "emoji": "🚀",
+    "seatsAmount": 100,
+    "availableSeats": 20,
+    "seatsMap": [
+      [1, 1],
+      [1, 1],
+      [1, 1]
+    ],
+    "revenue": 6000,
+    "popularity": "High Popularity",
+    "ticketTypes": {
+      "name": "Investor Pass",
+      "price": 100,
+      "type": "vip"
+    },
+    "status": "upcoming",
+    "tags": ["startup", "investment", "pitch"],
+    "venue": {
+      "name": "Skyline Co-Working Space",
+      "address": {
+        "street": "789 Startup Blvd",
+        "city": "New York",
+        "state": "NY",
+        "zipCode": "10001"
+      },
+      "capacity": 100
+    }
+  },
+  {
+    "name": "Mindfulness Retreat",
+    "description": "Relax and reset with guided meditation and mindfulness sessions.",
+    "category": "Wellness",
+    "datetime": "2025-10-10T08:00:00Z",
+    "organizer": "ZenLife",
+    "emoji": "🧘",
+    "seatsAmount": 80,
+    "availableSeats": 15,
+    "seatsMap": [
+      [1, 1],
+      [1, 1]
+    ],
+    "revenue": 3200,
+    "popularity": "Medium Popularity",
+    "ticketTypes": {
+      "name": "Retreat Pass",
+      "price": 40,
+      "type": "general"
+    },
+    "status": "upcoming",
+    "tags": ["meditation", "wellness", "mindfulness"],
+    "venue": {
+      "name": "Peaceful Pines",
+      "address": {
+        "street": "111 Tranquil Way",
+        "city": "Boulder",
+        "state": "CO",
+        "zipCode": "80301"
+      },
+      "capacity": 80
+    }
+  },
+  {
+    "name": "Halloween Spookfest",
+    "description": "A haunted experience filled with scares and fun!",
+    "category": "Holiday",
+    "datetime": "2025-10-31T20:00:00Z",
+    "organizer": "HauntMaster",
+    "emoji": "🎃",
+    "seatsAmount": 300,
+    "availableSeats": 90,
+    "seatsMap": [
+      [1, 0, 1],
+      [1, 1, 1],
+      [1, 1, 1]
+    ],
+    "revenue": 10500,
+    "popularity": "High Popularity",
+    "ticketTypes": {
+      "name": "Haunted Entry",
+      "price": 35,
+      "type": "general"
+    },
+    "status": "upcoming",
+    "tags": ["halloween", "scary", "costume"],
+    "venue": {
+      "name": "Old Mill Theatre",
+      "address": {
+        "street": "222 Fright St",
+        "city": "Salem",
+        "state": "MA",
+        "zipCode": "01970"
+      },
+      "capacity": 300
+    }
+  },
+  {
+    "name": "Coding Bootcamp 101",
+    "description": "Learn the basics of web development in this weekend bootcamp.",
+    "category": "Education",
+    "datetime": "2025-09-21T09:00:00Z",
+    "organizer": "DevTrain",
+    "emoji": "👨‍💻",
+    "seatsAmount": 60,
+    "availableSeats": 10,
+    "seatsMap": [
+      [1, 1],
+      [1, 1]
+    ],
+    "revenue": 4500,
+    "popularity": "Medium Popularity",
+    "ticketTypes": {
+      "name": "Workshop Pass",
+      "price": 75,
+      "type": "general"
+    },
+    "status": "active",
+    "tags": ["coding", "javascript", "beginner"],
+    "venue": {
+      "name": "TechLab Academy",
+      "address": {
+        "street": "303 Learn Ln",
+        "city": "Austin",
+        "state": "TX",
+        "zipCode": "73301"
+      },
+      "capacity": 60
+    }
+  },
+  {
+    "name": "Art & Wine Night",
+    "description": "Paint while enjoying a curated wine selection.",
+    "category": "Arts",
+    "datetime": "2025-09-28T18:30:00Z",
+    "organizer": "CreativeVibes",
+    "emoji": "🎨",
+    "seatsAmount": 40,
+    "availableSeats": 5,
+    "seatsMap": [
+      [1, 1],
+      [1, 0]
+    ],
+    "revenue": 1800,
+    "popularity": "Low Popularity",
+    "ticketTypes": {
+      "name": "Painting Session",
+      "price": 45,
+      "type": "general"
+    },
+    "status": "upcoming",
+    "tags": ["art", "wine", "painting"],
+    "venue": {
+      "name": "Canvas & Corks",
+      "address": {
+        "street": "909 Studio Way",
+        "city": "Portland",
+        "state": "OR",
+        "zipCode": "97201"
+      },
+      "capacity": 40
+    }
+  },
+  {
+    "name": "Indie Film Showcase",
+    "description": "Watch a selection of award-winning indie films.",
+    "category": "Film",
+    "datetime": "2025-10-05T17:00:00Z",
+    "organizer": "CinePhile Club",
+    "emoji": "🎬",
+    "seatsAmount": 150,
+    "availableSeats": 30,
+    "seatsMap": [
+      [1, 1, 1],
+      [1, 1, 1]
+    ],
+    "revenue": 3750,
+    "popularity": "Medium Popularity",
+    "ticketTypes": {
+      "name": "Movie Pass",
+      "price": 25,
+      "type": "general"
+    },
+    "status": "upcoming",
+    "tags": ["film", "cinema", "indie"],
+    "venue": {
+      "name": "Downtown Cinema Hall",
+      "address": {
+        "street": "812 Film Ave",
+        "city": "Los Angeles",
+        "state": "CA",
+        "zipCode": "90001"
+      },
+      "capacity": 150
+    }
+  }
+]

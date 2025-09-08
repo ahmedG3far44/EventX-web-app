@@ -18,7 +18,6 @@ import Spinner from "./Spinner";
 import QRCode from "react-qr-code";
 import { Link } from "react-router-dom";
 
-
 interface PaymentDetails {
   paymentMethod: string;
   cardName: string;
@@ -94,7 +93,6 @@ const TicketInfoDetails: React.FC<TicketInfoDetailsProps> = ({
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-blue-100 rounded-lg">
@@ -118,7 +116,6 @@ const TicketInfoDetails: React.FC<TicketInfoDetailsProps> = ({
         </div>
 
         <div className="p-6 space-y-6">
-
           <div className="flex flex-wrap gap-2">
             <span
               className={`px-3 py-1 text-sm font-medium rounded-full ${
@@ -265,7 +262,7 @@ const TicketInfoDetails: React.FC<TicketInfoDetailsProps> = ({
           </div>
           <div className="flex space-x-3 pt-4 border-t border-gray-200">
             <Link
-              to={`http://localhost:3000/tickets/${ticket._id}`}
+              to={`${window.location.origin}/tickets/${ticket._id}`}
               target="_blank"
               className="flex-1 bg-blue-600 hover:bg-blue-700 text-center text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
             >

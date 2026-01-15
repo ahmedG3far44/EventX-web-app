@@ -6,9 +6,8 @@ import {
   QrCode,
   ArrowLeft,
 } from "lucide-react";
+
 import {
-  PieChart,
-  Pie,
   Cell,
   BarChart,
   Bar,
@@ -30,15 +29,13 @@ const AttendeeInsights = () => {
   const params = useParams();
   const eventId = params?.id as string;
 
-  const [interestsData, setInterestsData] = useState(
-    overAllAnalysis.locationsBarData
-  );
-
+  // const [interestsData, setInterestsData] = useState(
+  //   overAllAnalysis.locationsBarData
+  // );
 
   const [locationsBarData, setLocationsBarData] = useState(
     overAllAnalysis.locationsBarData
   );
-
 
   const socialMediaData = [
     {
@@ -69,12 +66,10 @@ const AttendeeInsights = () => {
 
   const navigate = useNavigate();
 
-  
   const locationTableData = overAllAnalysis.locationTableData;
 
   useEffect(() => {
     getEventById(eventId);
-    setInterestsData(overAllAnalysis.interestsData);
     setLocationsBarData(overAllAnalysis.locationsBarData);
   }, [eventId]);
 
@@ -125,7 +120,6 @@ const AttendeeInsights = () => {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
@@ -150,34 +144,15 @@ const AttendeeInsights = () => {
               </div>
             </div>
 
-
             <AgeDistributionChart />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 ATTENDEE INTERESTS
               </h2>
-              <div className="relative h-48 mb-4">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={interestsData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={40}
-                      outerRadius={80}
-                      dataKey="value"
-                    >
-                      {interestsData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
+
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -257,9 +232,7 @@ const AttendeeInsights = () => {
           </div>
         </div>
 
-        
         <div className="space-y-6">
-          
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-2">
               Engagement & Social Media Reach
@@ -294,7 +267,6 @@ const AttendeeInsights = () => {
             </div>
           </div>
 
-          
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               ATTENDEE LOCATIONS

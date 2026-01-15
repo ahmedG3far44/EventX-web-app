@@ -1,5 +1,11 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import { useAuth } from "./AuthProvider";
 import { useParams } from "react-router-dom";
 
@@ -44,7 +50,6 @@ interface SocialMediaData {
   icon: string;
   color: string;
 }
-
 
 interface Address {
   street: string;
@@ -353,7 +358,6 @@ const AnalyticsProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-
   useEffect(() => {
     if (eventId) {
       getEventAnalysis(eventId as string);
@@ -362,7 +366,7 @@ const AnalyticsProvider = ({ children }: { children: ReactNode }) => {
     getOverAllAnalysis();
     getRevenueAnalysis();
   }, [eventId]);
-  
+
   return (
     <AnalyticsContext.Provider
       value={{

@@ -10,6 +10,7 @@ import {
   XCircle,
   Loader2,
 } from "lucide-react";
+import { env } from "configs/env";
 import { useAuth } from "@/contexts/AuthProvider";
 
 interface User {
@@ -28,10 +29,6 @@ interface User {
 
 interface PaymentDetails {
   paymentMethod: string;
-  cardName: string;
-  cardNumber: string;
-  expiryDate: string;
-  cvc: string;
   paymentStatus: string;
 }
 
@@ -55,7 +52,7 @@ interface TicketData {
   ticket: Ticket;
 }
 
-const BASE_URL = import.meta.env.VITE_BASE_URL as string;
+const BASE_URL = env.BASE_URL;
 
 const BookingTickets: React.FC = () => {
   const [tickets, setTickets] = useState<TicketData[]>([]);
@@ -116,7 +113,7 @@ const BookingTickets: React.FC = () => {
         ticket?.seatsNumber?.some((seat) =>
           seat.toLowerCase().includes(searchLower)
         ) ||
-        ticket?.paymentDetails?.cardName?.toLowerCase().includes(searchLower)
+        ticket?.paymentDetails?.paymentMethod?.toLowerCase().includes(searchLower)
     );
 
     setFilteredTickets(filtered);
@@ -174,11 +171,6 @@ const BookingTickets: React.FC = () => {
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
-
-  const maskCardNumber = (cardNumber?: string) => {
-    if (!cardNumber) return "**** **** **** ****";
-    return cardNumber.replace(/\d(?=\d{4})/g, "*");
   };
 
   if (loading) {
@@ -347,18 +339,6 @@ const BookingTickets: React.FC = () => {
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Status:</span>
                         {getStatusBadge(ticket.paymentDetails.paymentStatus)}
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Card:</span>
-                        <span className="font-medium">
-                          {maskCardNumber(ticket.paymentDetails.cardNumber)}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Holder:</span>
-                        <span className="font-medium">
-                          {ticket.paymentDetails.cardName}
-                        </span>
                       </div>
                     </div>
                   </div>

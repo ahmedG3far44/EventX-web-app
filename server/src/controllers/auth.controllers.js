@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 import formatResponse from "../utils/formatResponse.js";
+import { env } from "../configs/env.js";
 
 export const login = async (req, res) => {
   try {
@@ -10,32 +11,24 @@ export const login = async (req, res) => {
       throw new Error("payload data is missing!!");
     }
     const { email, password } = payload;
-    const hash = await bcrypt.hash(password, 10);
-    const isPasswordCorrect = await bcrypt.compare(password, hash);
-    if (!isPasswordCorrect) {
-      throw new Error("your email or password is wrong!!");
-    }
-    const user = await User.findOne({ email }).select({
-      _id: 1,
-      name: 1,
-      email: 1,
-      role: 1,
-      age: 1,
-      gender: 1,
-      profileImage: 1,
-    });
+    const user = await User.findOne({ email }).select("+password");
     if (!user) {
       throw new Error("user not found your email or password is wrong!!");
     }
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    if (!isPasswordCorrect) {
+      throw new Error("your email or password is wrong!!");
+    }
+    const { password: _, ...userWithoutPassword } = user._doc;
     const token = jwt.sign(
-      { ...user._doc, role: "USER" },
-      process.env.JWT_SECRETE,
+      { ...userWithoutPassword },
+      env.JWT_SECRET,
       {
         expiresIn: "7d",
       }
     );
     const loggedUser = {
-      ...user._doc,
+      ...userWithoutPassword,
     };
 
     res.status(200).json({
@@ -56,29 +49,22 @@ export const login = async (req, res) => {
 export const register = async (req, res) => {
   try {
     const payload = req.body;
-    const salt = await bcrypt.genSalt(10);
     if (!payload) {
       throw new Error("payload data is missing!!");
     }
-    const hashedPassword = await bcrypt.hash(payload.password, salt);
-    const user = await User.findOne({
+    const existingUser = await User.findOne({
       email: payload.email,
-      password: hashedPassword,
     });
-    if (user) {
+    if (existingUser) {
       throw new Error("this User is already exist!!");
     }
-    const hash = await bcrypt.hash(payload.password, salt);
+    const hashedPassword = await bcrypt.hash(payload.password, 10);
     const newUser = new User({
       ...payload,
-      password: hash,
+      password: hashedPassword,
     });
 
     await newUser.save();
-
-    const token = jwt.sign(newUser._doc, process.env.JWT_SECRETE, {
-      expiresIn: "7d",
-    });
 
     const {
       _id,
@@ -91,6 +77,14 @@ export const register = async (req, res) => {
       createdAt,
       updatedAt,
     } = newUser._doc;
+
+    const token = jwt.sign(
+      { _id, name, email, role, profileImage },
+      env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      }
+    );
 
     const registeredUser = {
       _id,
@@ -122,7 +116,7 @@ export const logout = async (req, res) => {
   try {
     res.clearCookie("authToken", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",
     });
@@ -132,6 +126,62 @@ export const logout = async (req, res) => {
     res
       .status(500)
       .json(formatResponse("internal server error", false, error.message));
+  }
+};
+
+export const seedUsers = async (req, res) => {
+  try {
+    const demoUsers = [
+      {
+        name: "Demo Admin",
+        email: "admin@eventx.com",
+        password: "Admin@123",
+        role: "ADMIN",
+        isVerified: true,
+        age: 30,
+        gender: "male",
+        profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=admin",
+      },
+      {
+        name: "Demo User",
+        email: "user@eventx.com",
+        password: "User@123",
+        role: "USER",
+        isVerified: true,
+        age: 25,
+        gender: "female",
+        profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=user",
+      },
+    ];
+
+    const results = [];
+    for (const demoUser of demoUsers) {
+      const existing = await User.findOne({ email: demoUser.email });
+      if (!existing) {
+        const hashedPassword = await bcrypt.hash(demoUser.password, 10);
+        const user = new User({ ...demoUser, password: hashedPassword });
+        await user.save();
+        results.push({ email: demoUser.email, action: "created" });
+      } else {
+        results.push({ email: demoUser.email, action: "already_exists" });
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        users: [
+          { email: "admin@eventx.com", password: "Admin@123", role: "ADMIN" },
+          { email: "user@eventx.com", password: "User@123", role: "USER" },
+        ],
+      },
+      message: "Seed users processed",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
@@ -163,7 +213,7 @@ export const createDefaultAdmin = async (req, res) => {
         role,
         profileImage,
       },
-      process.env.JWT_SECRETE,
+      env.JWT_SECRET,
       {
         expiresIn: "7d",
       }

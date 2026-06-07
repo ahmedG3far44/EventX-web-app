@@ -30,8 +30,6 @@ const Insights: React.FC = () => {
 
   const { overAllAnalysis } = useAnalytics();
 
-  console.log(overAllAnalysis);
-
   const upcomingEvents: Event[] = [
     {
       id: 1,

@@ -8,9 +8,10 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { env } from "configs/env";
 import { useAuth } from "./AuthProvider";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL as string;
+const BASE_URL = env.BASE_URL;
 
 const EventsContext = createContext<{
   events: EventType[];

@@ -37,15 +37,10 @@ const ticketSchema = new Schema(
       type: String,
     },
     paymentDetails: {
-      paymentId: Schema.Types.ObjectId,
       paymentMethod: {
         type: String,
         enum: ["card", "debit-card", "paypal", "stripe", "reserved"],
       },
-      cardName: { type: String },
-      cardNumber: { type: String },
-      expiryDate: { type: String },
-      cvc: { type: String },
       paymentStatus: {
         type: String,
         enum: ["pending", "completed", "failed", "refunded"],

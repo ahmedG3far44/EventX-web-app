@@ -12,8 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { useBookingTickets } from "@/contexts/BookingTicketsProvider";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useLocation } from "react-router-dom";
 
 interface PaymentDetails {
   transactionId: string;
@@ -28,15 +27,16 @@ interface PaymentDetails {
 const PaymentSuccessPage: React.FC = () => {
   const [countdown, setCountdown] = useState<number>(10);
   const [isRedirecting, setIsRedirecting] = useState<boolean>(false);
-  const { totalTicketsPrice } = useBookingTickets();
+  const location = useLocation();
+  const totalTicketsPrice = (location.state as { totalTicketsPrice?: number })?.totalTicketsPrice || 0;
   const paymentDetails: PaymentDetails = {
-    transactionId: "TXN-2024-08-25-001",
+    transactionId: "TXN-" + new Date().getFullYear() + "-" + String(Math.floor(Math.random() * 9999)).padStart(4, "0"),
     amount: totalTicketsPrice,
     currency: "USD",
-    paymentMethod: "Credit Card (**** 4242)",
+    paymentMethod: "Card",
     date: new Date().toLocaleString(),
-    description: "Premium Subscription Plan",
-    merchantName: "Your Company Name",
+    description: "Event Tickets Purchase",
+    merchantName: "EventX",
   };
   const navigate = useNavigate();
   useEffect(() => {
@@ -66,10 +66,6 @@ const PaymentSuccessPage: React.FC = () => {
   };
 
   const handleDownloadReceipt = () => {
-    console.log(
-      "Downloading receipt for transaction:",
-      paymentDetails.transactionId
-    );
     alert("Receipt download started! (This is just a demo)");
   };
 
@@ -81,8 +77,7 @@ const PaymentSuccessPage: React.FC = () => {
     try {
       await navigator.clipboard.writeText(paymentDetails.transactionId);
       alert("Transaction ID copied to clipboard!");
-    } catch (err) {
-      console.error("Failed to copy transaction ID:", err);
+    } catch {
       alert("Transaction ID: " + paymentDetails.transactionId);
     }
   };

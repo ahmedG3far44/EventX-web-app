@@ -1,8 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
 import type { SignupData } from "@/pages/signup";
 import { createContext, useContext, useState, type ReactNode } from "react";
+import { env } from "configs/env";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL as string;
+const BASE_URL = env.BASE_URL;
 
 export interface UserType {
   _id: string;
@@ -51,7 +52,6 @@ const AuthContext = createContext<AuthContextType>({
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserType | null>(() => {
     const storedUser = localStorage.getItem("user");
-    console.log(storedUser);
     return storedUser ? (JSON.parse(storedUser) as UserType) : null;
   });
   const [loading, setLoading] = useState(false);

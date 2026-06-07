@@ -77,7 +77,6 @@ const LoginPage: React.FC = () => {
     }
     const result = await login(formData.email, formData.password);
     if (result) {
-      console.log(result.redirect as string);
       navigate(`${result.redirect}`);
     }
   };

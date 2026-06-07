@@ -52,7 +52,6 @@ const createSeatsMap = (capacity) => {
     remainingSeats -= seatsInThisRow;
     if (remainingSeats <= 0) break;
   }
-  console.log(seatsMap);
   return seatsMap;
 };
 
@@ -90,16 +89,17 @@ export const updateEventStatus = async (req, res) => {
     const { id } = req.params;
     const payload = req.body;
     const status = payload.status;
-    const event = await Event.findByIdAndUpdate(id, {
-      status,
-    });
+    const event = await Event.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    );
     if (!event) {
       return res.status(404).json({
         success: false,
         message: "Event not found",
       });
     }
-    await event.save();
     res.status(200).json({
       success: true,
       message: `Event status updated to ${status}`,

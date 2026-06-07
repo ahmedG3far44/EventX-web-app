@@ -6,6 +6,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { env } from "configs/env";
 import { useAuth } from "./AuthProvider";
 import { useParams } from "react-router-dom";
 
@@ -203,7 +204,7 @@ const AnalyticsContext = createContext<AnalyticsContextType>({
   error: null,
 });
 
-const BASE_URL = import.meta.env.VITE_BASE_URL as string;
+const BASE_URL = env.BASE_URL;
 
 const AnalyticsProvider = ({ children }: { children: ReactNode }) => {
   const [overAllAnalysis, setOverAllAnalysis] = useState<OverAllAnalysisType>({
@@ -291,7 +292,7 @@ const AnalyticsProvider = ({ children }: { children: ReactNode }) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch(`${BASE_URL}/event/${eventId}`, {
+      const response = await fetch(`${BASE_URL}/analytics/event/${eventId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

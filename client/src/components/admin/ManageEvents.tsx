@@ -8,12 +8,8 @@ import { Link } from "react-router-dom";
 const ManageEvents: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("status");
-  const [selectedDate, setSelectedDate] = useState("");
-  console.log(selectedDate, setSelectedDate);
 
   const { events } = useEvents();
-
-  console.log(events, "event mange s");
 
   
   const filteredEvents = useMemo(() => {

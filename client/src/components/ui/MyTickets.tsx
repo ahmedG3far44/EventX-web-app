@@ -13,6 +13,7 @@ import {
   QrCode,
   Eye,
 } from "lucide-react";
+import { env } from "configs/env";
 import { useAuth } from "@/contexts/AuthProvider";
 import Spinner from "./Spinner";
 import QRCode from "react-qr-code";
@@ -20,10 +21,6 @@ import { Link } from "react-router-dom";
 
 interface PaymentDetails {
   paymentMethod: string;
-  cardName: string;
-  cardNumber: string;
-  expiryDate: string;
-  cvc: string;
   paymentStatus: "pending" | "completed" | "failed" | "refunded";
 }
 
@@ -49,7 +46,7 @@ interface ApiResponse {
   message: string;
 }
 
-const BASE_URL = import.meta.env.VITE_BASE_URL as string;
+const BASE_URL = env.BASE_URL;
 const DOMAIN_URL = window.location.origin;
 export interface TicketInfoDetailsProps {
   ticket: TicketData;
@@ -178,15 +175,30 @@ const TicketInfoDetails: React.FC<TicketInfoDetailsProps> = ({
               <div className="space-y-3">
                 <h3 className="font-semibold text-gray-900">Seating</h3>
                 <div className="flex flex-wrap gap-2">
-                  {ticket.seatsNumber.map((seat, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center space-x-2 bg-gray-100 px-3 py-2 rounded-lg"
-                    >
-                      <MapPin className="w-4 h-4 text-gray-500" />
-                      <span className="font-medium text-gray-900">{seat}</span>
-                    </div>
-                  ))}
+                  {ticket.seatsNumber.map((seat, index) => {
+                    const isReserved = ticket.paymentDetails?.paymentMethod === "reserved";
+                    return (
+                      <div
+                        key={index}
+                        className="flex items-center space-x-2 px-3 py-2 rounded-lg"
+                        style={{
+                          backgroundColor: isReserved ? "#fef3c7" : "#d1fae5",
+                        }}
+                      >
+                        <MapPin className="w-4 h-4 text-gray-500" />
+                        <span className="font-medium text-gray-900">{seat}</span>
+                        <span
+                          className={`text-xs font-medium px-1.5 py-0.5 rounded ${
+                            isReserved
+                              ? "bg-yellow-200 text-yellow-800"
+                              : "bg-green-200 text-green-800"
+                          }`}
+                        >
+                          {isReserved ? "RESERVED" : "PAID"}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -244,18 +256,7 @@ const TicketInfoDetails: React.FC<TicketInfoDetailsProps> = ({
                       </span>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Cardholder:</span>
-                    <span className="text-sm font-medium">
-                      {ticket.paymentDetails.cardName}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Card:</span>
-                    <span className="text-sm font-medium">
-                      •••• {ticket.paymentDetails.cardNumber.slice(-4)}
-                    </span>
-                  </div>
+
                 </div>
               </div>
             </div>
@@ -296,53 +297,6 @@ const MyTickets: React.FC = () => {
 
   const { token, user } = useAuth();
 
-  const dummyData: TicketData[] = [
-    {
-      _id: "68b5f8cf462c2920bf464725",
-      event: "68b5f72ae5dc6890b5e34e07",
-      user: "68a334ca1441b9f5d8c6666e",
-      ticketType: "vip",
-      seatsNumber: ["A-4", "B-2"],
-      price: 100,
-      quantity: 2,
-      status: "reserved",
-      qrCode: `http://localhost:3000/ticket/68b5f8cf462c2920bf464725`,
-      paymentDetails: {
-        paymentMethod: "card",
-        cardName: "G3far Kamal",
-        cardNumber: "4848-4848-4848-4848",
-        expiryDate: "08/29",
-        cvc: "433",
-        paymentStatus: "completed",
-      },
-      createdAt: "2025-09-01T19:49:35.465Z",
-      updatedAt: "2025-09-01T19:49:35.465Z",
-      __v: 0,
-    },
-    {
-      _id: "68b5f8d5462c2920bf464728",
-      event: "68b5f72ae5dc6890b5e34e07",
-      user: "68a334ca1441b9f5d8c6666e",
-      ticketType: "general",
-      seatsNumber: ["C-1", "C-2", "C-3"],
-      price: 50,
-      quantity: 3,
-      status: "paid",
-      qrCode: `http://localhost:3000/ticket/68b5f8d5462c2920bf464728`,
-      paymentDetails: {
-        paymentMethod: "card",
-        cardName: "G3far Kamal",
-        cardNumber: "4848-4848-4848-4848",
-        expiryDate: "08/29",
-        cvc: "433",
-        paymentStatus: "completed",
-      },
-      createdAt: "2025-09-01T19:49:41.245Z",
-      updatedAt: "2025-09-01T19:49:41.245Z",
-      __v: 0,
-    },
-  ];
-
   useEffect(() => {
     fetchTickets();
   }, []);
@@ -369,7 +323,7 @@ const MyTickets: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`${BASE_URL}/tickets/${user?._id}`, {
+      const response = await fetch(`${BASE_URL}/tickets/my/${user?._id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -389,9 +343,7 @@ const MyTickets: React.FC = () => {
         throw new Error(result.message || "Failed to fetch tickets");
       }
     } catch (err) {
-      console.error("Error fetching tickets:", err);
       setError(err instanceof Error ? err.message : "An error occurred");
-      setTickets(dummyData);
     } finally {
       setLoading(false);
     }
@@ -508,14 +460,23 @@ const MyTickets: React.FC = () => {
                   <div>
                     <p className="text-sm font-medium text-gray-900">Seats</p>
                     <div className="flex flex-wrap gap-1 mt-1">
-                      {ticket.seatsNumber.map((seat, index) => (
-                        <span
-                          key={index}
-                          className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded"
-                        >
-                          {seat}
-                        </span>
-                      ))}
+                      {ticket.seatsNumber.map((seat, index) => {
+                        const isReserved = ticket.paymentDetails?.paymentMethod === "reserved";
+                        return (
+                          <span
+                            key={index}
+                            className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded"
+                            style={{
+                              backgroundColor: isReserved ? "#fef3c7" : "#d1fae5",
+                              color: isReserved ? "#92400e" : "#065f46",
+                            }}
+                          >
+                            {seat}
+                            <span className="opacity-70">|</span>
+                            {isReserved ? "RESERVED" : "PAID"}
+                          </span>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>

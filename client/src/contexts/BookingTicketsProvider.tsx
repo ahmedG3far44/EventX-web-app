@@ -3,27 +3,26 @@
 import {
   createContext,
   useContext,
+  useMemo,
   useState,
   type ReactNode,
   type SetStateAction,
   type Dispatch,
 } from "react";
-import { useEvents } from "./EventsProvider";
 import type { PaymentFormData } from "@/components/ui/PaymentForm";
+import { env } from "configs/env";
 import { useAuth } from "./AuthProvider";
+import { useEvents } from "./EventsProvider";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL as string;
+const BASE_URL = env.BASE_URL;
 
 export interface BookingContextType {
   selectedSeats: string[];
   setSelectedSeats: Dispatch<SetStateAction<string[]>>;
   ticketPrice: number;
-  seats: number[][];
-  setNewSeatsMap: Dispatch<SetStateAction<number[][]>>;
   ticketState: "buy" | "reserve";
   setTicketState: Dispatch<SetStateAction<"buy" | "reserve">>;
   totalTicketsPrice: number;
-  setTotalPrice: Dispatch<SetStateAction<number>>;
   handleTickets: (paymentInfo: PaymentFormData) => Promise<void>;
   loading: boolean;
   error: string | null;
@@ -33,12 +32,9 @@ export const BookingContext = createContext<BookingContextType>({
   selectedSeats: [],
   setSelectedSeats: () => {},
   ticketPrice: 0,
-  seats: [],
-  setNewSeatsMap: () => {},
   ticketState: "buy",
   setTicketState: () => {},
   totalTicketsPrice: 0,
-  setTotalPrice: () => {},
   handleTickets: () => Promise.resolve(),
   loading: false,
   error: null,
@@ -50,33 +46,38 @@ const BookingTicketsProvider = ({ children }: { children: ReactNode }) => {
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const ticketPrice = eventDetails ? eventDetails.ticketTypes.price : 25;
   const [ticketState, setTicketState] = useState<"reserve" | "buy">("buy");
-  const [totalTicketsPrice, setTotalPrice] = useState(0);
+  const totalTicketsPrice = useMemo(
+    () => selectedSeats.length * ticketPrice,
+    [selectedSeats, ticketPrice]
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [seats, setNewSeatsMap] = useState<number[][]>(
-    eventDetails?.seatsMap as number[][]
-  );
 
   const handleTickets = async (paymentInfo: PaymentFormData) => {
     try {
       setLoading(true);
       setError(null);
-      const { cardName, cardNumber, cvc, expiryDate, paymentMethod } =
-        paymentInfo;
+      const { paymentMethod } = paymentInfo;
+
+      const updatedSeatsMap = (eventDetails?.seatsMap as number[][] ?? []).map(
+        (row, ri) =>
+          row.map((status, ci) => {
+            const name = `${String.fromCharCode(65 + ri)}-${ci + 1}`;
+            if (selectedSeats.includes(name)) return paymentMethod === "reserved" ? 1 : 2;
+            return status;
+          })
+      );
+
       const formData = {
         event: eventDetails?._id,
         user: user?._id,
         ticketType: "general",
         seatsNumber: selectedSeats,
-        price: totalTicketsPrice,
+        price: ticketPrice,
         quantity: selectedSeats.length,
-        seats,
+        seats: updatedSeatsMap,
         paymentDetails: {
           paymentMethod,
-          cardName,
-          cardNumber,
-          expiryDate,
-          cvc,
           paymentStatus: "completed",
         },
       };
@@ -93,8 +94,6 @@ const BookingTicketsProvider = ({ children }: { children: ReactNode }) => {
         throw new Error("connection error can't reserve your tickets!!");
       }
       const data = await response.json();
-      setSelectedSeats([])
-      setTotalPrice(0);
       return data.data;
     } catch (error) {
       setError((error as Error).message);
@@ -106,15 +105,12 @@ const BookingTicketsProvider = ({ children }: { children: ReactNode }) => {
   return (
     <BookingContext.Provider
       value={{
-        seats,
         selectedSeats,
         setSelectedSeats,
         ticketPrice,
-        setNewSeatsMap,
         ticketState,
         setTicketState,
         totalTicketsPrice,
-        setTotalPrice,
         handleTickets,
         loading,
         error,

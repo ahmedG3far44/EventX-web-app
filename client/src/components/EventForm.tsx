@@ -213,8 +213,8 @@ const EventForm: React.FC = () => {
           },
         });
       }
-    } catch (error) {
-      console.log((error as Error).message);
+    } catch {
+      // ignore
     } finally {
       setIsSubmitting(false);
     }

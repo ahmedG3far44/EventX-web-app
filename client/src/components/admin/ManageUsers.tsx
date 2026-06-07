@@ -11,6 +11,7 @@ import {
   User,
   Filter,
 } from "lucide-react";
+import { env } from "configs/env";
 import { useAuth } from "@/contexts/AuthProvider";
 
 interface User {
@@ -25,7 +26,7 @@ interface User {
   role: "user" | "admin";
 }
 
-const BASE_URL = import.meta.env.VITE_BASE_URL as string;
+const BASE_URL = env.BASE_URL;
 
 const ManageUsers: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -58,8 +59,8 @@ const ManageUsers: React.FC = () => {
         setUsers(data.data);
 
         return data.data;
-      } catch (error) {
-        console.log((error as Error).message);
+      } catch {
+        // ignore
       }
     }
     getAllUsers();

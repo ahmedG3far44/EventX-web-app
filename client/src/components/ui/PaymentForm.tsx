@@ -16,7 +16,7 @@ import { useEvents } from "@/contexts/EventsProvider";
 import { Navigate, useNavigate } from "react-router-dom";
 
 export interface PaymentFormData {
-  paymentMethod: "card" | "paypal";
+  paymentMethod: "card" | "paypal" | "reserved";
   cardName: string;
   cardNumber: string;
   expiryDate: string;
@@ -24,14 +24,10 @@ export interface PaymentFormData {
 }
 
 const PaymentForm = ({ eventId }: { eventId: string }) => {
-  const { events, eventDetails } = useEvents();
+  const { eventDetails } = useEvents();
   const navigate = useNavigate();
-  console.log(eventId);
-  console.log(eventDetails);
   const { totalTicketsPrice, selectedSeats, handleTickets } =
     useBookingTickets();
-
-  console.log(totalTicketsPrice);
   const [loading, setLoading] = useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [paymentDetails, setPaymentInfo] = useState<PaymentFormData>({
@@ -45,11 +41,6 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsInitialized(true);
-      console.log("PaymentForm Debug Info:");
-      console.log("eventId:", eventId);
-      console.log("events length:", events?.length);
-      console.log("selectedSeats:", selectedSeats);
-      console.log("totalPrice:", totalTicketsPrice);
     }, 100);
 
     return () => clearTimeout(timer);
@@ -71,22 +62,18 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
   }
 
   if (!eventId) {
-    console.error("No eventId found in URL params");
     return <Navigate to="/events" replace />;
   }
 
   if (!eventDetails) {
-    console.error("Events not loaded yet");
     return <Navigate to="/events" replace />;
   }
 
   if (!selectedSeats || selectedSeats.length === 0) {
-    console.error("No seats selected, redirecting to event page");
     return <Navigate to={`/event/${eventId}`} replace />;
   }
 
   if (totalTicketsPrice === 0) {
-    console.error("Total price is 0, redirecting to event page");
     return <Navigate to={`/event/${eventId}`} replace />;
   }
 
@@ -132,9 +119,9 @@ const PaymentForm = ({ eventId }: { eventId: string }) => {
         expiryDate: "",
         cvc: "",
       });
-      navigate("/success");
-    } catch (error) {
-      console.error("Payment error:", (error as Error).message);
+      navigate("/success", { state: { totalTicketsPrice } });
+    } catch {
+      // ignore
     } finally {
       setLoading(false);
     }

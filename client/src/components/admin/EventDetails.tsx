@@ -13,16 +13,16 @@ import {
 } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { env } from "configs/env";
 import type { EventType } from "@/lib/types";
 import QRCode from "react-qr-code";
 import PreviewSeats from "../ui/PreviewSeats";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL as string;
+const BASE_URL = env.BASE_URL;
 const DOMAIN_URL = window.location.origin;
 
 const EventDetails = () => {
   const { id } = useParams();
-  console.log(id);
 
   const navigate = useNavigate();
 
@@ -45,7 +45,6 @@ const EventDetails = () => {
         const data = await response.json();
 
         setEventDetails(data.data);
-        console.log(data, "event det data:9 9999");
         return data.data;
       } catch (error) {
         setError((error as Error).message);

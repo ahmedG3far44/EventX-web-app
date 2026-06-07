@@ -18,6 +18,7 @@ import {
   EyeOff,
 } from "lucide-react";
 import type { EventType } from "@/lib/types";
+import PreviewSeats from "./PreviewSeats";
 import { useNavigate } from "react-router-dom";
 
 const ShowEventDetails = ({
@@ -221,38 +222,7 @@ const ShowEventDetails = ({
                   <Separator />
                   <div>
                     <h4 className="font-medium mb-3">Seats Map</h4>
-                    <div className="flex items-center justify-center">
-                      <div className="inline-block p-4 bg-gray-50 rounded-lg">
-                        <div className="space-y-2 flex flex-col items-center justify-center ">
-                          {event.seatsMap.map((row, rowIndex) => (
-                            <div key={rowIndex} className="flex gap-2">
-                              {row.map((seat, seatIndex) => (
-                                <div
-                                  key={`${rowIndex}-${seatIndex}`}
-                                  className={`w-8 h-8 rounded flex items-center justify-center text-xs font-medium ${
-                                    seat === 1
-                                      ? "bg-green-200 text-green-800"
-                                      : "bg-red-200 text-red-800"
-                                  }`}
-                                >
-                                  {seat === 1 ? "✓" : "✗"}
-                                </div>
-                              ))}
-                            </div>
-                          ))}
-                        </div>
-                        <div className="flex justify-center gap-4 mt-4 text-xs">
-                          <div className="flex items-center gap-1">
-                            <div className="w-3 h-3 bg-green-200 rounded"></div>
-                            <span>Available</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <div className="w-3 h-3 bg-red-200 rounded"></div>
-                            <span>Occupied</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <PreviewSeats seats={event.seatsMap} seatSize="sm" />
                   </div>
                 </>
               )}
@@ -364,22 +334,21 @@ const ShowEventDetails = ({
                 </div>
               </div>
             </CardContent>
-            {event.status === "active" ||
-              (event.status === "upcoming" ? (
-                <Button
-                  className="w-[80%] mx-auto cursor-pointer bg-green-600 hover:bg-green-700 duration-300"
-                  onClick={() => setOpen(!isOpen as boolean)}
-                >
-                  {isOpen ? "Cancel Booking" : "Book Tickets"}
-                </Button>
-              ) : (
-                <Button
-                  className="w-[80%] disabled:bg-zinc-400 disabled:cursor-not-allowed  mx-auto cursor-pointer bg-zinc-600 duration-300"
-                  disabled
-                >
-                  No Available For Book
-                </Button>
-              ))}
+            {event.status === "active" || event.status === "upcoming" ? (
+              <Button
+                className="w-[80%] mx-auto cursor-pointer bg-green-600 hover:bg-green-700 duration-300"
+                onClick={() => setOpen(!isOpen)}
+              >
+                {isOpen ? "Cancel Booking" : "Book Tickets"}
+              </Button>
+            ) : (
+              <Button
+                className="w-[80%] disabled:bg-zinc-400 disabled:cursor-not-allowed mx-auto cursor-pointer bg-zinc-600 duration-300"
+                disabled
+              >
+                No Available For Book
+              </Button>
+            )}
           </Card>
         </div>
       </div>

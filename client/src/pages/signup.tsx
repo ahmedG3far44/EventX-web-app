@@ -206,8 +206,8 @@ export default function SignupPage() {
       if (result) {
         return <Navigate to={result.redirect} />;
       }
-    } catch (error) {
-      console.error("Submission error:", error);
+    } catch {
+      // ignore
     }
   };
 

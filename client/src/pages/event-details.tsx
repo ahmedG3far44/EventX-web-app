@@ -25,8 +25,8 @@ const EventDetailsPage = () => {
     );
   if (error) return <div className="text-red-500">{error}</div>;
   return (
-    <div className="flex min-h-screen justify-center gap-4 p-4 items-center m-auto">
-      <div className="flex items-center justify-center gap-4 relative">
+    <div className="min-h-screen w-full">
+      <div className="relative">
         {eventDetails && (
           <ShowEventDetails
             isOpen={isOpen}
@@ -52,19 +52,16 @@ function PopupWrapper({
 }: {
   children: ReactNode;
   setOpen: (open: boolean) => void;
-  isOpen?: boolean;
 }) {
   return (
-    <div className="fixed lef-0 top-0 w-full min-h-screen bg-black/90 z-40 flex items-center justify-center">
-      <div className="relative">
-        <span
-          role="button"
+    <div className="fixed inset-0 bg-black/80 z-40 flex items-start justify-center p-2 sm:p-4 overflow-y-auto">
+      <div className="relative w-full max-w-4xl mt-4 sm:mt-8 mb-4 sm:mb-8">
+        <button
           onClick={() => setOpen(false)}
-          className="p-1 rounded-full bg-zinc-200 absolute right-2 top-2 cursor-pointer hover:bg-zinc-100 duration-300 z-50 "
+          className="p-1.5 rounded-full bg-white/80 hover:bg-white absolute right-2 top-2 cursor-pointer transition-colors z-50 shadow-md"
         >
-          <LucideX size={15} />
-        </span>
-
+          <LucideX size={18} />
+        </button>
         {children}
       </div>
     </div>

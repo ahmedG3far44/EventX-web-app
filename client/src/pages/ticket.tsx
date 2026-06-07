@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Calendar,
   CheckCircle,
@@ -9,29 +10,62 @@ import {
   XCircle,
 } from "lucide-react";
 import QRCode from "react-qr-code";
-const TicketPage = () => {
-  const ticket = {
-    _id: "68b5f8cf462c2920bf464725",
-    event: "68b5f72ae5dc6890b5e34e07",
-    user: "68a334ca1441b9f5d8c6666e",
-    ticketType: "vip",
-    seatsNumber: ["A-4", "B-2"],
-    price: 100,
-    quantity: 2,
-    status: "reserved",
-    qrCode: `http://localhost:3000/ticket/68b5f8cf462c2920bf464725`,
-    paymentDetails: {
-      paymentMethod: "card",
-      cardName: "G3far Kamal",
-      cardNumber: "4848-4848-4848-4848",
-      expiryDate: "08/29",
-      cvc: "433",
-      paymentStatus: "completed",
-    },
-    createdAt: "2025-09-01T19:49:35.465Z",
-    updatedAt: "2025-09-01T19:49:35.465Z",
-    __v: 0,
+import { env } from "configs/env";
+import { useParams } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthProvider";
+
+const BASE_URL = env.BASE_URL;
+
+interface TicketData {
+  _id: string;
+  event: string;
+  user: string;
+  ticketType: string;
+  seatsNumber: string[];
+  price: number;
+  quantity: number;
+  status: string;
+  qrCode?: string;
+  paymentDetails: {
+    paymentMethod: string;
+    paymentStatus: string;
   };
+  createdAt: string;
+  updatedAt: string;
+}
+
+const TicketPage = () => {
+  const { ticketId } = useParams();
+  const { token } = useAuth();
+  const [ticket, setTicket] = useState<TicketData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchTicket = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`${BASE_URL}/tickets/${ticketId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch ticket");
+        }
+        const data = await response.json();
+        setTicket(data.data);
+      } catch (err) {
+        setError((err as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (ticketId && token) {
+      fetchTicket();
+    }
+  }, [ticketId, token]);
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -55,9 +89,27 @@ const TicketPage = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="w-full flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (error || !ticket) {
+    return (
+      <div className="w-full flex items-center justify-center p-8">
+        <div className="text-center">
+          <p className="text-red-500">Failed to load ticket: {error}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full  flex items-start justify-center p-4">
-      <div className="bg-white rounded-xl border  max-w-1/2 w-full  overflow-y-hidden">
+    <div className="w-full flex items-start justify-center p-4">
+      <div className="bg-white rounded-xl border max-w-1/2 w-full overflow-y-hidden">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-blue-100 rounded-lg">
@@ -133,18 +185,33 @@ const TicketPage = () => {
                 </div>
               </div>
 
-              <div className="space-y-3">
+                <div className="space-y-3">
                 <h3 className="font-semibold text-gray-900">Seating</h3>
                 <div className="flex flex-wrap gap-2">
-                  {ticket.seatsNumber.map((seat, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center space-x-2 bg-gray-100 px-3 py-2 rounded-lg"
-                    >
-                      <MapPin className="w-4 h-4 text-gray-500" />
-                      <span className="font-medium text-gray-900">{seat}</span>
-                    </div>
-                  ))}
+                  {ticket.seatsNumber.map((seat, index) => {
+                    const isReserved = ticket.paymentDetails?.paymentMethod === "reserved";
+                    return (
+                      <div
+                        key={index}
+                        className="flex items-center space-x-2 px-3 py-2 rounded-lg"
+                        style={{
+                          backgroundColor: isReserved ? "#fef3c7" : "#d1fae5",
+                        }}
+                      >
+                        <MapPin className="w-4 h-4 text-gray-500" />
+                        <span className="font-medium text-gray-900">{seat}</span>
+                        <span
+                          className={`text-xs font-medium px-1.5 py-0.5 rounded ${
+                            isReserved
+                              ? "bg-yellow-200 text-yellow-800"
+                              : "bg-green-200 text-green-800"
+                          }`}
+                        >
+                          {isReserved ? "RESERVED" : "PAID"}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -201,18 +268,6 @@ const TicketPage = () => {
                         {ticket.paymentDetails.paymentMethod}
                       </span>
                     </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Cardholder:</span>
-                    <span className="text-sm font-medium">
-                      {ticket.paymentDetails.cardName}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Card:</span>
-                    <span className="text-sm font-medium">
-                      •••• {ticket.paymentDetails.cardNumber.slice(-4)}
-                    </span>
                   </div>
                 </div>
               </div>

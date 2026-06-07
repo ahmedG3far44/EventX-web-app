@@ -15,7 +15,7 @@ import {
   YAxis,
   ResponsiveContainer,
 } from "recharts";
-import AgeDistributionChart from "../ui/AgeDistributionChart ";
+import AgeDistributionChart from "../ui/AgeDistributionChart";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useEvents } from "@/contexts/EventsProvider";

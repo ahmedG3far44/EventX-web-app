@@ -6,12 +6,13 @@ import indexRouter from "./routes/index.js";
 import cookieParser from "cookie-parser";
 
 import { connectDB } from "./configs/database.js";
+import { env } from "./configs/env.js";
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5003;
-const ENV = process.env.NODE_ENV;
+const PORT = env.PORT;
+const ENV = env.NODE_ENV;
 
 connectDB().then(() => {
   app.use(cors(originOptions));

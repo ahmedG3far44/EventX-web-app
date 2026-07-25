@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import LoginPage from "./pages/login";
 import SignupPage from "./pages/signup";
 import DashboardPage from "./pages/dashboard";
@@ -59,6 +60,7 @@ const App = () => {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
+      <Analytics />
     </div>
   );
 };

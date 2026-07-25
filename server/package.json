@@ -1,14 +1,14 @@
 {
-  "name": "server",
+  "name": "EventX-server",
   "version": "1.0.0",
   "description": "",
-  "main": "./src/server.js",
+  "main": "./src/index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon ./src/server",
-    "start": "node ./src/server"
+    "dev": "nodemon ./src/index.js",
+    "start": "node ./src/index.js"
   },
-  "keywords": [],
+  "keywords": ["booking", "event", "ticketing", "reservation"],
   "author": "ahmedG3far44",
   "license": "ISC",
   "dependencies": {

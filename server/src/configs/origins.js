@@ -1,5 +1,9 @@
+import dotenv from "dotenv";
+
+dotenv.config();
+
 const originOptions = {
-  origin: ["http://localhost:3000", "http://localhost:5173", "https://reliable-churros-048f84.netlify.app"],
+  origin: process.env.ALLOWED_ORIGINS || "http://localhost:5173",
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,

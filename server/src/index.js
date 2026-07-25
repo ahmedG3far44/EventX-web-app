@@ -16,7 +16,11 @@ connectDB().then(() => {
   app.use(express.json());
   app.use(cookieParser());
   app.get("/", (req, res) => {
-    res.send("<h1> server is running good !! </h1>");
+    res.send(`<div> 
+      <h1>EventX API Server!!</h1>
+      <p>Server is running in ${ENV} mode on port ${PORT}</p>
+      <p>Visit <a href="http://localhost:5173">EventX Client</a> to access the client application.</p>
+      </d>`);
   });
 
   app.use("/api", indexRouter);

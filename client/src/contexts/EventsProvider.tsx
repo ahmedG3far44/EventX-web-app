@@ -63,6 +63,7 @@ const EventsProvider = ({ children }: { children: ReactNode }) => {
       setEvents(data.data);
       return data;
     } catch (error) {
+      setEvents([]);
       setError((error as Error).message);
     } finally {
       setLoading(false);

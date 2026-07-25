@@ -46,7 +46,6 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
     selectedSeats,
     ticketState,
     totalTicketsPrice,
-    ticketPrice,
     handleTickets,
     setTicketState,
     setSelectedSeats,

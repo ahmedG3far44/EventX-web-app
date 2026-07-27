@@ -4,7 +4,7 @@ import { Card } from "./card";
 import { Badge } from "./badge";
 import { Button } from "./button";
 import { useBookingTickets } from "@/contexts/BookingTicketsProvider";
-import { MapPin, Ticket, LucideX, Armchair } from "lucide-react";
+import { MapPin, Ticket, X, Armchair } from "lucide-react";
 import { useState } from "react";
 
 function getSeatStyles(
@@ -55,7 +55,6 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
 
   const isModeChosen = ticketState === "reserve" || ticketState === "buy";
   const isBuyMode = ticketState === "buy";
-  const actionLabel = ticketState.toUpperCase();
 
   const isSeatSelected = (row: number, col: number) => {
     const name = `${String.fromCharCode(65 + row)}-${col + 1}`;
@@ -90,26 +89,29 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
 
   if (!isModeChosen)
     return (
-      <p className="text-center text-sm text-gray-600 mb-4">
-        Please choose <span className="font-semibold">Reserve</span> or{" "}
-        <span className="font-semibold">Buy</span> before selecting seats.
-      </p>
+      <div className="text-center py-8">
+        <Armchair className="w-10 h-10 mx-auto text-gray-300 mb-3" />
+        <p className="text-sm text-gray-500">
+          Choose <span className="font-semibold text-gray-700">Reserve</span> or{" "}
+          <span className="font-semibold text-gray-700">Buy</span> above to select seats.
+        </p>
+      </div>
     );
   if (error)
     return (
-      <p className="text-center text-sm text-red-600 p-4 rounded-2xl shadow mb-4">
+      <div className="text-center text-sm text-red-600 bg-red-50 border border-red-100 p-4 rounded-xl mb-4">
         {error}
-      </p>
+      </div>
     );
 
   return (
-    <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-3 sm:p-4 md:p-6 shadow-md rounded-md w-full max-w-4xl mx-auto">
-      <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-4">
+    <div className="bg-white p-3 sm:p-5 md:p-6 shadow-sm border border-gray-100 rounded-xl w-full max-w-4xl mx-auto">
+      <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-5">
         <Button
           className={`px-6 py-2.5 rounded-xl font-semibold transition-all cursor-pointer duration-300 w-full sm:w-auto ${
             ticketState === "reserve"
-              ? "bg-amber-500 hover:bg-amber-600 text-white shadow-lg"
-              : "bg-gray-200 hover:bg-gray-300 text-gray-700"
+              ? "bg-amber-500 hover:bg-amber-600 text-white shadow-md"
+              : "bg-gray-100 hover:bg-gray-200 text-gray-600"
           } disabled:opacity-50 disabled:cursor-not-allowed`}
           disabled={ticketState === "reserve"}
           onClick={() => setTicketState("reserve")}
@@ -119,8 +121,8 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
         <Button
           className={`px-6 py-2.5 rounded-xl font-semibold transition-all cursor-pointer duration-300 w-full sm:w-auto ${
             ticketState === "buy"
-              ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg"
-              : "bg-gray-200 hover:bg-gray-300 text-gray-700"
+              ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md"
+              : "bg-gray-100 hover:bg-gray-200 text-gray-600"
           } disabled:opacity-50 disabled:cursor-not-allowed`}
           disabled={ticketState === "buy"}
           onClick={() => setTicketState("buy")}
@@ -129,54 +131,46 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
         </Button>
       </div>
 
-      <Card className="p-3 sm:p-4 md:p-5 border-0 bg-white/95 backdrop-blur-sm">
-        <div className="flex flex-col items-center gap-3">
-          <div className="bg-gradient-to-r from-gray-800 to-gray-900 text-white px-6 sm:px-8 py-2 rounded-lg shadow-lg">
+      <Card className="p-3 sm:p-5 border border-gray-100 bg-white">
+        <div className="flex flex-col items-center gap-4">
+          <div className="bg-gradient-to-r from-gray-800 to-gray-900 text-white px-6 sm:px-10 py-2 rounded-lg shadow-md">
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="font-semibold text-base sm:text-lg">STAGE</span>
+              <span className="font-semibold text-sm sm:text-base tracking-wider">STAGE</span>
             </div>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
-            <div className="flex items-center gap-1.5">
-              <div className="w-4 h-4 sm:w-5 sm:h-5 rounded border-2 border-green-300 bg-green-100" />
-              <span className="text-xs sm:text-sm text-gray-700">Available</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-4 h-4 sm:w-5 sm:h-5 rounded border-2 border-yellow-400 bg-yellow-100" />
-              <span className="text-xs sm:text-sm text-gray-700">Reserved</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-4 h-4 sm:w-5 sm:h-5 rounded border-2 border-red-400 bg-red-100" />
-              <span className="text-xs sm:text-sm text-gray-700">Paid</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div
-                className={`w-4 h-4 sm:w-5 sm:h-5 rounded border-2 ${
-                  isBuyMode
-                    ? "border-indigo-600 bg-indigo-500"
-                    : "border-amber-500 bg-amber-400"
-                }`}
-              />
-              <span className="text-xs sm:text-sm text-gray-700 font-medium">
-                {isBuyMode ? "To Buy" : "To Reserve"}
-              </span>
-            </div>
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-5">
+            {[
+              { color: "bg-green-100 border-green-300", label: "Available" },
+              { color: "bg-yellow-100 border-yellow-400", label: "Reserved" },
+              { color: "bg-red-100 border-red-400", label: "Paid" },
+              {
+                color: isBuyMode
+                  ? "bg-indigo-500 border-indigo-600"
+                  : "bg-amber-400 border-amber-500",
+                label: isBuyMode ? "To Buy" : "To Reserve",
+              },
+            ].map((item) => (
+              <div key={item.label} className="flex items-center gap-1.5">
+                <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded border-2 ${item.color}`} />
+                <span className="text-xs sm:text-sm text-gray-600">{item.label}</span>
+              </div>
+            ))}
           </div>
 
-          <div className="w-full overflow-x-auto pb-2">
+          <div className="w-full overflow-x-auto pb-1 -mx-1 px-1">
             <div className="flex justify-center min-w-max">
               <div>
                 {seatMap.map((row, rowIndex) => (
                   <div
                     key={rowIndex}
-                    className="flex justify-center items-center gap-1.5 sm:gap-2 mb-1.5"
+                    className="flex justify-center items-center gap-1 sm:gap-1.5 mb-1"
                   >
-                    <div className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center font-bold text-gray-600 text-xs sm:text-sm">
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center font-bold text-gray-400 text-[10px] sm:text-xs">
                       {getRowLabel(rowIndex)}
                     </div>
-                    <div className="flex gap-1 sm:gap-1.5">
+                    <div className="flex gap-0.5 sm:gap-1">
                       {row.map((seatStatus, colIndex) => {
                         const selected = isSeatSelected(rowIndex, colIndex);
                         const isInteractive = seatStatus === 0 || selected;
@@ -184,14 +178,14 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
                           <div
                             key={colIndex}
                             className={`
-                              w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-lg border-2
-                              flex items-center justify-center text-xs font-bold
+                              w-6 h-6 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded border sm:rounded-lg sm:border-2
+                              flex items-center justify-center text-[8px] sm:text-xs font-bold
                               transition-all duration-200
                               ${getSeatStyles(seatStatus, selected, isBuyMode)}
                               ${
                                 isInteractive && isModeChosen
-                                  ? "cursor-pointer hover:scale-105 hover:shadow-md"
-                                  : "cursor-not-allowed opacity-70"
+                                  ? "cursor-pointer hover:scale-105 hover:shadow-sm"
+                                  : "cursor-not-allowed opacity-60"
                               }
                             `}
                             onClick={() => {
@@ -200,12 +194,12 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
                             }}
                             title={`${getRowLabel(rowIndex)}${colIndex + 1} - ${getSeatLabel(seatStatus, selected)}`}
                           >
-                            <Armchair className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                            <Armchair className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5" />
                           </div>
                         );
                       })}
                     </div>
-                    <div className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center font-bold text-gray-600 text-xs sm:text-sm">
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center font-bold text-gray-400 text-[10px] sm:text-xs">
                       {getRowLabel(rowIndex)}
                     </div>
                   </div>
@@ -214,74 +208,79 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-3 sm:gap-4 text-xs sm:text-sm text-gray-600">
-            <span>Total: {seatMap.flat().length}</span>
-            <span>Available: {counts.available}</span>
-            <span>Reserved: {counts.reserved}</span>
-            <span>Paid: {counts.paid}</span>
-            <span className="font-semibold">Selected: {counts.selected}</span>
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs sm:text-sm text-gray-500 border-t border-gray-100 pt-3 w-full justify-center">
+            <span>Total: <strong className="text-gray-700">{seatMap.flat().length}</strong></span>
+            <span>Available: <strong className="text-emerald-600">{counts.available}</strong></span>
+            <span>Reserved: <strong className="text-amber-600">{counts.reserved}</strong></span>
+            <span>Paid: <strong className="text-red-600">{counts.paid}</strong></span>
+            <span>Selected: <strong className="text-purple-600">{counts.selected}</strong></span>
           </div>
         </div>
       </Card>
 
-      <div className="mt-4">
+      <div className="mt-4 space-y-3">
+        {reserveTicketSuccess && (
+          <div className="bg-emerald-50 border border-emerald-200 p-3 sm:p-4 rounded-xl flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <p className="font-medium text-emerald-700 text-sm">
+                Tickets reserved successfully!
+              </p>
+            </div>
+            <button
+              className="p-1 rounded-md hover:bg-emerald-100 transition-colors cursor-pointer shrink-0"
+              onClick={() => setReserveTicketSuccess(false)}
+              aria-label="Dismiss"
+            >
+              <X size={16} className="text-emerald-500" />
+            </button>
+          </div>
+        )}
+
         {selectedSeats.length > 0 && (
-          <Card className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 p-4 sm:p-5 mb-4">
+          <Card className="bg-gray-50 border border-gray-100 p-4 sm:p-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <h3 className="font-semibold text-gray-800 flex items-center gap-2 mb-2">
-                  <Ticket className="w-4 h-4 sm:w-5 sm:h-5" />
-                  Selected Seats ({selectedSeats.length})
+              <div className="min-w-0">
+                <h3 className="font-semibold text-gray-800 flex items-center gap-2 mb-2 text-sm">
+                  <Ticket className="w-4 h-4 text-purple-500" />
+                  Selected ({selectedSeats.length})
                 </h3>
                 <div className="flex flex-wrap gap-1.5">
                   {selectedSeats.map((seat, index) => (
                     <Badge
                       key={index}
-                      className="bg-purple-100 text-purple-800 border border-purple-300 px-2.5 py-1 rounded-full font-medium text-xs sm:text-sm"
+                      className="bg-purple-100 text-purple-700 border border-purple-200 px-2 py-0.5 rounded-md font-medium text-xs"
                     >
                       {seat}
                     </Badge>
                   ))}
                 </div>
               </div>
-              <div className="text-left sm:text-right">
-                <p className="text-xs sm:text-sm text-gray-600">Total Price</p>
-                <p className="text-2xl sm:text-3xl font-bold text-purple-600">
-                  ${totalTicketsPrice.toLocaleString()}
+              <div className="text-left sm:text-right shrink-0">
+                <p className="text-xs text-gray-500">Total Price</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900">
+                  {totalTicketsPrice.toLocaleString()}
+                  <span className="text-sm text-gray-500 font-normal ml-0.5">EGP</span>
                 </p>
               </div>
             </div>
           </Card>
         )}
 
-        {reserveTicketSuccess && (
-          <div className="text-green-500 bg-green-50 border-green-100 border p-3 sm:p-4 rounded-2xl shadow-sm flex justify-between items-center mb-4">
-            <p className="font-semibold text-sm sm:text-base">
-              Your tickets {actionLabel} done successfully
-            </p>
-            <Button
-              className="ml-auto bg-green-700 text-white cursor-pointer hover:bg-green-600"
-              onClick={() => setReserveTicketSuccess(false)}
-            >
-              <LucideX size={20} />
-            </Button>
-          </div>
-        )}
-
         {selectedSeats.length > 0 && (
-          <div className="flex justify-center">
+          <>
             {isBuyMode ? (
               <Link
-                className="w-full text-center flex items-center justify-center bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white px-8 sm:px-12 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] gap-2"
+                className="w-full flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3.5 rounded-xl font-semibold text-sm sm:text-base transition-all duration-300 shadow-md hover:shadow-lg active:scale-[0.98] gap-2"
                 to={`/checkout/${eventDetails?._id ?? ""}`}
               >
-                <Ticket className="w-4 h-4 sm:w-5 sm:h-5" />
-                BUY TICKETS
+                <Ticket className="w-4 h-4" />
+                Proceed to Checkout
               </Link>
             ) : (
               <button
                 disabled={loading}
-                className="w-full text-center flex items-center justify-center bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 disabled:bg-zinc-400 cursor-pointer disabled:cursor-not-allowed text-white px-8 sm:px-12 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] gap-2"
+                className="w-full flex items-center justify-center bg-amber-500 hover:bg-amber-600 disabled:opacity-40 disabled:cursor-not-allowed text-white px-8 py-3.5 rounded-xl font-semibold text-sm sm:text-base transition-all duration-300 shadow-md hover:shadow-lg active:scale-[0.98] gap-2 cursor-pointer"
                 onClick={async () => {
                   await handleTickets({
                     paymentMethod: "reserved",
@@ -293,11 +292,18 @@ const Seats = ({ eventDetails }: { eventDetails: EventType }) => {
                   setReserveTicketSuccess(true);
                 }}
               >
-                <Ticket className="w-4 h-4 sm:w-5 sm:h-5" />
-                {loading ? "Reserving..." : "RESERVE"}
+                <Ticket className="w-4 h-4" />
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                    Reserving...
+                  </span>
+                ) : (
+                  "Reserve Now"
+                )}
               </button>
             )}
-          </div>
+          </>
         )}
       </div>
     </div>

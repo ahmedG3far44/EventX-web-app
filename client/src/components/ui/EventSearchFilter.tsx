@@ -4,7 +4,7 @@ import {
   Filter,
   X,
   Calendar,
-
+  CalendarX,
   Users,
   Star,
   Tag,
@@ -328,14 +328,14 @@ export default function EventSearchFilter({
         ))}
 
         {filteredEvents.length === 0 && (
-          <div className="text-center py-8">
-            <div className="text-gray-400 mb-2">
-              <Search className="h-12 w-12 mx-auto" />
+          <div className="col-span-full flex flex-col items-center justify-center min-h-[60vh]">
+            <div className="text-gray-300 mb-3">
+              <CalendarX className="h-14 w-14 mx-auto" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-1">
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">
               No events found
             </h3>
-            <p className="text-gray-500">
+            <p className="text-gray-500 text-sm">
               Try adjusting your search or filter criteria
             </p>
           </div>

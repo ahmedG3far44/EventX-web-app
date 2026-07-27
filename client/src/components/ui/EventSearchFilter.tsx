@@ -328,7 +328,7 @@ export default function EventSearchFilter({
         ))}
 
         {filteredEvents.length === 0 && (
-          <div className="col-span-full flex flex-col items-center justify-center min-h-[60vh]">
+          <div className="col-span-full flex flex-col items-center justify-center min-h-[70vh]">
             <div className="text-gray-300 mb-3">
               <CalendarX className="h-14 w-14 mx-auto" />
             </div>
